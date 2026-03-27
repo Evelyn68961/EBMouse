@@ -1,0 +1,42 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --color-teal-500: #0E7C86;
+  --color-teal-600: #0A5C63;
+  --color-hamster-body: #8B6914;
+  --color-hamster-belly: #D4A843;
+}
+
+body {
+  font-family: 'Noto Sans TC', 'Inter', sans-serif;
+  background: #FAFAF8;
+  color: #1B2838;
+}
+
+/* Smooth transitions for hint cards */
+.hint-content {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.3s ease-out, opacity 0.3s ease-out;
+  opacity: 0;
+}
+.hint-content.open {
+  max-height: 500px;
+  opacity: 1;
+}
+
+/* Phase progress bar animation */
+.phase-fill {
+  transition: width 0.5s ease-in-out;
+}
+
+/* Subtle hover lift for cards */
+.card-hover {
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+.card-hover:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(14, 124, 134, 0.12);
+}
