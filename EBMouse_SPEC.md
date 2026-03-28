@@ -193,13 +193,14 @@ EBMouse (EBM 鼠出任務)
 │   └── [Future cases added yearly]
 │
 ├── 🧰 Reference: Toolbox (工具箱)
-│   ├── Search strategy templates (downloadable)
-│   ├── CASP-SR checklist (downloadable)
-│   ├── GRADE scoring sheet (downloadable)
-│   ├── MID determination guide
-│   ├── Evidence-to-Decision template
-│   ├── SRA keyword conversion guide
-│   └── LitSuggest screening guide
+│   ├── Core GRADE Quick Guide ✅ — 7-tab interactive guide (overview, 5 domains, SoF tables)
+│   ├── CASP-SR Checklist ✅ — 13-question guide with scoring criteria, pitfalls, Kappa
+│   ├── PICOT Worksheet (planned)
+│   ├── PubMed Search Strategy Template (planned)
+│   ├── MID Determination Guide (planned)
+│   ├── Evidence-to-Decision Template (planned)
+│   ├── SRA Keyword Conversion Guide (planned)
+│   └── LitSuggest Screening Guide (planned)
 │
 └── ℹ️ About (關於)
     └── Team info, how to contribute, link to MA101
@@ -584,7 +585,7 @@ ebmouse/
 │   └── templates/                   ← downloadable PDF/printable templates
 └── src/
     ├── main.jsx
-    ├── App.jsx                      ← router + layout + project context provider
+    ├── App.jsx                      ← router + layout + project context provider (includes /toolbox/core-grade and /toolbox/casp-sr routes)
     ├── i18n.js                      ← bilingual strings
     ├── projectSchema.js             ← default project object + validation
     ├── storage.js                   ← localStorage CRUD + JSON export/import
@@ -618,7 +619,9 @@ ebmouse/
     │   │   ├── Roadmap.jsx          ← 5A framework guide
     │   │   ├── CaseLibrary.jsx      ← annotated past cases
     │   │   ├── CaseAtropine.jsx     ← 2024 atropine case
-    │   │   └── Toolbox.jsx          ← templates + guides
+    │   │   ├── Toolbox.jsx          ← toolbox index with links to active tools
+    │   │   ├── CoreGradeGuide.jsx   ← ✅ Core GRADE 7-tab interactive guide (BMJ 2025)
+    │   │   └── CaspChecklist.jsx    ← ✅ CASP-SR 13-question reference with scoring guidance
     │   │
     │   └── About.jsx
     │
@@ -662,7 +665,9 @@ ebmouse/
 - i18n framework with ZH/EN toggle
 - SVG hamster mascot (5 moods: neutral, thinking, celebrating, loading, concerned)
 - Reference: Case Library (2024 atropine case stub)
-- Reference: Toolbox (8 template stubs)
+- Reference: Toolbox — 2 interactive guides built, 6 template stubs
+  - Core GRADE Quick Guide (`/toolbox/core-grade`): 7-tab page covering overview, imprecision (with interactive SVG number-line diagrams), inconsistency, risk of bias, indirectness, publication bias, and SoF tables. Based on BMJ 2025 Core GRADE Papers 1–6 + GRADE Guidelines 6. Bilingual with visual decision flows, domain cards, plain language statement table.
+  - CASP-SR Checklist (`/toolbox/casp-sr`): All 13 questions as expandable cards with color-coded sections (validity/results/applicability), per-question "what to look for" checklists, 3-column scoring guidance (😀/😟/😐), common pitfall callouts, section filter, and Cohen's Kappa interpretation table.
 
 **Teaching Content Coverage (27 blocks):**
 - Phase 1 Assess (5): scenario dissection, patient profile checklist, EBM 3-pillar preferences, 3-step background search, treatment issues example
@@ -676,6 +681,7 @@ ebmouse/
 - PPTX generation via PptxGenJS
 - 1-page summary and GRADE table generators
 - Reference: Roadmap guide (standalone educational content pages)
+- Toolbox: remaining 6 tools (PICOT worksheet, PubMed search template, MID guide, EtD template, SRA guide, LitSuggest guide)
 
 ### Phase 2 — AI + Output Generation (Target: next)
 
@@ -728,7 +734,7 @@ ebmouse/
 | Core GRADE 3 | 10.1136/bmj-2024-081905 | Inconsistency |
 | Core GRADE 4 | 10.1136/bmj-2024-083864 | Risk of bias + publication bias |
 | Core GRADE 5 | 10.1136/bmj-2024-083865 | Indirectness |
-| Core GRADE 6 | (TBD) | Summary of Findings tables |
+| Core GRADE 6 | 10.1136/bmj-2024-083866 | Summary of Findings tables |
 | Core GRADE 7 | 10.1136/bmj-2024-083867 | Evidence to Decision |
 
 ### CASP
