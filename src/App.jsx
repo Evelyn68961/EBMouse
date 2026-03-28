@@ -10,6 +10,9 @@ import CaspChecklist from './pages/reference/CaspChecklist';
 import EtdFramework from './pages/reference/EtdFramework';
 import MidGuide from './pages/reference/MidGuide';
 import PicotWorksheet from './pages/reference/PicotWorksheet';
+import PubmedSearchGuide from './pages/reference/PubmedSearchGuide';
+import SraGuide from './pages/reference/SraGuide';
+import LitSuggestGuide from './pages/reference/LitSuggestGuide';
 import About from './pages/About';
 
 export const LangContext = createContext();
@@ -24,7 +27,7 @@ export default function App() {
   const toggleLang = () => {
     const next = lang === "zh" ? "en" : "zh";
     setLang(next);
-    try { localStorage.setItem("ebmouse-lang", next); } catch {}
+    try { localStorage.setItem("ebmouse-lang", next); } catch {};
   };
 
   return (
@@ -40,6 +43,9 @@ export default function App() {
           <Route path="/toolbox/etd" element={<EtdFramework />} />
           <Route path="/toolbox/mid" element={<MidGuide />} />
           <Route path="/toolbox/picot" element={<PicotWorksheet />} />
+          <Route path="/toolbox/pubmed-search" element={<PubmedSearchGuide />} />
+          <Route path="/toolbox/sra" element={<SraGuide />} />
+          <Route path="/toolbox/litsuggest" element={<LitSuggestGuide />} />
           <Route path="/about" element={<About />} />
         </Routes>
       </Layout>
