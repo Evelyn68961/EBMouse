@@ -189,7 +189,9 @@ EBMouse (EBM 鼠出任務)
 │   └── Deliverable checklist + judge expectations
 │
 ├── 📚 Reference: Case Library (案例庫)
-│   ├── Case 1: Atropine for Myopia (2024) — fully annotated
+│   ├── Case 1: Atropine for Myopia (2024) ✅ — fully annotated 5A walkthrough
+│   ├── Case 2: CPM for Post-TKA Rehab (2025) ✅ — fully annotated 5A walkthrough
+│   ├── Case 3: IV Iron for HF + IDA (2025) ✅ — fully annotated 5A walkthrough
 │   └── [Future cases added yearly]
 │
 ├── 🧰 Reference: Toolbox (工具箱) — ordered by 5A workflow with phase badges
@@ -670,7 +672,11 @@ ebmouse/
 - Slide preview sidebar (desktop) + mobile floating preview
 - i18n framework with ZH/EN toggle
 - SVG hamster mascot (5 moods: neutral, thinking, celebrating, loading, concerned)
-- Reference: Case Library (2024 atropine case stub)
+- Reference: Case Library — 3 fully built cases with shared CaseDetail renderer
+  - Case 1: Atropine for Childhood Myopia (2024, 四練) — 58 slides, 897-line data file. Two GRADE assessments (0.01% = Low, 0.05% = Moderate), continuous outcome MID (SE = 0.25D), conditional recommendation for 0.05% atropine.
+  - Case 2: CPM for Post-TKA Rehab (2025, 三練) — 55 slides, 672-line data file. Single GRADE assessment (Low), continuous outcome MID (ROM = 5°, corrected from team's 2° using Silva et al. Syst Rev 2024;13:50 anchor-based MCIC). Conditional recommendation against CPM. Corrections applied: cost data copy-paste errors, conclusion copy-paste, MID value.
+  - Case 3: IV Iron for HF + IDA (2025, 二練) — 54 slides, 782-line data file. Single GRADE assessment (Moderate), binary outcome null threshold (OR = 1) + OIS, NNT = 16. Conditional recommendation for IV iron. Corrections applied: slide 8 treatment regimen copy-paste, slide 37 MID copy-paste (atropine SE → null threshold for binary OR), slide 5 typo, slide 25 dual Kappa values. Supporting RCT: FAIR-HF2 (Anker et al. JAMA 2025).
+  - Shared `CaseDetail.jsx` renderer (946 lines): sticky phase nav, PICOT comparison cards, PRISMA flow, CASP emoji table + collapsible evidence, number line SVG for imprecision, GRADE scorecards, EtD direction bars, cost/benefit-risk tables, NNT display with collapsible derivation. Handles both continuous (MID) and binary (null threshold) outcomes, optional keyOutcome subgroups, optional regimen rows, optional visitCost rows. GRADE heading uses `assessment.label` for generic case support.
 - Reference: Toolbox — all 8 interactive guides built (toolbox complete)
   - Core GRADE Quick Guide (`/toolbox/core-grade`): 7-tab page covering overview, imprecision (with interactive SVG number-line diagrams), inconsistency, risk of bias, indirectness, publication bias, and SoF tables. Based on BMJ 2025 Core GRADE Papers 1–6 + GRADE Guidelines 6. Bilingual with visual decision flows, domain cards, plain language statement table.
   - CASP-SR Checklist (`/toolbox/casp-sr`): All 13 questions as expandable cards with color-coded sections (validity/results/applicability), per-question "what to look for" checklists, 3-column scoring guidance (😀/😟/😐), common pitfall callouts, section filter, and Cohen's Kappa interpretation table.
@@ -703,7 +709,6 @@ ebmouse/
 - 1-page clinical evidence summary generator
 - GRADE evidence profile table generator
 - Reference: Roadmap guide with full 5A educational content
-- Reference: Case 1 (Atropine) fully annotated walkthrough
 - Improved slide preview (currently basic miniatures)
 
 ### Phase 3 — Growth (Ongoing)
@@ -755,13 +760,18 @@ ebmouse/
 
 ### Competition-Specific
 
-- 2024 competition slides (`EBM_四練_20250811_統整_已報_.pdf`)
-- Wei XL et al. (2023) — PMID: 37602338
+- 2024 competition slides — Case 1: Atropine (`EBM_四練_20250811_統整_已報_.pdf`)
+- 2025 competition slides — Case 2: CPM (`EBM_三練_20250812_新模板.pdf`)
+- 2025 competition slides — Case 3: IV Iron (`EBM_二練_20250814_新模板.pptx`)
+- Wei XL et al. (2023) — PMID: 37602338 (atropine for myopia SR/MA)
 - LAMP Study Phase 4 — 5-year atropine RCT
+- Ahmed M et al. ESC Heart Fail. 2025;12(1):43. PMID: 38965691 (IV iron for HF, 14 RCTs, 6651 pts)
+- Anker SD et al. JAMA. 2025;333(22):1965-1976 (FAIR-HF2 RCT, supporting evidence for IV iron case)
 
-### MID Reference
+### MID References
 
-- Smith MJ, Walline JJ. *Adolesc Health Med Ther.* 2015;6:133-140.
+- Smith MJ, Walline JJ. *Adolesc Health Med Ther.* 2015;6:133-140. (atropine case: SE MID = 0.25D)
+- Silva MDC et al. *Syst Rev.* 2024;13(1):50. (CPM case: knee flexion MCIC = 3.8°–6.4°, used MID = 5°)
 
 ---
 
