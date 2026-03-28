@@ -152,11 +152,11 @@ function renderTable(tableLines, keyBase) {
 
   return (
     <div key={keyBase} className="overflow-x-auto my-3">
-      <table className="w-full text-xs border-collapse">
+      <table className="w-full text-sm border-collapse">
         <thead>
           <tr>
             {header.map((h, i) => (
-              <th key={i} className="text-left px-2 py-1.5 bg-gray-100 font-semibold text-gray-700 border border-gray-200">
+              <th key={i} className="text-left px-2 py-1.5 bg-gray-100 font-semibold text-gray-700 border border-gray-200 text-sm">
                 {renderInline(h)}
               </th>
             ))}
@@ -166,7 +166,7 @@ function renderTable(tableLines, keyBase) {
           {body.map((row, ri) => (
             <tr key={ri} className={ri % 2 === 0 ? "bg-white" : "bg-gray-50/50"}>
               {row.map((cell, ci) => (
-                <td key={ci} className="px-2 py-1.5 border border-gray-200 text-gray-600">
+                <td key={ci} className="px-2 py-1.5 border border-gray-200 text-gray-600 text-sm">
                   {renderInline(cell)}
                 </td>
               ))}

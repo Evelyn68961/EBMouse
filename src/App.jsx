@@ -5,6 +5,8 @@ import Home from './pages/Home';
 import WorkflowRouter from './pages/workflow/WorkflowRouter';
 import CaseLibrary from './pages/reference/CaseLibrary';
 import Toolbox from './pages/reference/Toolbox';
+import CoreGradeGuide from './pages/reference/CoreGradeGuide';
+import CaspChecklist from './pages/reference/CaspChecklist';
 import About from './pages/About';
 
 export const LangContext = createContext();
@@ -30,6 +32,8 @@ export default function App() {
           <Route path="/workflow/:projectId/*" element={<WorkflowRouter />} />
           <Route path="/cases" element={<CaseLibrary />} />
           <Route path="/toolbox" element={<Toolbox />} />
+          <Route path="/toolbox/core-grade" element={<CoreGradeGuide />} />
+          <Route path="/toolbox/casp-sr" element={<CaspChecklist />} />
           <Route path="/about" element={<About />} />
         </Routes>
       </Layout>
