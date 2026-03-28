@@ -198,9 +198,9 @@ EBMouse (EBM 鼠出任務)
 │   ├── Evidence-to-Decision Framework ✅ — 5-tab EtD guide (overview, 7 factors, strength, MID & values, presentation)
 │   ├── MID Determination Guide ✅ — 5-tab MID guide (what is MID, 4 methods, credibility, use in GRADE, practical guide)
 │   ├── PICOT Worksheet ✅ — 4-tab PICOT guide (5 elements, question types, selection strategy, quality checklist)
-│   ├── PubMed Search Strategy Template (planned)
-│   ├── SRA Keyword Conversion Guide (planned)
-│   └── LitSuggest Screening Guide (planned)
+│   ├── PubMed Search Strategy Template ✅ — 3-tab guide (build strategy, 3 databases, search tips)
+│   ├── SRA Keyword Conversion Guide ✅ — 3-tab Polyglot guide (why convert, how to, vocabulary map)
+│   └── LitSuggest Screening Guide ✅ — 3-tab ML screening guide (what is LitSuggest, workflow, competition use)
 │
 └── ℹ️ About (關於)
     └── Team info, how to contribute, link to MA101
@@ -585,7 +585,7 @@ ebmouse/
 │   └── templates/                   ← downloadable PDF/printable templates
 └── src/
     ├── main.jsx
-    ├── App.jsx                      ← router + layout + project context provider (includes /toolbox/core-grade, /toolbox/casp-sr, /toolbox/etd, /toolbox/mid, /toolbox/picot routes)
+    ├── App.jsx                      ← router + layout + project context provider (includes all 8 /toolbox/* routes)
     ├── i18n.js                      ← bilingual strings
     ├── projectSchema.js             ← default project object + validation
     ├── storage.js                   ← localStorage CRUD + JSON export/import
@@ -619,12 +619,15 @@ ebmouse/
     │   │   ├── Roadmap.jsx          ← 5A framework guide
     │   │   ├── CaseLibrary.jsx      ← annotated past cases
     │   │   ├── CaseAtropine.jsx     ← 2024 atropine case
-    │   │   ├── Toolbox.jsx          ← toolbox index with links to active tools
+    │   │   ├── Toolbox.jsx          ← toolbox index with links to all 8 tools
     │   │   ├── CoreGradeGuide.jsx   ← ✅ Core GRADE 7-tab interactive guide (BMJ 2025)
     │   │   ├── CaspChecklist.jsx    ← ✅ CASP-SR 13-question reference with scoring guidance
     │   │   ├── EtdFramework.jsx     ← ✅ Evidence-to-Decision 5-tab guide (Core GRADE Paper 7)
     │   │   ├── MidGuide.jsx         ← ✅ MID Determination 5-tab guide (Carrasco-Labra 2021 + Devji 2020)
-    │   │   └── PicotWorksheet.jsx   ← ✅ PICOT 4-tab guide (5 elements, types, selection, checklist)
+    │   │   ├── PicotWorksheet.jsx   ← ✅ PICOT 4-tab guide (5 elements, types, selection, checklist)
+    │   │   ├── PubmedSearchGuide.jsx ← ✅ PubMed search strategy 3-tab guide (build, databases, tips)
+    │   │   ├── SraGuide.jsx         ← ✅ SRA Polyglot 3-tab guide (why, how, vocabulary map)
+    │   │   └── LitSuggestGuide.jsx  ← ✅ LitSuggest 3-tab ML screening guide (what, workflow, competition)
     │   │
     │   └── About.jsx
     │
@@ -668,12 +671,15 @@ ebmouse/
 - i18n framework with ZH/EN toggle
 - SVG hamster mascot (5 moods: neutral, thinking, celebrating, loading, concerned)
 - Reference: Case Library (2024 atropine case stub)
-- Reference: Toolbox — 5 interactive guides built, 3 template stubs
+- Reference: Toolbox — all 8 interactive guides built (toolbox complete)
   - Core GRADE Quick Guide (`/toolbox/core-grade`): 7-tab page covering overview, imprecision (with interactive SVG number-line diagrams), inconsistency, risk of bias, indirectness, publication bias, and SoF tables. Based on BMJ 2025 Core GRADE Papers 1–6 + GRADE Guidelines 6. Bilingual with visual decision flows, domain cards, plain language statement table.
   - CASP-SR Checklist (`/toolbox/casp-sr`): All 13 questions as expandable cards with color-coded sections (validity/results/applicability), per-question "what to look for" checklists, 3-column scoring guidance (😀/😟/😐), common pitfall callouts, section filter, and Cohen's Kappa interpretation table.
   - Evidence-to-Decision Framework (`/toolbox/etd`): 5-tab page covering overview (4 recommendation categories, 7-step decision flow), 7 EtD factors (3 primary + 4 secondary as expandable cards with questions and impact), strength determination (certainty×strength matrix, strong vs conditional implications, exceptional circumstances), MID & values (why MID matters for EtD, value gradient, 4 methods, WHO COVID-19 value statement examples), and presentation (wording rules, 5-element structure, multilayered format, for-vs-against guidance). Based on Core GRADE Paper 7 (BMJ 2025;389:e083867).
   - MID Determination Guide (`/toolbox/mid`): 5-tab page covering what MID is (definition, anchor-based vs distribution-based, value gradient table), 4 methods (literature search, clinician experience, patient focus group, panel survey with pros/cons/examples), credibility assessment (5 core criteria + 4 GRC extension criteria with statistics from Carrasco-Labra 2021's 5,324 MID estimates), 3 roles in GRADE (imprecision threshold, inconsistency reference, EtD decision basis), and practical guide (step-by-step workflow, 2024 competition worked example with SE MID = 0.25D derivation, presentation checklist, common mistakes). Based on Core GRADE Papers 2 & 7, Carrasco-Labra et al. (JCE 2021;133:61–71), Devji et al. (BMJ 2020;369:m1714).
   - PICOT Worksheet (`/toolbox/picot`): 4-tab page covering 5 elements (P/I/C/O/T as color-coded cards with tips and 2024 atropine worked example), question types (4-type × study design table with treatment-type emphasis for competitions), selection strategy (PICOT-1 vs PICOT-2 side-by-side from 2024 case, 3 selection principles: patient preference → feasibility → evidence availability), and quality checklist (per-element color-coded checklist items covering specificity, measurability, scenario alignment).
+  - PubMed Search Strategy Template (`/toolbox/pubmed-search`): 3-tab page covering build strategy (3-step PICOT→Boolean with worked example and PubMed Advanced Search workflow), 3 databases (PubMed/Embase/Cochrane strengths comparison), and search tips (Boolean operators quick reference table, common mistakes, MeSH term finding guide).
+  - SRA Keyword Conversion Guide (`/toolbox/sra`): 3-tab page covering why convert (different databases use different controlled vocabularies — MeSH vs Emtree vs Cochrane syntax), how to (6-step Polyglot workflow with warnings about Emtree over-indexing), and vocabulary map (cross-database syntax comparison table for subject headings, title, title+abstract, truncation, exact phrase). Based on Clark et al. (JMLA 2020;108:195–207).
+  - LitSuggest Screening Guide (`/toolbox/litsuggest`): 3-tab page covering what is LitSuggest (ML-powered screening concept with positive/negative examples), workflow (7-step guide from account creation to iteration), and competition use (2024 case: 793→391 articles, presentation tips, how to pick positive examples, caveats). Based on Allot et al. (Nucleic Acids Res 2021;49:W352–W358).
 
 **Teaching Content Coverage (27 blocks):**
 - Phase 1 Assess (5): scenario dissection, patient profile checklist, EBM 3-pillar preferences, 3-step background search, treatment issues example
@@ -687,7 +693,7 @@ ebmouse/
 - PPTX generation via PptxGenJS
 - 1-page summary and GRADE table generators
 - Reference: Roadmap guide (standalone educational content pages)
-- Toolbox: remaining 3 tools (PubMed search template, SRA keyword conversion guide, LitSuggest screening guide)
+- Toolbox: ✅ COMPLETE — all 8 interactive reference guides built
 
 ### Phase 2 — AI + Output Generation (Target: next)
 

@@ -7,34 +7,14 @@ export default function Toolbox() {
   const { lang } = useLang();
 
   const tools = [
-    {
-      icon: "📊", status: "ready", to: "/toolbox/core-grade",
-      title: { zh: "Core GRADE 快速指南", en: "Core GRADE Quick Guide" },
-      desc: { zh: "五面向評估流程圖解 + 互動數線圖 + 白話語言對照表（BMJ 2025）", en: "5-domain assessment with visual guides, interactive number lines & plain language tables (BMJ 2025)" },
-    },
-    {
-      icon: "⚖️", status: "ready", to: "/toolbox/casp-sr",
-      title: { zh: "CASP-SR 評讀清單", en: "CASP-SR Checklist" },
-      desc: { zh: "13 題逐題指導 + 評分標準 + 常見錯誤 + Kappa 判讀", en: "13-question guide with scoring criteria, pitfalls & Kappa interpretation" },
-    },
-    {
-      icon: "📝", status: "ready", to: "/toolbox/etd",
-      title: { zh: "證據到建議框架", en: "Evidence-to-Decision Framework" },
-      desc: { zh: "七大考量因素 + 推薦強度判定 + MID 與價值偏好 + 推薦呈現方式", en: "7 factors + strength determination + MID & values + presentation format" },
-    },
-    {
-      icon: "🎯", status: "ready", to: "/toolbox/mid",
-      title: { zh: "MID 訂定指引", en: "MID Determination Guide" },
-      desc: { zh: "四種訂定方法 + 可信度評估五準則 + 在 GRADE 中的三個角色 + 實戰範例", en: "4 methods + 5 credibility criteria + 3 roles in GRADE + worked example" },
-    },
-    {
-      icon: "📋", status: "ready", to: "/toolbox/picot",
-      title: { zh: "PICOT 工作表", en: "PICOT Worksheet" },
-      desc: { zh: "五要素深度解析 + 四種問題類型 + 選擇策略 + 品質檢核清單", en: "5-element deep dive + 4 question types + selection strategy + quality checklist" },
-    },
-    { icon: "🔍", status: "soon", title: { zh: "PubMed 搜尋策略模板", en: "PubMed Search Template" }, desc: { zh: "填空式 Boolean 搜尋建立器", en: "Fill-in-the-blank Boolean search builder" } },
-    { icon: "🔄", status: "soon", title: { zh: "SRA 關鍵字轉換指引", en: "SRA Keyword Conversion Guide" }, desc: { zh: "PubMed → Cochrane/Embase 關鍵字自動轉換", en: "PubMed → Cochrane/Embase keyword auto-conversion" } },
-    { icon: "🤖", status: "soon", title: { zh: "LitSuggest 篩選指引", en: "LitSuggest Screening Guide" }, desc: { zh: "機器學習輔助文獻篩選工作流程", en: "ML-assisted literature screening workflow" } },
+    { icon: "📊", to: "/toolbox/core-grade", title: { zh: "Core GRADE 快速指南", en: "Core GRADE Quick Guide" }, desc: { zh: "五面向評估流程圖解 + 互動數線圖 + 白話語言對照表", en: "5-domain assessment with visual guides, interactive number lines & plain language tables" } },
+    { icon: "⚖️", to: "/toolbox/casp-sr", title: { zh: "CASP-SR 評讀清單", en: "CASP-SR Checklist" }, desc: { zh: "13 題逐題指導 + 評分標準 + 常見錯誤 + Kappa 判讀", en: "13-question guide with scoring criteria, pitfalls & Kappa interpretation" } },
+    { icon: "📝", to: "/toolbox/etd", title: { zh: "證據到建議框架", en: "Evidence-to-Decision Framework" }, desc: { zh: "七大考量因素 + 推薦強度判定 + MID 與價值偏好 + 推薦呈現方式", en: "7 factors + strength determination + MID & values + presentation format" } },
+    { icon: "🎯", to: "/toolbox/mid", title: { zh: "MID 訂定指引", en: "MID Determination Guide" }, desc: { zh: "四種訂定方法 + 可信度評估五準則 + 在 GRADE 中的三個角色 + 實戰範例", en: "4 methods + 5 credibility criteria + 3 roles in GRADE + worked example" } },
+    { icon: "📋", to: "/toolbox/picot", title: { zh: "PICOT 工作表", en: "PICOT Worksheet" }, desc: { zh: "五要素深度解析 + 四種問題類型 + 選擇策略 + 品質檢核清單", en: "5-element deep dive + 4 question types + selection strategy + quality checklist" } },
+    { icon: "🔍", to: "/toolbox/pubmed-search", title: { zh: "PubMed 搜尋策略模板", en: "PubMed Search Template" }, desc: { zh: "從 PICOT 到 Boolean 三步驟 + 三大資料庫 + Boolean 運算符速查", en: "PICOT to Boolean in 3 steps + 3 databases + Boolean operators quick reference" } },
+    { icon: "🔄", to: "/toolbox/sra", title: { zh: "SRA 關鍵字轉換指引", en: "SRA Keyword Conversion Guide" }, desc: { zh: "Polyglot Search Translator 操作流程 + 跨資料庫語法對照表", en: "Polyglot Search Translator workflow + cross-database syntax map" } },
+    { icon: "🤖", to: "/toolbox/litsuggest", title: { zh: "LitSuggest 篩選指引", en: "LitSuggest Screening Guide" }, desc: { zh: "NCBI 機器學習文獻篩選 + 操作流程 + 競賽應用範例（793→391篇）", en: "NCBI ML screening + workflow + competition example (793→391 articles)" } },
   ];
 
   return (
@@ -52,40 +32,17 @@ export default function Toolbox() {
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-        {tools.map(({ icon, title, desc, status, to }) => {
-          const content = (
-            <>
-              <div className="text-2xl mb-2">{icon}</div>
-              <h3 className="font-semibold text-gray-800 text-sm mb-1">{title[lang]}</h3>
-              <p className="text-xs text-gray-400 leading-relaxed">{desc[lang]}</p>
-              {status === "soon" && (
-                <span className="inline-block mt-3 px-2 py-0.5 bg-amber-50 text-amber-500 rounded text-xs font-medium">
-                  {lang === "zh" ? "即將上線" : "Coming soon"}
-                </span>
-              )}
-              {status === "ready" && (
-                <span className="inline-block mt-3 px-2 py-0.5 bg-teal-50 text-teal-600 rounded text-xs font-medium">
-                  {lang === "zh" ? "✅ 已上線" : "✅ Available"}
-                </span>
-              )}
-            </>
-          );
-
-          if (to) {
-            return (
-              <Link key={title.en} to={to}
-                className="block bg-white rounded-xl border border-gray-100 p-5 card-hover hover:border-teal-200 transition-colors">
-                {content}
-              </Link>
-            );
-          }
-
-          return (
-            <div key={title.en} className="bg-white rounded-xl border border-gray-100 p-5 card-hover">
-              {content}
-            </div>
-          );
-        })}
+        {tools.map(({ icon, title, desc, to }) => (
+          <Link key={title.en} to={to}
+            className="block bg-white rounded-xl border border-gray-100 p-5 card-hover hover:border-teal-200 transition-colors">
+            <div className="text-2xl mb-2">{icon}</div>
+            <h3 className="font-semibold text-gray-800 text-sm mb-1">{title[lang]}</h3>
+            <p className="text-xs text-gray-400 leading-relaxed">{desc[lang]}</p>
+            <span className="inline-block mt-3 px-2 py-0.5 bg-teal-50 text-teal-600 rounded text-xs font-medium">
+              {lang === "zh" ? "✅ 已上線" : "✅ Available"}
+            </span>
+          </Link>
+        ))}
       </div>
     </div>
   );
