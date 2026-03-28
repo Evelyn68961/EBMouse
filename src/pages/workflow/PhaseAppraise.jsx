@@ -4,6 +4,10 @@ import { useLang } from '../../App';
 import { t } from '../../i18n';
 import HintCard from '../../components/HintCard';
 import Hamster from '../../components/Hamster';
+import teachingContent from '../../data/teachingContent';
+import { TeachingBlocksForSection, PhaseIntro } from '../../components/TeachingBlock';
+
+const phase = teachingContent.appraise;
 
 const caspQuestions = {
   q1: { zh: "Q1. 是否明確提出研究問題？", en: "Q1. Was there a clear research question?" },
@@ -38,7 +42,7 @@ const gradeLabels = {
 export default function PhaseAppraise() {
   const { project, updateProject } = useProject();
   const { lang } = useLang();
-  const [tab, setTab] = useState("casp"); // casp | results | grade
+  const [tab, setTab] = useState("casp");
 
   const data = project.appraise;
 
@@ -66,6 +70,9 @@ export default function PhaseAppraise() {
         </div>
       </div>
 
+      {/* Phase intro */}
+      <PhaseIntro intro={phase.intro} />
+
       <div className="bg-warm-50 border border-amber-100 rounded-xl px-4 py-3 mb-6 flex items-start gap-3">
         <span className="text-lg mt-0.5">🐹</span>
         <p className="text-sm text-amber-800">{t("hamsterPhase4Start", lang)}</p>
@@ -89,13 +96,8 @@ export default function PhaseAppraise() {
       {/* CASP Tab */}
       {tab === "casp" && (
         <div>
-          <HintCard title={lang === "zh" ? "💡 CASP-SR 評讀工具" : "💡 CASP-SR Appraisal Tool"}>
-            {lang === "zh" ? (
-              <p>CASP (Critical Appraisal Skills Programme) 提供結構化的評讀框架。逐題回答每個問題，並附上從文獻中找到的證據。你的判斷會和 AI 的判斷比較，計算 Kappa 一致性。</p>
-            ) : (
-              <p>CASP provides a structured appraisal framework. Answer each question with evidence from the article. Your scores will be compared with AI scoring to calculate Kappa agreement.</p>
-            )}
-          </HintCard>
+          {/* Teaching blocks for CASP */}
+          <TeachingBlocksForSection blocks={phase.blocks} section="casp" />
 
           <div className="space-y-4 mt-4">
             {Object.entries(caspQuestions).map(([key, labels]) => (
@@ -132,6 +134,9 @@ export default function PhaseAppraise() {
       {/* Results Tab */}
       {tab === "results" && (
         <div>
+          {/* Teaching blocks for results */}
+          <TeachingBlocksForSection blocks={phase.blocks} section="results" />
+
           <h3 className="font-semibold text-gray-700 mb-3">{lang === "zh" ? "📊 主要結果" : "📊 Key Outcomes"}</h3>
           {data.results.outcomes.map((outcome, idx) => (
             <div key={idx} className="bg-white rounded-xl border border-gray-100 p-4 mb-4">
@@ -170,27 +175,8 @@ export default function PhaseAppraise() {
       {/* GRADE Tab */}
       {tab === "grade" && (
         <div>
-          <HintCard title={lang === "zh" ? "💡 Core GRADE (BMJ 2025)" : "💡 Core GRADE (BMJ 2025)"}>
-            {lang === "zh" ? (
-              <div className="space-y-1">
-                <p>GRADE 從「高」開始（因為納入的是 RCT），依五個面向評估是否需要降級：</p>
-                <p>1. <strong>誤差風險</strong> — 初級研究的偏誤程度</p>
-                <p>2. <strong>不精確性</strong> — 點估計和信賴區間相對於 MID 的位置</p>
-                <p>3. <strong>不一致性</strong> — 各研究間的結果差異</p>
-                <p>4. <strong>不直接性</strong> — 文獻 PICO 和臨床案例的匹配程度</p>
-                <p>5. <strong>發表偏誤</strong> — 漏斗圖不對稱、Egger's test</p>
-              </div>
-            ) : (
-              <div className="space-y-1">
-                <p>GRADE starts at "High" (for RCTs) and evaluates 5 domains for downgrading:</p>
-                <p>1. <strong>Risk of Bias</strong> — bias in primary studies</p>
-                <p>2. <strong>Imprecision</strong> — point estimate and CI relative to MID</p>
-                <p>3. <strong>Inconsistency</strong> — variability across studies</p>
-                <p>4. <strong>Indirectness</strong> — PICO match between evidence and case</p>
-                <p>5. <strong>Publication Bias</strong> — funnel asymmetry, Egger's test</p>
-              </div>
-            )}
-          </HintCard>
+          {/* Teaching blocks for GRADE */}
+          <TeachingBlocksForSection blocks={phase.blocks} section="grade" />
 
           {/* MID */}
           <div className="bg-white rounded-xl border border-gray-100 p-4 mt-4 mb-4">

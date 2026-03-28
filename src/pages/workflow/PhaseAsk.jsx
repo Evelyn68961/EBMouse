@@ -2,8 +2,11 @@ import React from 'react';
 import { useProject } from './WorkflowRouter';
 import { useLang } from '../../App';
 import { t } from '../../i18n';
-import HintCard from '../../components/HintCard';
 import Hamster from '../../components/Hamster';
+import teachingContent from '../../data/teachingContent';
+import { TeachingBlocksForSection, PhaseIntro } from '../../components/TeachingBlock';
+
+const phase = teachingContent.ask;
 
 export default function PhaseAsk() {
   const { project, updateProject } = useProject();
@@ -56,7 +59,7 @@ export default function PhaseAsk() {
   ];
 
   const picotFields = [
-    { key: "p", label: t("askP", lang), placeholder: lang === "zh" ? "例：患有軸性近視的小六女生" : "e.g., 12-year-old girl with axial myopia" },
+    { key: "p", label: t("askP", lang), placeholder: lang === "zh" ? "例：患有軸性近視且不想戴眼鏡的小六女生" : "e.g., 12-year-old girl with axial myopia" },
     { key: "i", label: t("askI", lang), placeholder: lang === "zh" ? "例：每晚點 atropine 眼藥水" : "e.g., nightly atropine eye drops" },
     { key: "c", label: t("askC", lang), placeholder: lang === "zh" ? "例：不點眼藥水" : "e.g., no eye drops" },
     { key: "o", label: t("askO", lang), placeholder: lang === "zh" ? "例：球面等效屈光度 (SE)、眼軸長度 (AL)" : "e.g., spherical equivalent (SE), axial length (AL)" },
@@ -76,32 +79,16 @@ export default function PhaseAsk() {
         </div>
       </div>
 
+      {/* Phase intro */}
+      <PhaseIntro intro={phase.intro} />
+
       <div className="bg-warm-50 border border-amber-100 rounded-xl px-4 py-3 mb-6 flex items-start gap-3">
         <span className="text-lg mt-0.5">🐹</span>
         <p className="text-sm text-amber-800">{t("hamsterPhase2Start", lang)}</p>
       </div>
 
-      <HintCard title={lang === "zh" ? "💡 如何建立好的 PICOT？" : "💡 How to build a good PICOT?"}>
-        {lang === "zh" ? (
-          <div className="space-y-2">
-            <p><strong>P</strong> 要夠具體：包含年齡、疾病、特殊條件（例如「不想戴眼鏡」）。</p>
-            <p><strong>I</strong> 要明確：藥名、劑量、頻次、給藥途徑。</p>
-            <p><strong>C</strong> 要合理：安慰劑、不治療、或另一種活性對照。</p>
-            <p><strong>O</strong> 要可測量且臨床相關：優先選擇病人導向的結果 (patient-oriented outcomes)。</p>
-            <p><strong>T</strong> 要合理：考慮疾病自然病程和介入預期見效的時間。</p>
-            <p className="mt-2 text-teal-600">如果有多個 PICOT，選擇最符合病人偏好的那個作為主要問題。</p>
-          </div>
-        ) : (
-          <div className="space-y-2">
-            <p><strong>P</strong> — Be specific: age, condition, special constraints (e.g., "doesn't want glasses").</p>
-            <p><strong>I</strong> — Be precise: drug name, dose, frequency, route.</p>
-            <p><strong>C</strong> — Be reasonable: placebo, no treatment, or active comparator.</p>
-            <p><strong>O</strong> — Must be measurable and clinically relevant: prioritize patient-oriented outcomes.</p>
-            <p><strong>T</strong> — Be reasonable: consider natural disease course and expected time to effect.</p>
-            <p className="mt-2 text-teal-600">If you have multiple PICOTs, choose the one that best aligns with patient preferences as primary.</p>
-          </div>
-        )}
-      </HintCard>
+      {/* Teaching blocks for PICOT */}
+      <TeachingBlocksForSection blocks={phase.blocks} section="picot" />
 
       {/* PICOT cards */}
       {data.picots.map((picot, idx) => (

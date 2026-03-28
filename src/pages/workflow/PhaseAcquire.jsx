@@ -2,8 +2,11 @@ import React from 'react';
 import { useProject } from './WorkflowRouter';
 import { useLang } from '../../App';
 import { t } from '../../i18n';
-import HintCard from '../../components/HintCard';
 import Hamster from '../../components/Hamster';
+import teachingContent from '../../data/teachingContent';
+import { TeachingBlocksForSection, PhaseIntro } from '../../components/TeachingBlock';
+
+const phase = teachingContent.acquire;
 
 export default function PhaseAcquire() {
   const { project, updateProject } = useProject();
@@ -28,6 +31,9 @@ export default function PhaseAcquire() {
         </div>
       </div>
 
+      {/* Phase intro */}
+      <PhaseIntro intro={phase.intro} />
+
       <div className="bg-warm-50 border border-amber-100 rounded-xl px-4 py-3 mb-6 flex items-start gap-3">
         <span className="text-lg mt-0.5">🐹</span>
         <p className="text-sm text-amber-800">{t("hamsterPhase3Start", lang)}</p>
@@ -36,23 +42,7 @@ export default function PhaseAcquire() {
       {/* Databases */}
       <section className="mb-8">
         <h3 className="font-semibold text-gray-700 mb-3">{lang === "zh" ? "🗄️ 資料庫選擇" : "🗄️ Database Selection"}</h3>
-        <HintCard title={lang === "zh" ? "💡 選哪些資料庫？" : "💡 Which databases?"}>
-          {lang === "zh" ? (
-            <div className="space-y-1">
-              <p><strong>PubMed</strong> — 文獻廣泛全面，免費存取</p>
-              <p><strong>Embase</strong> — 涵蓋較多歐洲文獻和藥物相關研究</p>
-              <p><strong>Cochrane Library</strong> — 證據品質高，專注系統性回顧</p>
-              <p className="mt-2 text-teal-600">建議至少使用兩個以上的資料庫，以確保搜尋的完整性。</p>
-            </div>
-          ) : (
-            <div className="space-y-1">
-              <p><strong>PubMed</strong> — Comprehensive coverage, free access</p>
-              <p><strong>Embase</strong> — Better European and drug-focused coverage</p>
-              <p><strong>Cochrane Library</strong> — High-quality evidence, SR-focused</p>
-              <p className="mt-2 text-teal-600">Use at least 2 databases for comprehensive searching.</p>
-            </div>
-          )}
-        </HintCard>
+        <TeachingBlocksForSection blocks={phase.blocks} section="databases" />
         {data.databases.map((db, idx) => (
           <div key={idx} className="flex gap-3 mb-3">
             <input
@@ -83,23 +73,7 @@ export default function PhaseAcquire() {
       {/* Boolean strategy */}
       <section className="mb-8">
         <h3 className="font-semibold text-gray-700 mb-3">{lang === "zh" ? "🔗 搜尋策略 (Boolean)" : "🔗 Search Strategy (Boolean)"}</h3>
-        <HintCard title={lang === "zh" ? "💡 如何建立搜尋策略？" : "💡 How to build a search strategy?"}>
-          {lang === "zh" ? (
-            <div className="space-y-1">
-              <p>1. 將 PICOT 各元素轉為<strong>關鍵字 (free text)</strong>和<strong>控制詞彙 (MeSH/Emtree)</strong></p>
-              <p>2. 同一概念的詞彙用 <strong>OR</strong> 連結</p>
-              <p>3. 不同概念用 <strong>AND</strong> 連結</p>
-              <p className="mt-2">可使用 <strong>Systematic Review Accelerator</strong> 將 PubMed 詞彙自動轉為 Cochrane/Embase 格式。</p>
-            </div>
-          ) : (
-            <div className="space-y-1">
-              <p>1. Convert each PICOT element to <strong>free text</strong> and <strong>controlled vocabulary (MeSH/Emtree)</strong></p>
-              <p>2. Connect synonyms within a concept with <strong>OR</strong></p>
-              <p>3. Connect different concepts with <strong>AND</strong></p>
-              <p className="mt-2">Use <strong>Systematic Review Accelerator</strong> to auto-convert PubMed terms for Cochrane/Embase.</p>
-            </div>
-          )}
-        </HintCard>
+        <TeachingBlocksForSection blocks={phase.blocks} section="keywords" />
         <textarea
           value={data.keywords.booleanStrategy}
           onChange={(e) => update((acq) => { acq.keywords.booleanStrategy = e.target.value; })}
@@ -112,6 +86,7 @@ export default function PhaseAcquire() {
       {/* Screening flow */}
       <section className="mb-8">
         <h3 className="font-semibold text-gray-700 mb-3">{lang === "zh" ? "📊 篩選流程 (PRISMA)" : "📊 Screening Flow (PRISMA)"}</h3>
+        <TeachingBlocksForSection blocks={phase.blocks} section="screeningFlow" />
         <div className="bg-white rounded-xl border border-gray-100 p-4">
           <div className="space-y-3">
             {[
@@ -157,6 +132,7 @@ export default function PhaseAcquire() {
       {/* Selected article */}
       <section className="mb-4">
         <h3 className="font-semibold text-gray-700 mb-3">{lang === "zh" ? "📄 選擇的文獻" : "📄 Selected Article"}</h3>
+        <TeachingBlocksForSection blocks={phase.blocks} section="selectedArticle" />
         <div className="space-y-3">
           {[
             { key: "title", label: lang === "zh" ? "文獻標題" : "Article title", wide: true },

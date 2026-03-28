@@ -40,3 +40,14 @@ body {
   transform: translateY(-2px);
   box-shadow: 0 8px 24px rgba(14, 124, 134, 0.12);
 }
+
+.teaching-content {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.4s ease-out, opacity 0.3s ease-out;
+  opacity: 0;
+}
+.teaching-content.open {
+  max-height: 3000px;
+  opacity: 1;
+}

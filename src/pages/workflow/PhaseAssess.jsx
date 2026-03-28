@@ -4,6 +4,10 @@ import { useLang } from '../../App';
 import { t } from '../../i18n';
 import HintCard from '../../components/HintCard';
 import Hamster from '../../components/Hamster';
+import teachingContent from '../../data/teachingContent';
+import { TeachingBlocksForSection, PhaseIntro } from '../../components/TeachingBlock';
+
+const phase = teachingContent.assess;
 
 export default function PhaseAssess() {
   const { project, updateProject } = useProject();
@@ -34,6 +38,9 @@ export default function PhaseAssess() {
         </div>
       </div>
 
+      {/* Phase intro */}
+      <PhaseIntro intro={phase.intro} />
+
       {/* Hamster message */}
       <div className="bg-warm-50 border border-amber-100 rounded-xl px-4 py-3 mb-6 flex items-start gap-3">
         <span className="text-lg mt-0.5">🐹</span>
@@ -45,13 +52,8 @@ export default function PhaseAssess() {
         <label className="block font-semibold text-gray-700 mb-2">
           {t("assessScenario", lang)}
         </label>
-        <HintCard title={lang === "zh" ? "💡 什麼是臨床情境？" : "💡 What is a clinical scenario?"}>
-          {lang === "zh" ? (
-            <p>臨床情境是競賽提供的病人故事。仔細閱讀，找出：病人的年齡、性別、疾病、目前的治療狀況、以及病人/家屬的偏好和顧慮。這些資訊會影響後續的 PICOT 建立。</p>
-          ) : (
-            <p>The clinical scenario is the patient story provided by the competition. Read carefully to identify: patient age, sex, condition, current treatment, and patient/family preferences and concerns. These details shape your PICOT later.</p>
-          )}
-        </HintCard>
+        {/* Teaching blocks for scenario */}
+        <TeachingBlocksForSection blocks={phase.blocks} section="scenario" />
         <textarea
           value={data.scenario}
           onChange={(e) => update("scenario", e.target.value)}
@@ -66,6 +68,8 @@ export default function PhaseAssess() {
         <h3 className="font-semibold text-gray-700 mb-3">
           {lang === "zh" ? "👤 病人基本資料" : "👤 Patient Profile"}
         </h3>
+        {/* Teaching blocks for patient profile */}
+        <TeachingBlocksForSection blocks={phase.blocks} section="patientProfile" />
         <div className="grid grid-cols-2 gap-3">
           {[
             { key: "age", label: t("assessPatientAge", lang), placeholder: lang === "zh" ? "例：12歲" : "e.g., 12 years old" },
@@ -92,13 +96,8 @@ export default function PhaseAssess() {
         <label className="block font-semibold text-gray-700 mb-2">
           {t("assessPreferences", lang)}
         </label>
-        <HintCard title={lang === "zh" ? "💡 為什麼病人偏好很重要？" : "💡 Why do patient preferences matter?"}>
-          {lang === "zh" ? (
-            <p>實證醫學不只是找證據，還要把證據和病人的價值觀、偏好結合。例如：病人不想戴眼鏡（影響穿搭）、家長擔心隱眼的感染風險——這些偏好會影響你選擇哪個 PICOT 來回答。</p>
-          ) : (
-            <p>EBM isn't just about finding evidence — it's about integrating evidence with patient values and preferences. For example: a patient who doesn't want glasses (affects appearance) or a parent worried about contact lens infection risk — these preferences influence which PICOT you pursue.</p>
-          )}
-        </HintCard>
+        {/* Teaching blocks for patient preferences */}
+        <TeachingBlocksForSection blocks={phase.blocks} section="patientPreferences" />
         <textarea
           value={data.patientPreferences}
           onChange={(e) => update("patientPreferences", e.target.value)}
@@ -113,23 +112,8 @@ export default function PhaseAssess() {
         <h3 className="font-semibold text-gray-700 mb-3">
           {lang === "zh" ? "📖 背景知識" : "📖 Background Knowledge"}
         </h3>
-        <HintCard title={lang === "zh" ? "💡 去哪裡找背景知識？" : "💡 Where to find background knowledge?"}>
-          {lang === "zh" ? (
-            <div>
-              <p className="mb-2">推薦使用以下資源來建立背景知識：</p>
-              <p><strong>UpToDate</strong> — 疾病簡介、治療方式、臨床指引</p>
-              <p><strong>DynaMed</strong> — 風險族群、藥物資訊</p>
-              <p className="mt-2">目標是理解三件事：疾病是什麼、誰容易得、怎麼治療。</p>
-            </div>
-          ) : (
-            <div>
-              <p className="mb-2">Recommended resources for background knowledge:</p>
-              <p><strong>UpToDate</strong> — Disease overview, treatments, clinical guidelines</p>
-              <p><strong>DynaMed</strong> — Risk groups, drug information</p>
-              <p className="mt-2">Goal: understand three things — what the disease is, who gets it, how to treat it.</p>
-            </div>
-          )}
-        </HintCard>
+        {/* Teaching blocks for background knowledge */}
+        <TeachingBlocksForSection blocks={phase.blocks} section="backgroundKnowledge" />
 
         {[
           { key: "diseaseOverview", label: t("assessDisease", lang), placeholder: lang === "zh" ? "疾病定義、病生理機轉..." : "Disease definition, pathophysiology...", rows: 3 },

@@ -4,6 +4,10 @@ import { useLang } from '../../App';
 import { t } from '../../i18n';
 import HintCard from '../../components/HintCard';
 import Hamster from '../../components/Hamster';
+import teachingContent from '../../data/teachingContent';
+import { TeachingBlocksForSection, PhaseIntro } from '../../components/TeachingBlock';
+
+const phase = teachingContent.apply;
 
 const etdFactors = [
   { key: "benefitRisk", zh: "利益風險", en: "Benefit vs. Risk" },
@@ -45,6 +49,9 @@ export default function PhaseApply() {
         </div>
       </div>
 
+      {/* Phase intro */}
+      <PhaseIntro intro={phase.intro} />
+
       <div className="bg-warm-50 border border-amber-100 rounded-xl px-4 py-3 mb-6 flex items-start gap-3">
         <span className="text-lg mt-0.5">🐹</span>
         <p className="text-sm text-amber-800">{t("hamsterPhase5Start", lang)}</p>
@@ -53,13 +60,7 @@ export default function PhaseApply() {
       {/* Applicability */}
       <section className="mb-8">
         <h3 className="font-semibold text-gray-700 mb-3">{lang === "zh" ? "🎯 案例適用性 (CASP Q9)" : "🎯 Case Applicability (CASP Q9)"}</h3>
-        <HintCard title={lang === "zh" ? "💡 如何評估適用性？" : "💡 How to assess applicability?"}>
-          {lang === "zh" ? (
-            <p>比較文獻的 PICO 和你的臨床案例。年齡、種族、疾病嚴重度、介入方式、對照組、結果指標——每個維度的相似程度越高，證據越能直接應用到你的病人。</p>
-          ) : (
-            <p>Compare the study's PICO with your clinical case. The more similar across age, ethnicity, disease severity, intervention, comparator, and outcomes, the more directly applicable the evidence is.</p>
-          )}
-        </HintCard>
+        <TeachingBlocksForSection blocks={phase.blocks} section="applicability" />
         <textarea
           value={data.applicability.rationale}
           onChange={(e) => updateApply((app) => { app.applicability.rationale = e.target.value; })}
@@ -72,6 +73,7 @@ export default function PhaseApply() {
       {/* Benefit-Risk */}
       <section className="mb-8">
         <h3 className="font-semibold text-gray-700 mb-3">{lang === "zh" ? "⚖️ 利益風險比較" : "⚖️ Benefit-Risk Comparison"}</h3>
+        <TeachingBlocksForSection blocks={phase.blocks} section="benefitRisk" />
         {data.benefitRisk.options.map((opt, idx) => (
           <div key={idx} className="bg-white rounded-xl border border-gray-100 p-4 mb-3">
             <input type="text" value={opt.name} onChange={(e) => updateApply((app) => { app.benefitRisk.options[idx].name = e.target.value; })}
@@ -100,6 +102,7 @@ export default function PhaseApply() {
       {/* Cost Analysis */}
       <section className="mb-8">
         <h3 className="font-semibold text-gray-700 mb-3">{lang === "zh" ? "💰 成本分析" : "💰 Cost Analysis"}</h3>
+        <TeachingBlocksForSection blocks={phase.blocks} section="costAnalysis" />
         {data.costAnalysis.options.map((opt, idx) => (
           <div key={idx} className="bg-white rounded-xl border border-gray-100 p-4 mb-3">
             <input type="text" value={opt.name} onChange={(e) => updateApply((app) => { app.costAnalysis.options[idx].name = e.target.value; })}
@@ -129,13 +132,7 @@ export default function PhaseApply() {
       {/* Evidence to Decision */}
       <section className="mb-8">
         <h3 className="font-semibold text-gray-700 mb-3">{lang === "zh" ? "📋 證據到建議 (EtD)" : "📋 Evidence to Decision (EtD)"}</h3>
-        <HintCard title={lang === "zh" ? "💡 EtD 框架 (Core GRADE Paper 7)" : "💡 EtD Framework (Core GRADE Paper 7)"}>
-          {lang === "zh" ? (
-            <p>Evidence-to-Decision 框架考慮六個面向，從「強烈反對」到「強烈贊成」評估。最終綜合這六個面向決定推薦強度。</p>
-          ) : (
-            <p>The EtD framework considers six dimensions, rated from "strongly against" to "strongly for." The final recommendation strength combines all six assessments.</p>
-          )}
-        </HintCard>
+        <TeachingBlocksForSection blocks={phase.blocks} section="evidenceToDecision" />
 
         <div className="space-y-3 mt-4">
           {etdFactors.map(({ key, zh, en }) => (
@@ -198,13 +195,7 @@ export default function PhaseApply() {
       {/* Patient summary */}
       <section className="mb-4">
         <h3 className="font-semibold text-gray-700 mb-3">{lang === "zh" ? "🗣️ 去學術化回應（給病人/家屬）" : "🗣️ Patient-Facing Summary"}</h3>
-        <HintCard title={lang === "zh" ? "💡 如何用白話文說明？" : "💡 How to explain in plain language?"}>
-          {lang === "zh" ? (
-            <p>把你的建議用病人和家屬能理解的語言寫出來。避免專業術語，用日常用語解釋效果和風險。想像你在診間跟他們面對面說話。</p>
-          ) : (
-            <p>Write your recommendation in language patients and families can understand. Avoid jargon, explain effects and risks in everyday terms. Imagine you're speaking face-to-face in the clinic.</p>
-          )}
-        </HintCard>
+        <TeachingBlocksForSection blocks={phase.blocks} section="patientSummary" />
         <textarea
           value={data.patientSummary}
           onChange={(e) => updateApply((app) => { app.patientSummary = e.target.value; })}
