@@ -4,6 +4,9 @@ import Layout from './components/Layout';
 import Home from './pages/Home';
 import WorkflowRouter from './pages/workflow/WorkflowRouter';
 import CaseLibrary from './pages/reference/CaseLibrary';
+import CaseAtropine2024 from './pages/reference/CaseAtropine2024';
+import CaseCPM2025 from './pages/reference/CaseCPM2025';
+import CaseIVIron2025 from './pages/reference/CaseIVIron2025';
 import Toolbox from './pages/reference/Toolbox';
 import CoreGradeGuide from './pages/reference/CoreGradeGuide';
 import CaspChecklist from './pages/reference/CaspChecklist';
@@ -37,6 +40,9 @@ export default function App() {
           <Route path="/" element={<Home />} />
           <Route path="/workflow/:projectId/*" element={<WorkflowRouter />} />
           <Route path="/cases" element={<CaseLibrary />} />
+          <Route path="/cases/atropine-2024" element={<CaseAtropine2024 />} />
+          <Route path="/cases/cpm-2025" element={<CaseCPM2025 />} />
+          <Route path="/cases/iv-iron-2025" element={<CaseIVIron2025 />} />
           <Route path="/toolbox" element={<Toolbox />} />
           <Route path="/toolbox/core-grade" element={<CoreGradeGuide />} />
           <Route path="/toolbox/casp-sr" element={<CaspChecklist />} />
