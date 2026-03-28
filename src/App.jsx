@@ -7,6 +7,9 @@ import CaseLibrary from './pages/reference/CaseLibrary';
 import Toolbox from './pages/reference/Toolbox';
 import CoreGradeGuide from './pages/reference/CoreGradeGuide';
 import CaspChecklist from './pages/reference/CaspChecklist';
+import EtdFramework from './pages/reference/EtdFramework';
+import MidGuide from './pages/reference/MidGuide';
+import PicotWorksheet from './pages/reference/PicotWorksheet';
 import About from './pages/About';
 
 export const LangContext = createContext();
@@ -34,6 +37,9 @@ export default function App() {
           <Route path="/toolbox" element={<Toolbox />} />
           <Route path="/toolbox/core-grade" element={<CoreGradeGuide />} />
           <Route path="/toolbox/casp-sr" element={<CaspChecklist />} />
+          <Route path="/toolbox/etd" element={<EtdFramework />} />
+          <Route path="/toolbox/mid" element={<MidGuide />} />
+          <Route path="/toolbox/picot" element={<PicotWorksheet />} />
           <Route path="/about" element={<About />} />
         </Routes>
       </Layout>

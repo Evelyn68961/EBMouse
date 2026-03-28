@@ -195,10 +195,10 @@ EBMouse (EBM 鼠出任務)
 ├── 🧰 Reference: Toolbox (工具箱)
 │   ├── Core GRADE Quick Guide ✅ — 7-tab interactive guide (overview, 5 domains, SoF tables)
 │   ├── CASP-SR Checklist ✅ — 13-question guide with scoring criteria, pitfalls, Kappa
-│   ├── PICOT Worksheet (planned)
+│   ├── Evidence-to-Decision Framework ✅ — 5-tab EtD guide (overview, 7 factors, strength, MID & values, presentation)
+│   ├── MID Determination Guide ✅ — 5-tab MID guide (what is MID, 4 methods, credibility, use in GRADE, practical guide)
+│   ├── PICOT Worksheet ✅ — 4-tab PICOT guide (5 elements, question types, selection strategy, quality checklist)
 │   ├── PubMed Search Strategy Template (planned)
-│   ├── MID Determination Guide (planned)
-│   ├── Evidence-to-Decision Template (planned)
 │   ├── SRA Keyword Conversion Guide (planned)
 │   └── LitSuggest Screening Guide (planned)
 │
@@ -585,7 +585,7 @@ ebmouse/
 │   └── templates/                   ← downloadable PDF/printable templates
 └── src/
     ├── main.jsx
-    ├── App.jsx                      ← router + layout + project context provider (includes /toolbox/core-grade and /toolbox/casp-sr routes)
+    ├── App.jsx                      ← router + layout + project context provider (includes /toolbox/core-grade, /toolbox/casp-sr, /toolbox/etd, /toolbox/mid, /toolbox/picot routes)
     ├── i18n.js                      ← bilingual strings
     ├── projectSchema.js             ← default project object + validation
     ├── storage.js                   ← localStorage CRUD + JSON export/import
@@ -621,7 +621,10 @@ ebmouse/
     │   │   ├── CaseAtropine.jsx     ← 2024 atropine case
     │   │   ├── Toolbox.jsx          ← toolbox index with links to active tools
     │   │   ├── CoreGradeGuide.jsx   ← ✅ Core GRADE 7-tab interactive guide (BMJ 2025)
-    │   │   └── CaspChecklist.jsx    ← ✅ CASP-SR 13-question reference with scoring guidance
+    │   │   ├── CaspChecklist.jsx    ← ✅ CASP-SR 13-question reference with scoring guidance
+    │   │   ├── EtdFramework.jsx     ← ✅ Evidence-to-Decision 5-tab guide (Core GRADE Paper 7)
+    │   │   ├── MidGuide.jsx         ← ✅ MID Determination 5-tab guide (Carrasco-Labra 2021 + Devji 2020)
+    │   │   └── PicotWorksheet.jsx   ← ✅ PICOT 4-tab guide (5 elements, types, selection, checklist)
     │   │
     │   └── About.jsx
     │
@@ -665,9 +668,12 @@ ebmouse/
 - i18n framework with ZH/EN toggle
 - SVG hamster mascot (5 moods: neutral, thinking, celebrating, loading, concerned)
 - Reference: Case Library (2024 atropine case stub)
-- Reference: Toolbox — 2 interactive guides built, 6 template stubs
+- Reference: Toolbox — 5 interactive guides built, 3 template stubs
   - Core GRADE Quick Guide (`/toolbox/core-grade`): 7-tab page covering overview, imprecision (with interactive SVG number-line diagrams), inconsistency, risk of bias, indirectness, publication bias, and SoF tables. Based on BMJ 2025 Core GRADE Papers 1–6 + GRADE Guidelines 6. Bilingual with visual decision flows, domain cards, plain language statement table.
   - CASP-SR Checklist (`/toolbox/casp-sr`): All 13 questions as expandable cards with color-coded sections (validity/results/applicability), per-question "what to look for" checklists, 3-column scoring guidance (😀/😟/😐), common pitfall callouts, section filter, and Cohen's Kappa interpretation table.
+  - Evidence-to-Decision Framework (`/toolbox/etd`): 5-tab page covering overview (4 recommendation categories, 7-step decision flow), 7 EtD factors (3 primary + 4 secondary as expandable cards with questions and impact), strength determination (certainty×strength matrix, strong vs conditional implications, exceptional circumstances), MID & values (why MID matters for EtD, value gradient, 4 methods, WHO COVID-19 value statement examples), and presentation (wording rules, 5-element structure, multilayered format, for-vs-against guidance). Based on Core GRADE Paper 7 (BMJ 2025;389:e083867).
+  - MID Determination Guide (`/toolbox/mid`): 5-tab page covering what MID is (definition, anchor-based vs distribution-based, value gradient table), 4 methods (literature search, clinician experience, patient focus group, panel survey with pros/cons/examples), credibility assessment (5 core criteria + 4 GRC extension criteria with statistics from Carrasco-Labra 2021's 5,324 MID estimates), 3 roles in GRADE (imprecision threshold, inconsistency reference, EtD decision basis), and practical guide (step-by-step workflow, 2024 competition worked example with SE MID = 0.25D derivation, presentation checklist, common mistakes). Based on Core GRADE Papers 2 & 7, Carrasco-Labra et al. (JCE 2021;133:61–71), Devji et al. (BMJ 2020;369:m1714).
+  - PICOT Worksheet (`/toolbox/picot`): 4-tab page covering 5 elements (P/I/C/O/T as color-coded cards with tips and 2024 atropine worked example), question types (4-type × study design table with treatment-type emphasis for competitions), selection strategy (PICOT-1 vs PICOT-2 side-by-side from 2024 case, 3 selection principles: patient preference → feasibility → evidence availability), and quality checklist (per-element color-coded checklist items covering specificity, measurability, scenario alignment).
 
 **Teaching Content Coverage (27 blocks):**
 - Phase 1 Assess (5): scenario dissection, patient profile checklist, EBM 3-pillar preferences, 3-step background search, treatment issues example
@@ -681,7 +687,7 @@ ebmouse/
 - PPTX generation via PptxGenJS
 - 1-page summary and GRADE table generators
 - Reference: Roadmap guide (standalone educational content pages)
-- Toolbox: remaining 6 tools (PICOT worksheet, PubMed search template, MID guide, EtD template, SRA guide, LitSuggest guide)
+- Toolbox: remaining 3 tools (PubMed search template, SRA keyword conversion guide, LitSuggest screening guide)
 
 ### Phase 2 — AI + Output Generation (Target: next)
 

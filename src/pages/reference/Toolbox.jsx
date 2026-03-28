@@ -8,25 +8,33 @@ export default function Toolbox() {
 
   const tools = [
     {
-      icon: "📊",
+      icon: "📊", status: "ready", to: "/toolbox/core-grade",
       title: { zh: "Core GRADE 快速指南", en: "Core GRADE Quick Guide" },
       desc: { zh: "五面向評估流程圖解 + 互動數線圖 + 白話語言對照表（BMJ 2025）", en: "5-domain assessment with visual guides, interactive number lines & plain language tables (BMJ 2025)" },
-      status: "ready",
-      to: "/toolbox/core-grade",
     },
     {
-      icon: "⚖️",
+      icon: "⚖️", status: "ready", to: "/toolbox/casp-sr",
       title: { zh: "CASP-SR 評讀清單", en: "CASP-SR Checklist" },
       desc: { zh: "13 題逐題指導 + 評分標準 + 常見錯誤 + Kappa 判讀", en: "13-question guide with scoring criteria, pitfalls & Kappa interpretation" },
-      status: "ready",
-      to: "/toolbox/casp-sr",
     },
-    { icon: "📋", title: { zh: "PICOT 工作表", en: "PICOT Worksheet" }, desc: { zh: "結構化表單，引導你建立完整的 PICOT", en: "Structured form to guide complete PICOT formulation" }, status: "soon" },
-    { icon: "🔍", title: { zh: "PubMed 搜尋策略模板", en: "PubMed Search Template" }, desc: { zh: "填空式 Boolean 搜尋建立器", en: "Fill-in-the-blank Boolean search builder" }, status: "soon" },
-    { icon: "🎯", title: { zh: "MID 訂定指引", en: "MID Determination Guide" }, desc: { zh: "四種方法：文獻、專家、病人、基準研究", en: "4 methods: literature, expert, patient, benchmark" }, status: "soon" },
-    { icon: "📝", title: { zh: "證據到建議框架", en: "Evidence-to-Decision Template" }, desc: { zh: "Based on BMJ 2025 Core GRADE Paper 7", en: "Based on BMJ 2025 Core GRADE Paper 7" }, status: "soon" },
-    { icon: "🔄", title: { zh: "SRA 關鍵字轉換指引", en: "SRA Keyword Conversion Guide" }, desc: { zh: "PubMed → Cochrane/Embase 關鍵字自動轉換", en: "PubMed → Cochrane/Embase keyword auto-conversion" }, status: "soon" },
-    { icon: "🤖", title: { zh: "LitSuggest 篩選指引", en: "LitSuggest Screening Guide" }, desc: { zh: "機器學習輔助文獻篩選工作流程", en: "ML-assisted literature screening workflow" }, status: "soon" },
+    {
+      icon: "📝", status: "ready", to: "/toolbox/etd",
+      title: { zh: "證據到建議框架", en: "Evidence-to-Decision Framework" },
+      desc: { zh: "七大考量因素 + 推薦強度判定 + MID 與價值偏好 + 推薦呈現方式", en: "7 factors + strength determination + MID & values + presentation format" },
+    },
+    {
+      icon: "🎯", status: "ready", to: "/toolbox/mid",
+      title: { zh: "MID 訂定指引", en: "MID Determination Guide" },
+      desc: { zh: "四種訂定方法 + 可信度評估五準則 + 在 GRADE 中的三個角色 + 實戰範例", en: "4 methods + 5 credibility criteria + 3 roles in GRADE + worked example" },
+    },
+    {
+      icon: "📋", status: "ready", to: "/toolbox/picot",
+      title: { zh: "PICOT 工作表", en: "PICOT Worksheet" },
+      desc: { zh: "五要素深度解析 + 四種問題類型 + 選擇策略 + 品質檢核清單", en: "5-element deep dive + 4 question types + selection strategy + quality checklist" },
+    },
+    { icon: "🔍", status: "soon", title: { zh: "PubMed 搜尋策略模板", en: "PubMed Search Template" }, desc: { zh: "填空式 Boolean 搜尋建立器", en: "Fill-in-the-blank Boolean search builder" } },
+    { icon: "🔄", status: "soon", title: { zh: "SRA 關鍵字轉換指引", en: "SRA Keyword Conversion Guide" }, desc: { zh: "PubMed → Cochrane/Embase 關鍵字自動轉換", en: "PubMed → Cochrane/Embase keyword auto-conversion" } },
+    { icon: "🤖", status: "soon", title: { zh: "LitSuggest 篩選指引", en: "LitSuggest Screening Guide" }, desc: { zh: "機器學習輔助文獻篩選工作流程", en: "ML-assisted literature screening workflow" } },
   ];
 
   return (
@@ -65,11 +73,8 @@ export default function Toolbox() {
 
           if (to) {
             return (
-              <Link
-                key={title.en}
-                to={to}
-                className="block bg-white rounded-xl border border-gray-100 p-5 card-hover hover:border-teal-200 transition-colors"
-              >
+              <Link key={title.en} to={to}
+                className="block bg-white rounded-xl border border-gray-100 p-5 card-hover hover:border-teal-200 transition-colors">
                 {content}
               </Link>
             );
