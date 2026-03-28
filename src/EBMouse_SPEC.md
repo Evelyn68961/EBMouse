@@ -58,7 +58,6 @@ A small brown hamster character that appears as subtle SVG icons throughout the 
 | Project | Audience | Purpose | Overlap |
 |---------|----------|---------|---------|
 | **MA101** | Pharmacists learning MA methodology | Teach SR/MA from scratch (C0–C5 + workshops) | GRADE, PICO, forest plot concepts |
-| **EBM Workshop Companion** | Monthly journal club participants | Real-time group appraisal during live workshops | CASP questions, concept explainers |
 | **EBMouse** (this) | Competition team + future juniors | Guided EBM workflow producing competition deliverables | CASP, GRADE, PICO — applied to real scenarios with output generation |
 
 **Design principle:** Standalone site. May link to MA101 for deeper methodology learning, but never depends on it. The unique value is the "learning = producing" workflow, wrapped in a friendly hamster-guided experience.
@@ -167,20 +166,22 @@ User enters clinical scenario
 ```
 EBMouse (EBM 鼠出任務)
 │
-├── 🏠 Home (首頁)
-│   ├── Quick intro + "Start New Project" button
-│   ├── "Resume Project" (load from localStorage or JSON import)
-│   ├── Navigation cards for reference modules
+├── 🏠 Home (首頁) — Maze trail hub
+│   ├── Maze trail hero: S-curve path with 5 stops (5A phases), hamster at current progress
+│   ├── Active project status bar with "Continue mission" button
+│   ├── Project management: new/resume/import/export/delete
+│   ├── Quick links to Cases, Toolbox, About
 │   └── Language toggle
 │
 ├── 🚀 Guided Workflow (引導式工作流程) ← THE CORE EXPERIENCE
 │   ├── Phase 1: Assess — Clinical scenario input
-│   ├── Phase 2: Ask — PICOT builder + AI feedback
-│   ├── Phase 3: Acquire — Search documentation
-│   ├── Phase 4: Appraise — CASP + Results + GRADE
-│   ├── Phase 5: Apply — Evidence-to-Decision
+│   ├── Phase 2: Ask — PICOT builder + AI feedback + 🧰 toolbox: PICOT Worksheet
+│   ├── Phase 3: Acquire — Search documentation + 🧰 toolbox: PubMed Search, SRA, LitSuggest
+│   ├── Phase 4: Appraise — CASP + Results + GRADE + 🧰 toolbox: CASP, Core GRADE, MID
+│   ├── Phase 5: Apply — Evidence-to-Decision + 🧰 toolbox: EtD Framework
 │   ├── Preview — Slide-by-slide preview of accumulated data
 │   └── Export — Generate .pptx / 1-page summary / GRADE table
+│   (Toolbox links open in new tab via ToolboxLinks component — no page navigation away from workflow)
 │
 ├── 📋 Reference: Competition Roadmap (競賽流程指南)
 │   ├── 5A Framework overview
@@ -205,7 +206,7 @@ EBMouse (EBM 鼠出任務)
 │   └── Evidence-to-Decision Framework ✅ [Apply] — 5-tab EtD guide (overview, 7 factors, strength, MID & values, presentation)
 │
 └── ℹ️ About (關於)
-    └── Team info, how to contribute, link to MA101
+    └── Team info, link to MA101 (meta-analysis-101.vercel.app)
 ```
 
 ---
@@ -563,7 +564,7 @@ When team collaboration or analytics are needed:
 
 | Layer | Choice | Rationale |
 |-------|--------|-----------|
-| Framework | React (Vite) | Fast build, same as EBM Workshop Companion |
+| Framework | React (Vite) | Fast build, modern tooling |
 | Styling | Tailwind CSS | Utility-first, rapid prototyping |
 | i18n | Custom ZH/EN object (same pattern as MA101) | Proven approach |
 | Routing | React Router | Multi-page navigation |
@@ -579,7 +580,7 @@ ebmouse/
 ├── index.html
 ├── package.json
 ├── vite.config.js
-├── vercel.json
+├── vercel.json                      ← SPA rewrite (all routes → index.html) + API passthrough
 ├── EBMOUSE_SPEC.md
 ├── api/
 │   └── ai-feedback.js              ← Vercel serverless function (Claude proxy)
@@ -595,8 +596,10 @@ ebmouse/
     ├── components/
     │   ├── Layout.jsx               ← nav + footer + lang toggle + progress bar
     │   ├── PhaseNav.jsx             ← 5-phase progress indicator
+    │   ├── MazeTrail.jsx            ← ✅ SVG maze trail for home page (S-curve path, 5 stops, hamster marker)
+    │   ├── ToolboxLinks.jsx         ← ✅ contextual toolbox quick-links (opens in new tab, per-phase mapping)
     │   ├── HintCard.jsx             ← collapsible educational hint (legacy, still used for small tips)
-    │   ├── TeachingBlock.jsx        ← ✅ NEW: type-aware collapsible teaching block renderer
+    │   ├── TeachingBlock.jsx        ← ✅ type-aware collapsible teaching block renderer
     │   ├── Hamster.jsx              ← SVG hamster mascot (5 moods)
     │   ├── SlidePreview.jsx         ← live preview of generated slides
     │   ├── AiFeedbackPanel.jsx      ← displays AI feedback with loading state
@@ -606,7 +609,7 @@ ebmouse/
     │   └── ImageUploader.jsx        ← for forest/funnel plot images
     │
     ├── pages/
-    │   ├── Home.jsx                 ← project list + start/resume/import
+    │   ├── Home.jsx                 ← maze trail hub + project management
     │   │
     │   ├── workflow/                ← THE GUIDED WORKFLOW
     │   │   ├── PhaseAssess.jsx      ← Phase 1: scenario + background
@@ -631,7 +634,7 @@ ebmouse/
     │   │   ├── SraGuide.jsx         ← ✅ SRA Polyglot 3-tab guide (why, how, vocabulary map)
     │   │   └── LitSuggestGuide.jsx  ← ✅ LitSuggest 3-tab ML screening guide (what, workflow, competition)
     │   │
-    │   └── About.jsx
+    │   └── About.jsx                ← team info + link to MA101 (neutral hamster, leading-loose text)
     │
     ├── generators/
     │   ├── pptxGenerator.js         ← PptxGenJS slide generation logic
@@ -661,8 +664,10 @@ ebmouse/
 ### Phase 1 — Guided Workflow MVP ✅ COMPLETE
 
 **Built:**
-- Home page with project management (new/resume/import/export)
+- Home page: maze trail hub with S-curve path, 5 stops for 5A phases, hamster marker at current progress, project management below (new/resume/import/export/delete), active project selector updates maze display
+- `vercel.json` SPA rewrite: all client-side routes handled by React Router (fixes 404 on direct navigation to /cases, /toolbox, etc.)
 - Complete guided workflow (Phase 1–5) with form inputs at each step
+- Contextual toolbox quick-links (`ToolboxLinks` component): teal pill buttons at the top of each workflow phase linking to relevant toolbox reference pages (opens in new tab). Mapping: Phase 2 → PICOT Worksheet; Phase 3 → PubMed Search, SRA, LitSuggest; Phase 4 → CASP, Core GRADE, MID; Phase 5 → EtD Framework.
 - localStorage persistence with JSON export/import
 - Comprehensive bilingual teaching content system (27 blocks across 5 phases)
   - `src/data/teachingContent.js` — all teaching content organized by phase → section
