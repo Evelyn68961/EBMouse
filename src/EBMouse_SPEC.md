@@ -192,15 +192,15 @@ EBMouse (EBM 鼠出任務)
 │   ├── Case 1: Atropine for Myopia (2024) — fully annotated
 │   └── [Future cases added yearly]
 │
-├── 🧰 Reference: Toolbox (工具箱)
-│   ├── Core GRADE Quick Guide ✅ — 7-tab interactive guide (overview, 5 domains, SoF tables)
-│   ├── CASP-SR Checklist ✅ — 13-question guide with scoring criteria, pitfalls, Kappa
-│   ├── Evidence-to-Decision Framework ✅ — 5-tab EtD guide (overview, 7 factors, strength, MID & values, presentation)
-│   ├── MID Determination Guide ✅ — 5-tab MID guide (what is MID, 4 methods, credibility, use in GRADE, practical guide)
-│   ├── PICOT Worksheet ✅ — 4-tab PICOT guide (5 elements, question types, selection strategy, quality checklist)
-│   ├── PubMed Search Strategy Template ✅ — 3-tab guide (build strategy, 3 databases, search tips)
-│   ├── SRA Keyword Conversion Guide ✅ — 3-tab Polyglot guide (why convert, how to, vocabulary map)
-│   └── LitSuggest Screening Guide ✅ — 3-tab ML screening guide (what is LitSuggest, workflow, competition use)
+├── 🧰 Reference: Toolbox (工具箱) — ordered by 5A workflow with phase badges
+│   ├── PICOT Worksheet ✅ [Ask] — 4-tab PICOT guide (5 elements, question types, selection strategy, quality checklist)
+│   ├── PubMed Search Strategy Template ✅ [Acquire] — 3-tab guide (build strategy, 3 databases, search tips)
+│   ├── SRA Keyword Conversion Guide ✅ [Acquire] — 3-tab Polyglot guide (why convert, how to, vocabulary map)
+│   ├── LitSuggest Screening Guide ✅ [Acquire] — 3-tab ML screening guide (what is LitSuggest, workflow, competition use)
+│   ├── CASP-SR Checklist ✅ [Appraise] — 13-question guide with scoring criteria, pitfalls, Kappa
+│   ├── Core GRADE Quick Guide ✅ [Appraise] — 7-tab interactive guide (overview, 5 domains, SoF tables)
+│   ├── MID Determination Guide ✅ [Appraise] — 5-tab MID guide (what is MID, 4 methods, credibility, use in GRADE, practical guide)
+│   └── Evidence-to-Decision Framework ✅ [Apply] — 5-tab EtD guide (overview, 7 factors, strength, MID & values, presentation)
 │
 └── ℹ️ About (關於)
     └── Team info, how to contribute, link to MA101
@@ -619,7 +619,7 @@ ebmouse/
     │   │   ├── Roadmap.jsx          ← 5A framework guide
     │   │   ├── CaseLibrary.jsx      ← annotated past cases
     │   │   ├── CaseAtropine.jsx     ← 2024 atropine case
-    │   │   ├── Toolbox.jsx          ← toolbox index with links to all 8 tools
+    │   │   ├── Toolbox.jsx          ← toolbox index — single-column list ordered by 5A workflow with phase badges
     │   │   ├── CoreGradeGuide.jsx   ← ✅ Core GRADE 7-tab interactive guide (BMJ 2025)
     │   │   ├── CaspChecklist.jsx    ← ✅ CASP-SR 13-question reference with scoring guidance
     │   │   ├── EtdFramework.jsx     ← ✅ Evidence-to-Decision 5-tab guide (Core GRADE Paper 7)
