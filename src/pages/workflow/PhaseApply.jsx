@@ -6,6 +6,7 @@ import HintCard from '../../components/HintCard';
 import Hamster from '../../components/Hamster';
 import teachingContent from '../../data/teachingContent';
 import { TeachingBlocksForSection, PhaseIntro } from '../../components/TeachingBlock';
+import ToolboxLinks from '../../components/ToolboxLinks';
 
 const phase = teachingContent.apply;
 
@@ -51,6 +52,7 @@ export default function PhaseApply() {
 
       {/* Phase intro */}
       <PhaseIntro intro={phase.intro} />
+      <ToolboxLinks phase={5} />
 
       <div className="bg-warm-50 border border-amber-100 rounded-xl px-4 py-3 mb-6 flex items-start gap-3">
         <span className="text-lg mt-0.5">🐹</span>

@@ -5,6 +5,7 @@ import { t } from '../../i18n';
 import Hamster from '../../components/Hamster';
 import teachingContent from '../../data/teachingContent';
 import { TeachingBlocksForSection, PhaseIntro } from '../../components/TeachingBlock';
+import ToolboxLinks from '../../components/ToolboxLinks';
 
 const phase = teachingContent.ask;
 
@@ -81,6 +82,7 @@ export default function PhaseAsk() {
 
       {/* Phase intro */}
       <PhaseIntro intro={phase.intro} />
+      <ToolboxLinks phase={2} />
 
       <div className="bg-warm-50 border border-amber-100 rounded-xl px-4 py-3 mb-6 flex items-start gap-3">
         <span className="text-lg mt-0.5">🐹</span>
