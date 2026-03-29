@@ -28,7 +28,10 @@ Follow a friendly hamster mascot through the complete EBM workflow — from read
 
 - 🌐 Bilingual interface (繁體中文 / English)
 - 🐹 Friendly hamster mascot guides you through each step
-- 💡 Collapsible educational hints at every stage
+- 📖 27 inline teaching blocks covering the full 5A methodology
+- 🧰 8 interactive Toolbox reference guides (PICOT, CASP, Core GRADE, MID, EtD, PubMed Search, SRA, LitSuggest)
+- 🏋️ 72 practice questions across PICOT, CASP, GRADE, and EtD (MC, fill-in-blank, error-spotting)
+- 📚 3 fully annotated Case Library entries with real competition data
 - 💾 Auto-save with JSON export/import
 - 📎 Export your work as a presentation
 
@@ -42,7 +45,6 @@ npm run dev
 ## Related Projects
 
 - [Meta-Analysis 101](https://github.com/Evelyn68961/meta-analysis-101) — Learn systematic review & meta-analysis methodology
-- [EBM Workshop Companion](https://github.com/Evelyn68961/ebm-workshop-companion) — Real-time journal club appraisal tool
 
 ---
 
