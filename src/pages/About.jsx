@@ -72,24 +72,10 @@ export default function About() {
       </div>
 
       {/* Hamster gallery */}
-      <div className="mt-12 text-center">
-        <h3 className="font-display font-semibold text-gray-600 mb-4">
-          {lang === "zh" ? "認識小鼠的表情" : "Meet the Hamster's Moods"}
-        </h3>
-        <div className="flex justify-center gap-6">
-          {[
-            { Comp: HamsterNeutral, label: { zh: "歡迎", en: "Welcome" } },
-            { Comp: HamsterThinking, label: { zh: "思考", en: "Thinking" } },
-            { Comp: HamsterCelebrating, label: { zh: "慶祝", en: "Celebrating" } },
-            { Comp: HamsterLoading, label: { zh: "衝刺", en: "Loading" } },
-            { Comp: HamsterConcerned, label: { zh: "擔心", en: "Concerned" } },
-          ].map(({ Comp, label }) => (
-            <div key={label.en} className="text-center">
-              <Comp size={48} />
-              <p className="text-xs text-gray-400 mt-1">{label[lang]}</p>
-            </div>
-          ))}
-        </div>
+      <div className="mt-12 flex justify-center gap-6">
+        <HamsterNeutral size={60} />
+        <HamsterThinking size={60} />
+        <HamsterConcerned size={60} />
       </div>
     </div>
   );
