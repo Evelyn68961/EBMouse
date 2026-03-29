@@ -100,11 +100,11 @@ export function HamsterCelebrating({ size = 48, className = "" }) {
       {/* Big smile */}
       <path d="M26 30 Q32 37 38 30" stroke={baseColors.dark} strokeWidth="1.5" fill="none" strokeLinecap="round" />
       {/* Arms up! */}
-      <path d="M14 32 Q10 22 14 16" stroke={baseColors.body} strokeWidth="5" fill="none" strokeLinecap="round" />
-      <path d="M50 32 Q54 22 50 16" stroke={baseColors.body} strokeWidth="5" fill="none" strokeLinecap="round" />
+      <path d="M16 34 Q10 28 11 22" stroke={baseColors.body} strokeWidth="4" fill="none" strokeLinecap="round" />
+      <path d="M48 34 Q54 28 53 22" stroke={baseColors.body} strokeWidth="4" fill="none" strokeLinecap="round" />
       {/* Paws at top */}
-      <circle cx="14" cy="15" r="3" fill={baseColors.body} />
-      <circle cx="50" cy="15" r="3" fill={baseColors.body} />
+      <ellipse cx="11" cy="21" rx="2.8" ry="2.2" fill={baseColors.body} />
+      <ellipse cx="53" cy="21" rx="2.8" ry="2.2" fill={baseColors.body} />
       {/* Sparkles */}
       <path d="M8 8 L10 4 L12 8 L8 6 L12 6 Z" fill="#F1C40F" />
       <path d="M52 4 L54 0 L56 4 L52 2 L56 2 Z" fill="#F1C40F" />
