@@ -76,7 +76,7 @@ export default function CaseLibrary() {
   return (
     <div className="max-w-4xl mx-auto px-4 py-8">
       <div className="flex items-center gap-3 mb-8">
-        <Hamster mood="neutral" size={48} />
+        <Hamster mood="thinking" size={48} />
         <div>
           <h1 className="font-display font-bold text-3xl text-teal-700">
             {lang === "zh" ? "📚 案例庫" : "📚 Case Library"}

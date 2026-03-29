@@ -27,7 +27,7 @@ export default function Toolbox() {
   return (
     <div className="max-w-3xl mx-auto px-4 py-8">
       <div className="flex items-center gap-3 mb-8">
-        <Hamster mood="neutral" size={48} />
+        <Hamster mood="concerned" size={48} />
         <div>
           <h1 className="font-display font-bold text-3xl text-teal-700">
             {lang === "zh" ? "🧰 工具箱" : "🧰 Toolbox"}
