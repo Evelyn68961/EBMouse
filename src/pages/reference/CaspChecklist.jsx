@@ -5,6 +5,8 @@
 import React, { useState } from 'react';
 import { useLang } from '../../App';
 import Hamster, { HamsterThinking, HamsterConcerned, HamsterCelebrating } from '../../components/Hamster';
+import { PracticeSection } from '../../components/PracticeQuestion';
+import practiceQuestions from '../../data/practice';
 
 // ─── Accordion ───
 function Accordion({ title, icon, children, defaultOpen = false }) {
@@ -461,6 +463,7 @@ export default function CaspChecklist() {
     { id: 'validity', zh: '效度', en: 'Validity', icon: '🔬' },
     { id: 'results', zh: '結果', en: 'Results', icon: '📊' },
     { id: 'applicability', zh: '適用性', en: 'Applicability', icon: '🎯' },
+    { id: 'practice', zh: '練習', en: 'Practice', icon: '🏋️' },
   ];
 
   const sectionMap = {
@@ -471,7 +474,9 @@ export default function CaspChecklist() {
 
   const filteredQuestions = activeSection === 'all'
     ? caspQuestions
-    : caspQuestions.filter(q => q.sectionColor === sectionMap[activeSection]);
+    : activeSection === 'practice'
+      ? []
+      : caspQuestions.filter(q => q.sectionColor === sectionMap[activeSection]);
 
   return (
     <div className="max-w-4xl mx-auto px-4 py-8">
@@ -520,7 +525,7 @@ export default function CaspChecklist() {
       </Accordion>
 
       {/* Section filter */}
-      <div className="flex gap-1.5 mb-5 mt-6">
+      <div className="flex flex-wrap gap-1.5 mb-5 mt-6">
         {sections.map(({ id, zh, en, icon }) => (
           <button
             key={id}
@@ -536,60 +541,70 @@ export default function CaspChecklist() {
         ))}
       </div>
 
-      {/* Questions */}
-      <div>
-        {filteredQuestions.map(q => (
-          <CaspQuestionCard key={q.id} q={q} lang={lang} />
-        ))}
-      </div>
-
-      {/* Kappa guide */}
-      <Accordion title={lang === 'zh' ? "Cohen's Kappa 一致性判讀" : "Cohen's Kappa Interpretation"} icon="🤝">
-        <div className="mt-3 overflow-x-auto">
-          <table className="w-full text-sm border-collapse">
-            <thead>
-              <tr style={{ background: '#E8F6F7' }}>
-                <th className="text-left px-3 py-2 font-semibold text-teal-800 border border-teal-200">Kappa</th>
-                <th className="text-left px-3 py-2 font-semibold text-teal-800 border border-teal-200">{lang === 'zh' ? '一致性程度' : 'Agreement Level'}</th>
-              </tr>
-            </thead>
-            <tbody>
-              {[
-                { range: '< 0.20', zh: '極差', en: 'Poor' },
-                { range: '0.21 – 0.40', zh: '尚可', en: 'Fair' },
-                { range: '0.41 – 0.60', zh: '中等', en: 'Moderate' },
-                { range: '0.61 – 0.80', zh: '良好', en: 'Substantial' },
-                { range: '0.81 – 1.00', zh: '幾乎完美', en: 'Almost Perfect' },
-              ].map(({ range, zh, en }) => (
-                <tr key={range} className="hover:bg-gray-50">
-                  <td className="px-3 py-2 border border-gray-200 font-mono text-sm">{range}</td>
-                  <td className="px-3 py-2 border border-gray-200 text-gray-600">{lang === 'zh' ? zh : en}</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-        <p className="text-xs text-gray-500 mt-3">
-          {lang === 'zh'
-            ? '💡 競賽中 Kappa = 1.0 代表人類和 AI 評分完全一致。如果不一致，要說明為什麼你認為你的判斷更合理。'
-            : '💡 In competitions, Kappa = 1.0 means perfect human-AI agreement. If disagreements exist, explain why your judgment is more appropriate.'}
-        </p>
-      </Accordion>
-
-      {/* Three-section overview */}
-      <div className="mt-6 grid grid-cols-1 sm:grid-cols-3 gap-3">
-        {[
-          { color: S.validity, zh: '效度 (Q1–Q4)', en: 'Validity (Q1–Q4)', descZh: '研究的方法學是否嚴謹？結果值得信賴嗎？', descEn: 'Is the methodology rigorous? Can we trust the results?', qs: 'Q1, Q2, Q3a–d, Q4' },
-          { color: S.results, zh: '結果 (Q5–Q6)', en: 'Results (Q5–Q6)', descZh: '資料擷取和合併分析是否正確？', descEn: 'Were data extraction and synthesis done correctly?', qs: 'Q5a, Q5b, Q6, Q6-1, Q6-2' },
-          { color: S.applicability, zh: '適用性 (Q7)', en: 'Applicability (Q7)', descZh: '結果能應用到你的臨床案例嗎？', descEn: 'Can results be applied to your clinical case?', qs: 'Q7' },
-        ].map(({ color, zh, en, descZh, descEn, qs }) => (
-          <div key={zh} className="rounded-xl p-4 border" style={{ borderColor: color + '40', background: color + '08' }}>
-            <p className="font-bold text-sm mb-1" style={{ color }}>{lang === 'zh' ? zh : en}</p>
-            <p className="text-xs text-gray-600 leading-relaxed mb-2">{lang === 'zh' ? descZh : descEn}</p>
-            <p className="text-xs text-gray-400">{qs}</p>
+      {/* Practice tab */}
+      {activeSection === 'practice' ? (
+        <PracticeSection
+          questions={practiceQuestions.casp}
+          title={{ zh: 'CASP 評讀練習', en: 'CASP Appraisal Practice' }}
+        />
+      ) : (
+        <>
+          {/* Questions */}
+          <div>
+            {filteredQuestions.map(q => (
+              <CaspQuestionCard key={q.id} q={q} lang={lang} />
+            ))}
           </div>
-        ))}
-      </div>
+
+          {/* Kappa guide */}
+          <Accordion title={lang === 'zh' ? "Cohen's Kappa 一致性判讀" : "Cohen's Kappa Interpretation"} icon="🤝">
+            <div className="mt-3 overflow-x-auto">
+              <table className="w-full text-sm border-collapse">
+                <thead>
+                  <tr style={{ background: '#E8F6F7' }}>
+                    <th className="text-left px-3 py-2 font-semibold text-teal-800 border border-teal-200">Kappa</th>
+                    <th className="text-left px-3 py-2 font-semibold text-teal-800 border border-teal-200">{lang === 'zh' ? '一致性程度' : 'Agreement Level'}</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {[
+                    { range: '< 0.20', zh: '極差', en: 'Poor' },
+                    { range: '0.21 – 0.40', zh: '尚可', en: 'Fair' },
+                    { range: '0.41 – 0.60', zh: '中等', en: 'Moderate' },
+                    { range: '0.61 – 0.80', zh: '良好', en: 'Substantial' },
+                    { range: '0.81 – 1.00', zh: '幾乎完美', en: 'Almost Perfect' },
+                  ].map(({ range, zh, en }) => (
+                    <tr key={range} className="hover:bg-gray-50">
+                      <td className="px-3 py-2 border border-gray-200 font-mono text-sm">{range}</td>
+                      <td className="px-3 py-2 border border-gray-200 text-gray-600">{lang === 'zh' ? zh : en}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+            <p className="text-xs text-gray-500 mt-3">
+              {lang === 'zh'
+                ? '💡 競賽中 Kappa = 1.0 代表人類和 AI 評分完全一致。如果不一致，要說明為什麼你認為你的判斷更合理。'
+                : '💡 In competitions, Kappa = 1.0 means perfect human-AI agreement. If disagreements exist, explain why your judgment is more appropriate.'}
+            </p>
+          </Accordion>
+
+          {/* Three-section overview */}
+          <div className="mt-6 grid grid-cols-1 sm:grid-cols-3 gap-3">
+            {[
+              { color: S.validity, zh: '效度 (Q1–Q4)', en: 'Validity (Q1–Q4)', descZh: '研究的方法學是否嚴謹？結果值得信賴嗎？', descEn: 'Is the methodology rigorous? Can we trust the results?', qs: 'Q1, Q2, Q3a–d, Q4' },
+              { color: S.results, zh: '結果 (Q5–Q6)', en: 'Results (Q5–Q6)', descZh: '資料擷取和合併分析是否正確？', descEn: 'Were data extraction and synthesis done correctly?', qs: 'Q5a, Q5b, Q6, Q6-1, Q6-2' },
+              { color: S.applicability, zh: '適用性 (Q7)', en: 'Applicability (Q7)', descZh: '結果能應用到你的臨床案例嗎？', descEn: 'Can results be applied to your clinical case?', qs: 'Q7' },
+            ].map(({ color, zh, en, descZh, descEn, qs }) => (
+              <div key={zh} className="rounded-xl p-4 border" style={{ borderColor: color + '40', background: color + '08' }}>
+                <p className="font-bold text-sm mb-1" style={{ color }}>{lang === 'zh' ? zh : en}</p>
+                <p className="text-xs text-gray-600 leading-relaxed mb-2">{lang === 'zh' ? descZh : descEn}</p>
+                <p className="text-xs text-gray-400">{qs}</p>
+              </div>
+            ))}
+          </div>
+        </>
+      )}
 
       {/* Reference */}
       <div className="mt-6 p-4 rounded-xl bg-gray-50 border border-gray-200">

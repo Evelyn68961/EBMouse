@@ -5,6 +5,8 @@
 import React, { useState } from 'react';
 import { useLang } from '../../App';
 import Hamster, { HamsterThinking, HamsterConcerned } from '../../components/Hamster';
+import { PracticeSection } from '../../components/PracticeQuestion';
+import practiceQuestions from '../../data/practice';
 
 // ─── Color constants ───
 const C = {
@@ -535,6 +537,9 @@ export default function CoreGradeGuide() {
               { zh: 'OIS 通過 → 不扣分。OIS 未通過 → 扣 1 分。', en: 'OIS met → no downgrade. OIS not met → downgrade 1.' },
             ]} />
           </Accordion>
+          <div className="mt-8 pt-6 border-t border-gray-200">
+            <PracticeSection questions={practiceQuestions.grade_imprecision} title={{ zh: '不精確性 練習題', en: 'Imprecision Practice' }} />
+          </div>
         </div>
       )}
 
@@ -640,6 +645,9 @@ export default function CoreGradeGuide() {
               ]} />
             </div>
           </Accordion>
+          <div className="mt-8 pt-6 border-t border-gray-200">
+            <PracticeSection questions={practiceQuestions.grade_inconsistency} title={{ zh: '不一致性 練習題', en: 'Inconsistency Practice' }} />
+          </div>
         </div>
       )}
 
@@ -710,6 +718,9 @@ export default function CoreGradeGuide() {
               </div>
             </div>
           </Accordion>
+          <div className="mt-8 pt-6 border-t border-gray-200">
+            <PracticeSection questions={practiceQuestions.grade_rob} title={{ zh: '誤差風險 練習題', en: 'Risk of Bias Practice' }} />
+          </div>
         </div>
       )}
 
@@ -783,6 +794,9 @@ export default function CoreGradeGuide() {
               </p>
             </div>
           </Accordion>
+          <div className="mt-8 pt-6 border-t border-gray-200">
+            <PracticeSection questions={practiceQuestions.grade_indirectness} title={{ zh: '不直接性 練習題', en: 'Indirectness Practice' }} />
+          </div>
         </div>
       )}
 
@@ -836,6 +850,9 @@ export default function CoreGradeGuide() {
               </p>
             </div>
           </Accordion>
+          <div className="mt-8 pt-6 border-t border-gray-200">
+            <PracticeSection questions={practiceQuestions.grade_pub_bias} title={{ zh: '發表偏誤 練習題', en: 'Publication Bias Practice' }} />
+          </div>
         </div>
       )}
 

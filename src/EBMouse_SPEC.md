@@ -196,14 +196,14 @@ EBMouse (EBM 鼠出任務)
 │   └── [Future cases added yearly]
 │
 ├── 🧰 Reference: Toolbox (工具箱) — ordered by 5A workflow with phase badges
-│   ├── PICOT Worksheet ✅ [Ask] — 4-tab PICOT guide (5 elements, question types, selection strategy, quality checklist)
+│   ├── PICOT Worksheet ✅ [Ask] — 5-tab PICOT guide (5 elements, question types, selection strategy, quality checklist, practice)
 │   ├── PubMed Search Strategy Template ✅ [Acquire] — 3-tab guide (build strategy, 3 databases, search tips)
 │   ├── SRA Keyword Conversion Guide ✅ [Acquire] — 3-tab Polyglot guide (why convert, how to, vocabulary map)
 │   ├── LitSuggest Screening Guide ✅ [Acquire] — 3-tab ML screening guide (what is LitSuggest, workflow, competition use)
-│   ├── CASP-SR Checklist ✅ [Appraise] — 13-question guide with scoring criteria, pitfalls, Kappa
-│   ├── Core GRADE Quick Guide ✅ [Appraise] — 7-tab interactive guide (overview, 5 domains, SoF tables)
+│   ├── CASP-SR Checklist ✅ [Appraise] — 13-question guide with scoring criteria, pitfalls, Kappa + Practice tab
+│   ├── Core GRADE Quick Guide ✅ [Appraise] — 7-tab interactive guide (overview, 5 domains, SoF tables) + practice at bottom of each domain tab
 │   ├── MID Determination Guide ✅ [Appraise] — 5-tab MID guide (what is MID, 4 methods, credibility, use in GRADE, practical guide)
-│   └── Evidence-to-Decision Framework ✅ [Apply] — 5-tab EtD guide (overview, 7 factors, strength, MID & values, presentation)
+│   └── Evidence-to-Decision Framework ✅ [Apply] — 5-tab EtD guide (overview, 7 factors, strength, MID & values, presentation) + Practice tab
 │
 └── ℹ️ About (關於)
     └── Team info, link to MA101 (meta-analysis-101.vercel.app)
@@ -606,7 +606,8 @@ ebmouse/
     │   ├── NumberLine.jsx           ← MID/CI visualization for GRADE
     │   ├── PicoComparisonTable.jsx  ← study vs. case PICO comparison
     │   ├── GradeScorecard.jsx       ← 5-domain summary with color coding
-    │   └── ImageUploader.jsx        ← for forest/funnel plot images
+    │   ├── ImageUploader.jsx        ← for forest/funnel plot images
+    │   └── PracticeQuestion.jsx     ← ✅ shared practice question renderer (MC/fill/error, auto-detects PICOT/CASP/GRADE/EtD)
     │
     ├── pages/
     │   ├── Home.jsx                 ← maze trail hub + project management
@@ -626,10 +627,10 @@ ebmouse/
     │   │   ├── CaseAtropine.jsx     ← 2024 atropine case
     │   │   ├── Toolbox.jsx          ← toolbox index — single-column list ordered by 5A workflow with phase badges
     │   │   ├── CoreGradeGuide.jsx   ← ✅ Core GRADE 7-tab interactive guide (BMJ 2025)
-    │   │   ├── CaspChecklist.jsx    ← ✅ CASP-SR 13-question reference with scoring guidance
+    │   │   ├── CaspChecklist.jsx    ← ✅ CASP-SR 13-question reference with scoring guidance + Practice tab
     │   │   ├── EtdFramework.jsx     ← ✅ Evidence-to-Decision 5-tab guide (Core GRADE Paper 7)
     │   │   ├── MidGuide.jsx         ← ✅ MID Determination 5-tab guide (Carrasco-Labra 2021 + Devji 2020)
-    │   │   ├── PicotWorksheet.jsx   ← ✅ PICOT 4-tab guide (5 elements, types, selection, checklist)
+    │   │   ├── PicotWorksheet.jsx   ← ✅ PICOT 5-tab guide (5 elements, types, selection, checklist, practice)
     │   │   ├── PubmedSearchGuide.jsx ← ✅ PubMed search strategy 3-tab guide (build, databases, tips)
     │   │   ├── SraGuide.jsx         ← ✅ SRA Polyglot 3-tab guide (why, how, vocabulary map)
     │   │   └── LitSuggestGuide.jsx  ← ✅ LitSuggest 3-tab ML screening guide (what, workflow, competition)
@@ -644,8 +645,16 @@ ebmouse/
     └── data/
         ├── teachingContent.js       ← ✅ NEW: 27 bilingual teaching blocks (concept/steps/example/pitfall/checklist)
         ├── cases/                   ← annotated case data (JSON)
-        ├── practiceScenarios.js     ← built-in practice clinical scenarios
-        └── caspModelAnswers.js      ← model CASP answers for practice cases
+        └── practice/                ← ✅ interactive practice questions (72 total, 9 per section)
+            ├── index.js             ← re-exports all sections as { picot, casp, grade_rob, grade_inconsistency, grade_indirectness, grade_imprecision, grade_pub_bias, etd }
+            ├── picotPractice.js     ← ✅ 9 Qs (3 MC + 3 fill + 3 error)
+            ├── caspPractice.js      ← ✅ 9 Qs (3 MC + 3 fill + 3 error)
+            ├── gradeRobPractice.js  ← ✅ 9 Qs (3 MC + 3 fill + 3 error)
+            ├── gradeInconsistencyPractice.js ← ✅ 9 Qs (3 MC + 3 fill + 3 error)
+            ├── gradeIndirectnessPractice.js  ← 9 Qs (TODO)
+            ├── gradeImprecisionPractice.js   ← 9 Qs (TODO)
+            ├── gradePubBiasPractice.js       ← 9 Qs (TODO)
+            └── etdPractice.js       ← 9 Qs (TODO)
 ```
 
 ### Design
@@ -684,10 +693,10 @@ ebmouse/
   - Shared `CaseDetail.jsx` renderer (946 lines): sticky phase nav, PICOT comparison cards, PRISMA flow, CASP emoji table + collapsible evidence, number line SVG for imprecision, GRADE scorecards, EtD direction bars, cost/benefit-risk tables, NNT display with collapsible derivation. Handles both continuous (MID) and binary (null threshold) outcomes, optional keyOutcome subgroups, optional regimen rows, optional visitCost rows. GRADE heading uses `assessment.label` for generic case support.
 - Reference: Toolbox — all 8 interactive guides built (toolbox complete)
   - Core GRADE Quick Guide (`/toolbox/core-grade`): 7-tab page covering overview, imprecision (with interactive SVG number-line diagrams), inconsistency, risk of bias, indirectness, publication bias, and SoF tables. Based on BMJ 2025 Core GRADE Papers 1–6 + GRADE Guidelines 6. Bilingual with visual decision flows, domain cards, plain language statement table.
-  - CASP-SR Checklist (`/toolbox/casp-sr`): All 13 questions as expandable cards with color-coded sections (validity/results/applicability), per-question "what to look for" checklists, 3-column scoring guidance (😀/😟/😐), common pitfall callouts, section filter, and Cohen's Kappa interpretation table.
+  - CASP-SR Checklist (`/toolbox/casp-sr`): All 13 questions as expandable cards with color-coded sections (validity/results/applicability), per-question "what to look for" checklists, 3-column scoring guidance (😀/😟/😐), common pitfall callouts, section filter, Cohen's Kappa interpretation table, and Practice tab with 9 interactive questions.
   - Evidence-to-Decision Framework (`/toolbox/etd`): 5-tab page covering overview (4 recommendation categories, 7-step decision flow), 7 EtD factors (3 primary + 4 secondary as expandable cards with questions and impact), strength determination (certainty×strength matrix, strong vs conditional implications, exceptional circumstances), MID & values (why MID matters for EtD, value gradient, 4 methods, WHO COVID-19 value statement examples), and presentation (wording rules, 5-element structure, multilayered format, for-vs-against guidance). Based on Core GRADE Paper 7 (BMJ 2025;389:e083867).
   - MID Determination Guide (`/toolbox/mid`): 5-tab page covering what MID is (definition, anchor-based vs distribution-based, value gradient table), 4 methods (literature search, clinician experience, patient focus group, panel survey with pros/cons/examples), credibility assessment (5 core criteria + 4 GRC extension criteria with statistics from Carrasco-Labra 2021's 5,324 MID estimates), 3 roles in GRADE (imprecision threshold, inconsistency reference, EtD decision basis), and practical guide (step-by-step workflow, 2024 competition worked example with SE MID = 0.25D derivation, presentation checklist, common mistakes). Based on Core GRADE Papers 2 & 7, Carrasco-Labra et al. (JCE 2021;133:61–71), Devji et al. (BMJ 2020;369:m1714).
-  - PICOT Worksheet (`/toolbox/picot`): 4-tab page covering 5 elements (P/I/C/O/T as color-coded cards with tips and 2024 atropine worked example), question types (4-type × study design table with treatment-type emphasis for competitions), selection strategy (PICOT-1 vs PICOT-2 side-by-side from 2024 case, 3 selection principles: patient preference → feasibility → evidence availability), and quality checklist (per-element color-coded checklist items covering specificity, measurability, scenario alignment).
+  - PICOT Worksheet (`/toolbox/picot`): 5-tab page covering 5 elements (P/I/C/O/T as color-coded cards with tips and 2024 atropine worked example), question types (4-type × study design table with treatment-type emphasis for competitions), selection strategy (PICOT-1 vs PICOT-2 side-by-side from 2024 case, 3 selection principles: patient preference → feasibility → evidence availability), quality checklist (per-element color-coded checklist items covering specificity, measurability, scenario alignment), and practice (9 interactive questions).
   - PubMed Search Strategy Template (`/toolbox/pubmed-search`): 3-tab page covering build strategy (3-step PICOT→Boolean with worked example and PubMed Advanced Search workflow), 3 databases (PubMed/Embase/Cochrane strengths comparison), and search tips (Boolean operators quick reference table, common mistakes, MeSH term finding guide).
   - SRA Keyword Conversion Guide (`/toolbox/sra`): 3-tab page covering why convert (different databases use different controlled vocabularies — MeSH vs Emtree vs Cochrane syntax), how to (6-step Polyglot workflow with warnings about Emtree over-indexing), and vocabulary map (cross-database syntax comparison table for subject headings, title, title+abstract, truncation, exact phrase). Based on Clark et al. (JMLA 2020;108:195–207).
   - LitSuggest Screening Guide (`/toolbox/litsuggest`): 3-tab page covering what is LitSuggest (ML-powered screening concept with positive/negative examples), workflow (7-step guide from account creation to iteration), and competition use (2024 case: 793→391 articles, presentation tips, how to pick positive examples, caveats). Based on Allot et al. (Nucleic Acids Res 2021;49:W352–W358).
@@ -698,6 +707,14 @@ ebmouse/
 - Phase 3 Acquire (6): Big 3 databases, PICOT→Boolean steps, SRA conversion, LitSuggest screening, PRISMA 4-step flow, article selection criteria
 - Phase 4 Appraise (7): CASP-SR Q1-Q7 overview, scoring pitfalls, results summary (WMD/CI/forest plot), MID 4-method explanation, Core GRADE 5-domain flowcharts with BMJ 2025 refs, imprecision number-line worked example, GRADE summary calculation
 - Phase 5 Apply (5): CASP Q9 applicability table, benefit-risk method, cost analysis breakdown, EtD 6-dimension framework, patient summary writing
+
+**Practice Question System (72 questions across 8 sections):**
+- Shared renderer: `PracticeQuestion.jsx` — auto-detects question type (PICOT/CASP/GRADE/EtD) from data shape, renders all 3 formats (MC, fill-in-blank, error-spotting). `PracticeSection` convenience wrapper for toolbox page integration.
+- Source mix: ~60% from 3 existing cases (Atropine/CPM/IV Iron), ~40% new pharmacy scenarios
+- Integration pattern: toolbox pages import from `../../data/practice` and add a Practice tab (PICOT, CASP, EtD) or append practice questions at the bottom of each domain tab (Core GRADE)
+- DONE (36 questions, 4 files): picotPractice.js ✅, caspPractice.js ✅, gradeRobPractice.js ✅, gradeInconsistencyPractice.js ✅
+- TODO (36 questions, 4 files): gradeIndirectnessPractice.js, gradeImprecisionPractice.js, gradePubBiasPractice.js, etdPractice.js
+- TODO (integration): index.js re-export, CoreGradeGuide practice at bottom of domain tabs, EtdFramework Practice tab
 
 **Not yet built:**
 - AI integration (users complete workflow without AI feedback)
@@ -721,7 +738,7 @@ ebmouse/
 **Add:**
 - Supabase migration for persistence + team collaboration
 - New competition cases added yearly to Case Library
-- Practice mode: pre-loaded scenarios with model answers for self-assessment
+- Practice mode: remaining 4 data files (indirectness, imprecision, pub bias, EtD) + CoreGradeGuide/EtdFramework integration
 - Search Strategy Workshop (Module 2.2 from original spec)
 - Analytics: track where users spend most time / get stuck
 - Public sharing: anonymized project export for other hospital teams

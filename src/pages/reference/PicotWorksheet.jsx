@@ -5,6 +5,8 @@
 import React, { useState } from 'react';
 import { useLang } from '../../App';
 import { HamsterThinking, HamsterCelebrating, HamsterConcerned } from '../../components/Hamster';
+import { PracticeSection } from '../../components/PracticeQuestion';
+import practiceQuestions from '../../data/practice';
 
 // ─── Accordion ───
 function Accordion({ title, icon, children, defaultOpen = false }) {
@@ -64,6 +66,7 @@ export default function PicotWorksheet() {
     { id: 'types', zh: '問題類型', en: 'Question Types', icon: '❓' },
     { id: 'selection', zh: '選擇策略', en: 'Selection', icon: '🎯' },
     { id: 'checklist', zh: '品質檢核', en: 'Quality Check', icon: '✅' },
+    { id: 'practice', zh: '練習', en: 'Practice', icon: '🏋️' },
   ];
 
   return (
@@ -469,6 +472,42 @@ export default function PicotWorksheet() {
               ))}
             </div>
           </div>
+        </div>
+      )}
+
+      {/* ═══ TAB: Practice ═══ */}
+      {activeTab === 'practice' && (
+        <div>
+          <div className="bg-gradient-to-r from-amber-50 to-orange-50 border border-amber-200 rounded-xl p-5 mb-6">
+            <div className="flex items-start gap-3">
+              <HamsterThinking size={36} className="flex-shrink-0 mt-0.5" />
+              <div>
+                <h2 className="font-bold text-base text-amber-800 mb-1">
+                  {lang === 'zh' ? '練習建立 PICOT' : 'Practice Building PICOTs'}
+                </h2>
+                <p className="text-sm text-gray-700 leading-relaxed">
+                  {lang === 'zh'
+                    ? '9 題練習，包含選擇題、填空題和找錯題。每題都有詳細解說和常見錯誤分析。'
+                    : '9 practice questions including multiple choice, fill-in-the-blank, and error spotting. Each has detailed explanations and common mistake analysis.'}
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <PracticeSection
+            questions={practiceQuestions.picot?.filter((q) => q.format === 'mc') || []}
+            title={{ zh: '選擇題 — 哪組 PICOT 最適合？', en: 'Multiple Choice — Which PICOT fits best?' }}
+          />
+
+          <PracticeSection
+            questions={practiceQuestions.picot?.filter((q) => q.format === 'fill') || []}
+            title={{ zh: '填空題 — 填入缺少的要素', en: 'Fill-in-the-Blank — Complete the missing elements' }}
+          />
+
+          <PracticeSection
+            questions={practiceQuestions.picot?.filter((q) => q.format === 'error') || []}
+            title={{ zh: '找錯題 — 找出 PICOT 中的錯誤', en: 'Error Spotting — Find the mistakes in the PICOT' }}
+          />
         </div>
       )}
 

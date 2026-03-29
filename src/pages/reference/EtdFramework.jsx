@@ -5,6 +5,8 @@
 import React, { useState } from 'react';
 import { useLang } from '../../App';
 import { HamsterThinking, HamsterCelebrating, HamsterConcerned } from '../../components/Hamster';
+import { PracticeSection } from '../../components/PracticeQuestion';
+import practiceQuestions from '../../data/practice';
 
 // ─── Accordion ───
 function Accordion({ title, icon, children, defaultOpen = false }) {
@@ -110,6 +112,7 @@ export default function EtdFramework() {
     { id: 'strength', zh: '推薦強度', en: 'Strength', icon: '💪' },
     { id: 'mid', zh: 'MID 與價值偏好', en: 'MID & Values', icon: '🎯' },
     { id: 'presentation', zh: '推薦呈現', en: 'Presentation', icon: '📝' },
+    { id: 'practice', zh: '練習', en: 'Practice', icon: '🏋️' },
   ];
 
   return (
@@ -632,6 +635,12 @@ export default function EtdFramework() {
             </div>
           </Accordion>
         </div>
+      )}
+      {activeTab === 'practice' && (
+        <PracticeSection
+          questions={practiceQuestions.etd}
+          title={{ zh: 'EtD 推薦練習題', en: 'EtD Recommendation Practice' }}
+        />
       )}
 
       {/* Reference */}
