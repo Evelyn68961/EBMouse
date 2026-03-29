@@ -76,6 +76,8 @@ export default function About() {
         <HamsterNeutral size={60} />
         <HamsterThinking size={60} />
         <HamsterConcerned size={60} />
+        <HamsterLoading size={60} />
+        <HamsterCelebrating size={60} />
       </div>
     </div>
   );
