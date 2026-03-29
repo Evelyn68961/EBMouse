@@ -54,8 +54,8 @@ export default function PhaseApply() {
       <PhaseIntro intro={phase.intro} />
       <ToolboxLinks phase={5} />
 
-      <div className="bg-warm-50 border border-amber-100 rounded-xl px-4 py-3 mb-6 flex items-start gap-3">
-        <span className="text-lg mt-0.5">🐹</span>
+      <div className="bg-warm-50 border border-amber-100 rounded-xl px-4 py-3 mb-6 flex items-center gap-3">
+        <Hamster mood="neutral" size={24} />
         <p className="text-sm text-amber-800">{t("hamsterPhase5Start", lang)}</p>
       </div>
 
