@@ -37,7 +37,7 @@ function detectType(q) {
 }
 
 const PICOT_KEYS = ['p', 'i', 'c', 'o', 't'];
-const CASP_KEYS = ['q1', 'q2', 'q3a', 'q3b', 'q3c', 'q3d', 'q4', 'q5a', 'q5b', 'q6', 'q6_1', 'q6_2', 'q7'];
+const CASP_KEYS = ['q1', 'q2', 'q3a', 'q3b', 'q3c', 'q3d', 'q4', 'q5a', 'q5b', 'q6', 'q6_1', 'q6_2', 'q7', 'q7_1', 'q7_2', 'q8', 'q9', 'q10'];
 const GRADE_KEYS = ['rob', 'inconsistency', 'indirectness', 'imprecision', 'pubBias'];
 const ETD_KEYS = ['strength', 'wording', 'direction', 'population', 'intervention', 'qualifier'];
 
@@ -46,7 +46,8 @@ const PICOT_COLORS = { p: '#0E7C86', i: '#2980B9', c: '#8E44AD', o: '#E67E22', t
 const CASP_COLORS = {
   q1: '#0E7C86', q2: '#0E7C86', q3a: '#0E7C86', q3b: '#0E7C86', q3c: '#0E7C86', q3d: '#0E7C86', q4: '#0E7C86',
   q5a: '#2980B9', q5b: '#2980B9', q6: '#2980B9', q6_1: '#2980B9', q6_2: '#2980B9',
-  q7: '#8E44AD',
+  q7: '#8E44AD', q7_1: '#8E44AD', q7_2: '#8E44AD', q8: '#8E44AD',
+  q9: '#E67E22', q10: '#27AE60',
 };
 
 const GRADE_COLORS = {
@@ -68,7 +69,8 @@ function getLabel(key) {
   const labels = {
     p: 'P', i: 'I', c: 'C', o: 'O', t: 'T',
     q1: 'Q1', q2: 'Q2', q3a: 'Q3a', q3b: 'Q3b', q3c: 'Q3c', q3d: 'Q3d', q4: 'Q4',
-    q5a: 'Q5a', q5b: 'Q5b', q6: 'Q6', q6_1: 'Q6-1', q6_2: 'Q6-2', q7: 'Q7',
+    q5a: 'Q5a', q5b: 'Q5b', q6: 'Q6', q6_1: 'Q6-1', q6_2: 'Q6-2',
+    q7: 'Q7', q7_1: 'Q7-1', q7_2: 'Q7-2', q8: 'Q8', q9: 'Q9', q10: 'Q10',
     rob: 'RoB', inconsistency: 'INC', indirectness: 'IND', imprecision: 'IMP', pubBias: 'PUB',
     strength: 'STR', wording: 'WRD', direction: 'DIR', population: 'POP', intervention: 'INT', qualifier: 'QUA',
   };

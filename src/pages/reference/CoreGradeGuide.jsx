@@ -164,6 +164,7 @@ export default function CoreGradeGuide() {
 
   const tabs = [
     { id: 'overview', zh: '總覽', en: 'Overview', icon: '🗺️' },
+    { id: 'nrsi', zh: '觀察性 / NRSI', en: 'Obs / NRSI', icon: '🔬' },
     { id: 'imprecision', zh: '不精確性', en: 'Imprecision', icon: '🎯' },
     { id: 'inconsistency', zh: '不一致性', en: 'Inconsistency', icon: '📊' },
     { id: 'rob', zh: '誤差風險', en: 'Risk of Bias', icon: '⚖️' },
@@ -388,6 +389,253 @@ export default function CoreGradeGuide() {
               <strong>Sources:</strong> Guyatt et al. Core GRADE 1–6. <em>BMJ</em> 2025;389:e081903–e083866. Guyatt et al. GRADE Guidelines 6: Imprecision. <em>J Clin Epidemiol</em> 2011;64:1283–93 (corrigendum 2021).
             </p>
           </div>
+        </div>
+      )}
+
+      {/* ═══════════════════════════════════════ */}
+      {/* TAB: Observational Studies / NRSI */}
+      {/* ═══════════════════════════════════════ */}
+      {activeTab === 'nrsi' && (
+        <div>
+          <h2 className="font-bold text-xl text-gray-800 mb-2">
+            🔬 {lang === 'zh' ? '觀察性研究 / NRSI 專屬指南' : 'Observational Studies / NRSI Guide'}
+          </h2>
+          <p className="text-sm text-gray-500 mb-4 leading-relaxed">
+            {lang === 'zh'
+              ? '當沒有 RCT、或 RCT 證據確定性過低時，Core GRADE 用戶會考慮使用觀察性研究 (non-randomised studies of interventions, NRSI)。本頁整理 NRSI 在 GRADE 評估中的所有特殊規則。'
+              : 'When RCTs are unavailable or yield low/very-low certainty, Core GRADE users consider non-randomised studies of interventions (NRSI). This tab covers all the NRSI-specific rules in GRADE assessment.'}
+          </p>
+
+          {/* Starting point */}
+          <Accordion title={lang === 'zh' ? '起點：NRSI 從「低」開始' : 'Starting Point: NRSI Begin at "Low"'} icon="🏁" defaultOpen>
+            <div className="mt-3 grid grid-cols-2 gap-4">
+              <div className="rounded-xl p-4 text-center" style={{ background: '#D5F5E3' }}>
+                <p className="font-bold text-green-800 text-base mb-1">★★★★ {lang === 'zh' ? '高' : 'High'}</p>
+                <p className="text-xs text-green-700">{lang === 'zh' ? '隨機對照試驗 (RCT)' : 'Randomised Controlled Trials'}</p>
+              </div>
+              <div className="rounded-xl p-4 text-center" style={{ background: '#FEF9E7' }}>
+                <p className="font-bold text-orange-700 text-base mb-1">★★ {lang === 'zh' ? '低' : 'Low'}</p>
+                <p className="text-xs text-orange-600">{lang === 'zh' ? '觀察性研究 (NRSI)' : 'Observational Studies (NRSI)'}</p>
+              </div>
+            </div>
+            <p className="text-xs text-gray-500 mt-3 leading-relaxed">
+              {lang === 'zh'
+                ? 'NRSI 從「低」開始的原因：即使做了統計校正，介入組與對照組之間幾乎一定存在「殘餘混淆」(residual confounding)，這是 NRSI 設計上無法完全克服的限制。然後依誤差風險再決定是否扣到「很低」，或依大效果/劑量反應再決定是否升到「中」或「高」。'
+                : 'NRSI start at Low because residual confounding between intervention and control groups almost always persists despite statistical adjustment — an inherent limitation of NRSI designs. Then assess risk-of-bias issues to potentially downgrade to Very Low, or large effect / dose-response to upgrade to Moderate or High.'}
+            </p>
+          </Accordion>
+
+          {/* NRSI study designs */}
+          <Accordion title={lang === 'zh' ? 'NRSI 常見研究設計' : 'Common NRSI Study Designs'} icon="📚">
+            <div className="mt-3 space-y-2">
+              {[
+                { type: 'Cohort', zh: '世代研究', descZh: '追蹤有/無暴露的兩組人，比較未來結果發生率。', descEn: 'Follows people with/without an exposure over time, comparing future outcome rates.' },
+                { type: 'Case-Control', zh: '病例對照研究', descZh: '比較有/無結果的兩組人，回溯過去的暴露差異。', descEn: 'Compares people with/without an outcome (cases vs controls), looking back at past exposures.' },
+                { type: 'Cross-sectional', zh: '橫斷面研究', descZh: '在某個時間點測量族群中暴露/結果的盛行率。', descEn: 'Measures prevalence of exposure/outcome in a population at a single time point.' },
+                { type: 'Case series', zh: '病例系列', descZh: '只描述接受介入的患者，無對照組——通常會被降為「很低」。', descEn: 'Only describes patients receiving the intervention, no comparator — usually downgraded to Very Low.' },
+              ].map(({ type, zh, descZh, descEn }) => (
+                <div key={type} className="bg-white rounded-lg border border-gray-100 p-3">
+                  <p className="text-sm font-bold text-teal-700">{type} <span className="text-xs text-gray-400 font-normal">({lang === 'zh' ? zh : type})</span></p>
+                  <p className="text-xs text-gray-600 mt-1 leading-relaxed">{lang === 'zh' ? descZh : descEn}</p>
+                </div>
+              ))}
+            </div>
+          </Accordion>
+
+          {/* NRSI RoB items (Box 2) */}
+          <Accordion title={lang === 'zh' ? 'NRSI 誤差風險的關鍵項目' : 'Key NRSI Risk-of-Bias Items'} icon="⚖️" defaultOpen>
+            <div className="mt-3 space-y-2">
+              {[
+                { zh: '介入與對照組的納入條件不同，導致預後因子分布不均', en: 'Different eligibility criteria between groups → uneven distribution of prognostic factors' },
+                { zh: '介入測量不準確（暴露分類錯誤）', en: 'Inaccurate measurement of interventions (exposure misclassification)' },
+                { zh: '結果測量方法不適當', en: 'Inappropriate measurement of outcomes' },
+                { zh: '混淆控制不足（混淆因子測量不準 OR 統計校正不充分）', en: 'Inadequate confounder control (inaccurate measurement OR insufficient statistical adjustment)' },
+                { zh: '結果資料遺失', en: 'Missing outcome data' },
+                { zh: '選擇性結果報告', en: 'Selective outcome reporting' },
+              ].map((item, i) => (
+                <div key={i} className="flex items-center gap-2 bg-orange-50/50 rounded-lg px-3 py-2">
+                  <span className="text-xs text-orange-400 font-mono w-5">{i + 1}.</span>
+                  <span className="text-sm text-gray-700">{lang === 'zh' ? item.zh : item.en}</span>
+                </div>
+              ))}
+            </div>
+            <p className="text-xs text-gray-500 mt-3 leading-relaxed">
+              {lang === 'zh'
+                ? '⭐ 與 RCT 相比，NRSI 的核心偏誤來源是「混淆控制」——這在 RCT 中由隨機化處理，但在 NRSI 中需要靠統計校正，且永遠不完美。'
+                : '⭐ Compared with RCTs, the core bias source in NRSI is "confounder control" — handled by randomisation in RCTs but only by statistical adjustment in NRSI, which is never perfect.'}
+            </p>
+          </Accordion>
+
+          {/* NRSI RoB tools */}
+          <Accordion title={lang === 'zh' ? 'NRSI 推薦的誤差風險工具' : 'Recommended NRSI Risk-of-Bias Tools'} icon="🛠️">
+            <div className="mt-3 overflow-x-auto">
+              <table className="w-full text-xs border-collapse">
+                <thead>
+                  <tr style={{ background: C.tealLight }}>
+                    <th className="text-left px-3 py-2 font-semibold text-teal-800 border border-teal-200">{lang === 'zh' ? '工具' : 'Tool'}</th>
+                    <th className="text-left px-3 py-2 font-semibold text-teal-800 border border-teal-200">{lang === 'zh' ? '適用對象' : 'For'}</th>
+                    <th className="text-left px-3 py-2 font-semibold text-teal-800 border border-teal-200">{lang === 'zh' ? '特色' : 'Notes'}</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {[
+                    { tool: 'Newcastle-Ottawa Scale (NOS)', use: { zh: 'Cohort、case-control', en: 'Cohort, case-control' }, note: { zh: '簡潔、易上手；最被廣泛使用', en: 'Simple and parsimonious; most widely used' } },
+                    { tool: 'CLARITY 修訂版 / CLARITY modified', use: { zh: 'Cohort、case-control', en: 'Cohort, case-control' }, note: { zh: 'NOS 改良版，更適合 GRADE 評估', en: 'Refined NOS, better suited to GRADE assessment' } },
+                    { tool: 'ROBINS-I (v1 / v2)', use: { zh: '所有 NRSI', en: 'All NRSI' }, note: { zh: '嚴謹但複雜；常被誤用，使用負擔大', en: 'Rigorous but complex; often misapplied, high evaluator burden' } },
+                  ].map(({ tool, use, note }) => (
+                    <tr key={tool} className="hover:bg-gray-50">
+                      <td className="px-3 py-2 border border-gray-200 font-medium font-mono text-xs">{tool}</td>
+                      <td className="px-3 py-2 border border-gray-200 text-gray-600">{use[lang]}</td>
+                      <td className="px-3 py-2 border border-gray-200 text-gray-600">{note[lang]}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+            <div className="bg-amber-50 rounded-lg p-3 mt-3">
+              <p className="text-xs text-amber-800">
+                {lang === 'zh'
+                  ? '💡 注意：ROBINS-I 把「殘餘混淆」納入工具本身的評估，而 Core GRADE 是用「NRSI 從低開始」來處理。所以兩種方法最終的確定性等級應該一致——不要重複扣分。'
+                  : '💡 Note: ROBINS-I incorporates residual confounding into the tool itself, while Core GRADE handles it by starting NRSI at Low. The final certainty ratings from both approaches should align — don\'t double-count.'}
+              </p>
+            </div>
+          </Accordion>
+
+          {/* Case series special case */}
+          <Accordion title={lang === 'zh' ? '病例系列 / 單臂試驗：特殊規則' : 'Case Series / Single-Arm Trials: Special Rules'} icon="🎭">
+            <div className="mt-3 space-y-3">
+              <div className="rounded-lg p-3 bg-red-50">
+                <p className="text-xs font-bold text-red-800 mb-1">{lang === 'zh' ? '⛔ 一般情況：直接降為「很低」' : '⛔ Default: Downgrade to Very Low'}</p>
+                <p className="text-xs text-red-700 leading-relaxed">
+                  {lang === 'zh'
+                    ? '由於沒有對照組，無法估計介入相對於不介入的效果。即使外部歷史對照可用，仍幾乎一定屬於高誤差風險。'
+                    : 'Without a contemporaneous comparator, you cannot estimate the effect of intervention vs no intervention. Even with external/historical controls, the comparison is almost always at high risk of bias.'}
+                </p>
+              </div>
+              <div className="rounded-lg p-3 bg-green-50">
+                <p className="text-xs font-bold text-green-800 mb-1">{lang === 'zh' ? '✅ 特殊例外：「介入組獨有的傷害」' : '✅ Special exception: Harms unique to the intervention'}</p>
+                <p className="text-xs text-green-700 leading-relaxed">
+                  {lang === 'zh'
+                    ? '當傷害只可能發生在接受介入的人身上（如手術併發症、大腸鏡出血）時，對照組事件率近乎為零。此時「設計嚴謹的單臂研究」可以提供「高」確定性的傷害估計。'
+                    : 'When a harm can only occur in people receiving the intervention (e.g., surgical complications, colonoscopy bleeding), the control event rate is near zero. A well-conducted single-arm study can then provide High certainty for harm estimates.'}
+                </p>
+                <p className="text-xs text-green-600 italic mt-2">
+                  {lang === 'zh'
+                    ? '範例：97,000 人的大腸鏡資料庫研究，估計 30 天內出血率為 1.64/1000、穿孔率為 0.85/1000——「高」確定性，與 RCT 等同。'
+                    : 'Example: A 97,000-person colonoscopy database study estimated 30-day bleeding at 1.64/1000 and perforation at 0.85/1000 — High certainty, equivalent to a rigorous RCT.'}
+                </p>
+              </div>
+            </div>
+          </Accordion>
+
+          {/* Direction of bias */}
+          <Accordion title={lang === 'zh' ? '考慮偏誤方向：何時不必扣分' : 'Direction of Bias: When NOT to Downgrade'} icon="↔️">
+            <div className="mt-3 grid grid-cols-1 sm:grid-cols-2 gap-3">
+              <div className="rounded-lg p-3 bg-green-50">
+                <p className="text-xs font-bold text-green-800 mb-1">{lang === 'zh' ? '不需扣分的情境' : 'No Need to Downgrade'}</p>
+                <p className="text-xs text-green-700 leading-relaxed">
+                  {lang === 'zh'
+                    ? '研究顯示有效果，而偏誤的方向會使效果看起來更小 → 真實效果只會更大，偏誤方向強化結論。'
+                    : 'Study shows an effect, and bias would have decreased it → true effect is only larger, bias reinforces conclusion.'}
+                </p>
+                <p className="text-xs text-green-600 italic mt-2">
+                  {lang === 'zh'
+                    ? '範例：未設盲使臨床醫師更容易把「副作用」歸因於試驗藥；但研究顯示加藥反而減少副作用——偏誤方向反而強化結論。'
+                    : 'Example: Lack of blinding makes clinicians more likely to attribute "side effects" to the study drug; but the study shows the drug actually reduced side effects — bias direction reinforces the conclusion.'}
+                </p>
+              </div>
+              <div className="rounded-lg p-3 bg-red-50">
+                <p className="text-xs font-bold text-red-800 mb-1">{lang === 'zh' ? '需要扣分的情境' : 'Should Downgrade'}</p>
+                <p className="text-xs text-red-700 leading-relaxed">
+                  {lang === 'zh'
+                    ? '研究顯示有效果，但偏誤可能誇大了效果 → 真實效果可能更小甚至不存在。'
+                    : 'Study shows an effect, but bias may have exaggerated it → true effect may be smaller or nonexistent.'}
+                </p>
+              </div>
+            </div>
+          </Accordion>
+
+          {/* Rating UP details */}
+          <Accordion title={lang === 'zh' ? 'NRSI 升級條件（詳細）' : 'NRSI Upgrade Criteria (Detailed)'} icon="⬆️" defaultOpen>
+            <div className="mt-3 space-y-3">
+              <div className="bg-amber-50 rounded-lg p-3 border border-amber-100">
+                <p className="text-xs text-amber-900 leading-relaxed">
+                  {lang === 'zh'
+                    ? '⚠️ 前提：NRSI 必須沒有其他降級因素（無嚴重誤差風險、無嚴重不一致性、無嚴重不直接性、足夠精確）才考慮升級。'
+                    : '⚠️ Prerequisite: NRSI must have NO other downgrading factors (no serious risk of bias, no serious inconsistency, no serious indirectness, sufficiently precise) to be considered for upgrading.'}
+                </p>
+              </div>
+
+              {/* Large effect */}
+              <div className="bg-white rounded-xl border border-gray-100 p-4">
+                <h4 className="font-bold text-sm text-teal-700 mb-2">💪 {lang === 'zh' ? '大效果量' : 'Large Effect'}</h4>
+                <div className="overflow-x-auto">
+                  <table className="w-full text-xs border-collapse">
+                    <thead>
+                      <tr style={{ background: C.tealLight }}>
+                        <th className="text-left px-3 py-2 font-semibold text-teal-800 border border-teal-200">{lang === 'zh' ? '效果量' : 'Effect Size'}</th>
+                        <th className="text-left px-3 py-2 font-semibold text-teal-800 border border-teal-200">{lang === 'zh' ? '行動' : 'Action'}</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr><td className="px-3 py-2 border border-gray-200 font-mono">RR &gt; 2 {lang === 'zh' ? '或' : 'or'} &lt; 0.5</td><td className="px-3 py-2 border border-gray-200">{lang === 'zh' ? '考慮升 1 級' : 'Consider upgrading 1 level'}</td></tr>
+                      <tr><td className="px-3 py-2 border border-gray-200 font-mono">RR &gt; 5 {lang === 'zh' ? '或' : 'or'} &lt; 0.2</td><td className="px-3 py-2 border border-gray-200">{lang === 'zh' ? '考慮升 2 級' : 'Consider upgrading 2 levels'}</td></tr>
+                    </tbody>
+                  </table>
+                </div>
+                <p className="text-xs text-gray-500 mt-2 leading-relaxed">
+                  {lang === 'zh'
+                    ? '原理：模擬研究顯示，能解釋 RR > 2 的混淆因子很罕見；能解釋 RR > 5 的混淆因子幾乎不存在。OR 與 HR 用相似閾值。'
+                    : 'Rationale: modelling studies show that confounders capable of explaining RR > 2 are uncommon; those explaining RR > 5 are very rare. OR and HR use similar thresholds.'}
+                </p>
+                <p className="text-xs text-teal-600 italic mt-2">
+                  {lang === 'zh'
+                    ? '經典範例：嬰兒俯臥 vs 仰臥的 SIDS 風險 OR = 4.46 (95% CI 2.98 to 6.68) → 升 1 級。'
+                    : 'Classic example: infant prone vs supine sleep position for SIDS, OR = 4.46 (95% CI 2.98 to 6.68) → upgrade 1.'}
+                </p>
+              </div>
+
+              {/* Dose-response */}
+              <div className="bg-white rounded-xl border border-gray-100 p-4">
+                <h4 className="font-bold text-sm text-teal-700 mb-2">📈 {lang === 'zh' ? '劑量反應梯度' : 'Dose-Response Gradient'}</h4>
+                <p className="text-xs text-gray-600 leading-relaxed mb-2">
+                  {lang === 'zh'
+                    ? '劑量越高，效果越大（或反向）→ 強化因果關係的可信度，可考慮升級。'
+                    : 'Higher dose → larger effect (or reverse) → strengthens causal inference, consider upgrading.'}
+                </p>
+                <div className="bg-red-50 rounded-lg p-3 mt-2">
+                  <p className="text-xs font-bold text-red-800 mb-1">⚠️ {lang === 'zh' ? '陷阱：偽劑量反應' : 'Pitfall: Spurious Dose-Response'}</p>
+                  <p className="text-xs text-red-700 leading-relaxed">
+                    {lang === 'zh'
+                      ? '咖啡 vs 胰臟癌的「劑量反應」其實是因為吸菸者喝更多咖啡——真正的因果是吸菸。若懷疑這種混淆，不要升級。'
+                      : 'The "dose-response" between coffee and pancreatic cancer turned out to be because smokers drink more coffee — true cause was smoking. If you suspect such confounding, don\'t upgrade.'}
+                  </p>
+                </div>
+              </div>
+            </div>
+          </Accordion>
+
+          {/* Removed criterion */}
+          <Accordion title={lang === 'zh' ? '注意：「合理混淆方向」已從 Core GRADE 移除' : 'Note: "Plausible Confounding Direction" Removed from Core GRADE'} icon="📤">
+            <div className="mt-3">
+              <p className="text-sm text-gray-600 leading-relaxed">
+                {lang === 'zh'
+                  ? '舊版 GRADE 曾允許用「合理的混淆方向」(plausible confounding direction) 作為 NRSI 升級的第三個條件——但 Core GRADE 將其移除，因為「太難應用，且很少真的適用」。所以 Core GRADE 中 NRSI 升級只看：(1) 大效果量、(2) 劑量反應梯度。'
+                  : 'Earlier GRADE guidance allowed "plausible direction of confounding" as a third NRSI upgrading criterion — Core GRADE has removed it because it "proved too difficult to apply and too rarely applicable." So in Core GRADE, NRSI upgrading only considers: (1) large effect size, (2) dose-response gradient.'}
+              </p>
+            </div>
+          </Accordion>
+
+          {/* Quick decision flow */}
+          <Accordion title={lang === 'zh' ? 'NRSI 確定性評估快速流程' : 'NRSI Certainty Assessment: Quick Flow'} icon="🗺️">
+            <StepFlow lang={lang} steps={[
+              { zh: '起點：低 (★★)', en: 'Start: Low (★★)' },
+              { zh: '評估 5 個降級面向（誤差風險、不精確、不一致、不直接、發表偏誤）→ 是否扣到「很低」(★)?', en: 'Assess 5 downgrade domains (RoB, imprecision, inconsistency, indirectness, pub. bias) → downgrade to Very Low (★)?' },
+              { zh: '若沒有降級因素 → 評估升級條件：大效果量 (RR > 2 or < 0.5) 或 劑量反應', en: 'If no downgrade factors → assess upgrade criteria: large effect (RR > 2 or < 0.5) or dose-response' },
+              { zh: '大效果量符合 → 升 1 級到「中」(★★★)；極大效果 (RR > 5 or < 0.2) → 升 2 級到「高」(★★★★)', en: 'Large effect → upgrade 1 to Moderate (★★★); very large (RR > 5 or < 0.2) → upgrade 2 to High (★★★★)' },
+              { zh: '若懷疑潛在混淆使「劑量反應」失真 → 不升級', en: 'If suspected confounding distorts the "dose-response" → don\'t upgrade' },
+            ]} />
+          </Accordion>
         </div>
       )}
 
@@ -665,6 +913,15 @@ export default function CoreGradeGuide() {
               : 'Risk of bias = the likelihood that flaws in study design or execution have distorted results from the true effect.'}
           </p>
 
+          <div className="bg-blue-50 border border-blue-100 rounded-lg px-3 py-2 mb-4 text-xs text-blue-800 flex items-start gap-2">
+            <span className="text-blue-500 flex-shrink-0">ℹ️</span>
+            <span>
+              {lang === 'zh'
+                ? '本頁主要針對 RCT。NRSI 的誤差風險項目、工具（Newcastle-Ottawa、ROBINS-I）以及病例系列特殊規則，請見「觀察性 / NRSI」分頁。'
+                : 'This tab focuses on RCTs. For NRSI risk-of-bias items, tools (Newcastle-Ottawa, ROBINS-I), and case-series special rules, see the "Obs / NRSI" tab.'}
+            </span>
+          </div>
+
           <Accordion title={lang === 'zh' ? 'RCT 的主要誤差來源' : 'Key Bias Sources in RCTs'} icon="🏥" defaultOpen>
             <div className="mt-3 space-y-2">
               {[
@@ -814,6 +1071,15 @@ export default function CoreGradeGuide() {
               : 'Publication bias = studies with unfavorable results were not published, inflating the pooled estimate.'}
           </p>
 
+          <div className="bg-amber-50 border border-amber-100 rounded-lg px-3 py-2 mb-4 text-xs text-amber-800 flex items-start gap-2">
+            <span className="text-amber-500 flex-shrink-0">⚠️</span>
+            <span>
+              {lang === 'zh'
+                ? 'NRSI（特別是企業贊助的觀察性研究）的發表偏誤通常比 RCT 更嚴重——選擇性不發表的研究比例較高。處理流程相同，但對 NRSI 應更積極考慮扣分。'
+                : 'Publication bias is typically more severe in NRSI than in RCTs (especially industry-funded observational studies) — selective non-publication is more common. The decision flow is the same, but be more inclined to downgrade for NRSI.'}
+            </span>
+          </div>
+
           <Accordion title={lang === 'zh' ? '決策流程' : 'Decision Flow'} icon="🗺️" defaultOpen>
             <StepFlow lang={lang} steps={[
               { zh: '所有研究都是小型且企業贊助？→ 直接扣分。', en: 'All studies small and industry-sponsored? → Downgrade directly.' },
@@ -869,6 +1135,15 @@ export default function CoreGradeGuide() {
               ? 'SoF 表格是 GRADE 的核心產出。每一列是一個結果指標，系統化呈現效果估計值、確定性等級和白話結論。'
               : 'The SoF table is GRADE\'s core output. Each row is an outcome, systematically presenting effect estimates, certainty level, and plain-language conclusions.'}
           </p>
+
+          <div className="bg-purple-50 border border-purple-100 rounded-lg px-3 py-2 mb-4 text-xs text-purple-800 flex items-start gap-2">
+            <span className="text-purple-500 flex-shrink-0">📌</span>
+            <span>
+              {lang === 'zh'
+                ? '當同一個結果指標同時有 RCT 與 NRSI 證據（如：罕見的長期傷害），可在 SoF 表格中以「相鄰兩列」分別呈現，並各自標示確定性等級。優先採用確定性較高的證據來源。'
+                : 'When both RCT and NRSI evidence exist for the same outcome (e.g., rare long-term harms), present them in adjacent rows in the SoF table, each with its own certainty rating. Prioritise the source with higher certainty.'}
+            </span>
+          </div>
 
           <Accordion title={lang === 'zh' ? 'SoF 表格必備欄位' : 'Required SoF Table Columns'} icon="📝" defaultOpen>
             <div className="mt-3 space-y-2">
