@@ -29,8 +29,8 @@ Follow a friendly hamster mascot through the complete EBM workflow — from read
 - 🌐 Bilingual interface (繁體中文 / English)
 - 🐹 Friendly hamster mascot guides you through each step
 - 📖 27 inline teaching blocks covering the full 5A methodology
-- 🧰 8 interactive Toolbox reference guides (PICOT, CASP, Core GRADE, MID, EtD, PubMed Search, SRA, LitSuggest)
-- 🏋️ 72 practice questions across PICOT, CASP, GRADE, and EtD (MC, fill-in-blank, error-spotting)
+- 🧰 9 interactive Toolbox reference guides — covers both RCT and observational SR/MA appraisal (PICOT, CASP-SR for RCTs, CASP-SR for observational studies, Core GRADE, MID, EtD, PubMed Search, SRA, LitSuggest)
+- 🏋️ 87 practice questions across PICOT, CASP (RCT + Obs), GRADE, MID, and EtD (MC, fill-in-blank, error-spotting)
 - 📚 3 fully annotated Case Library entries with real competition data
 - 💾 Auto-save with JSON export/import
 - 📎 Export your work as a presentation

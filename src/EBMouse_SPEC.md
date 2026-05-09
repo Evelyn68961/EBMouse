@@ -200,9 +200,10 @@ EBMouse (EBM 鼠出任務)
 │   ├── PubMed Search Strategy Template ✅ [Acquire] — 3-tab guide (build strategy, 3 databases, search tips)
 │   ├── SRA Keyword Conversion Guide ✅ [Acquire] — 3-tab Polyglot guide (why convert, how to, vocabulary map)
 │   ├── LitSuggest Screening Guide ✅ [Acquire] — 3-tab ML screening guide (what is LitSuggest, workflow, competition use)
-│   ├── CASP-SR Checklist ✅ [Appraise] — 13-question guide with scoring criteria, pitfalls, Kappa + Practice tab
-│   ├── Core GRADE Quick Guide ✅ [Appraise] — 7-tab interactive guide (overview, 5 domains, SoF tables) + practice at bottom of each domain tab
-│   ├── MID Determination Guide ✅ [Appraise] — 5-tab MID guide (what is MID, 4 methods, credibility, use in GRADE, practical guide)
+│   ├── CASP-SR (RCT) Checklist ✅ [Appraise] — 13-question guide for SR/MA of RCTs with scoring criteria, pitfalls, Kappa + Practice tab
+│   ├── CASP-SR (Obs) Checklist ✅ [Appraise] — 10-question guide for SR/MA of observational studies (5 sections A–E, PECOT(S) framework, Newcastle-Ottawa / ROBINS-I/E tools, Yes/No/Can't Tell scoring) + Practice tab
+│   ├── Core GRADE Quick Guide ✅ [Appraise] — 8-tab interactive guide (overview, NRSI/observational, 5 domains, SoF tables) + practice at bottom of each domain tab
+│   ├── MID Determination Guide ✅ [Appraise] — 7-tab MID guide (what is MID, thresholds + 7-category effect-size scale, 4 methods, credibility, imprecision RIS/OIS, worked examples, practice) — based on GRADE Guidance 35
 │   └── Evidence-to-Decision Framework ✅ [Apply] — 5-tab EtD guide (overview, 7 factors, strength, MID & values, presentation) + Practice tab
 │
 └── ℹ️ About (關於)
@@ -603,11 +604,12 @@ ebmouse/
     │   ├── Hamster.jsx              ← SVG hamster mascot (5 moods)
     │   ├── SlidePreview.jsx         ← live preview of generated slides
     │   ├── AiFeedbackPanel.jsx      ← displays AI feedback with loading state
-    │   ├── NumberLine.jsx           ← MID/CI visualization for GRADE
+    │   ├── NumberLine.jsx           ← MID/CI visualization for GRADE (single-axis)
+    │   ├── EffectScale.jsx          ← ✅ 7-category effect-size scale (large/moderate/small benefit | trivial | small/moderate/large harm) per GRADE Guidance 35, with optional CI overlay and threshold-crossing detection
     │   ├── PicoComparisonTable.jsx  ← study vs. case PICO comparison
     │   ├── GradeScorecard.jsx       ← 5-domain summary with color coding
     │   ├── ImageUploader.jsx        ← for forest/funnel plot images
-    │   └── PracticeQuestion.jsx     ← ✅ shared practice question renderer (MC/fill/error, auto-detects PICOT/CASP/GRADE/EtD)
+    │   └── PracticeQuestion.jsx     ← ✅ shared practice question renderer (MC/fill/error, auto-detects PICOT/CASP/GRADE/EtD/MID; CASP keys include Q7-1, Q7-2, Q8, Q9, Q10 for Obs checklist)
     │
     ├── pages/
     │   ├── Home.jsx                 ← maze trail hub + project management
@@ -626,10 +628,11 @@ ebmouse/
     │   │   ├── CaseLibrary.jsx      ← annotated past cases
     │   │   ├── CaseAtropine.jsx     ← 2024 atropine case
     │   │   ├── Toolbox.jsx          ← toolbox index — single-column list ordered by 5A workflow with phase badges
-    │   │   ├── CoreGradeGuide.jsx   ← ✅ Core GRADE 7-tab interactive guide (BMJ 2025)
-    │   │   ├── CaspChecklist.jsx    ← ✅ CASP-SR 13-question reference with scoring guidance + Practice tab
+    │   │   ├── CoreGradeGuide.jsx   ← ✅ Core GRADE 8-tab interactive guide (BMJ 2025) — adds NRSI/observational tab covering ROBINS-I/E, NOS, CLARITY, rating-up criteria
+    │   │   ├── CaspChecklist.jsx    ← ✅ CASP-SR (RCT) 13-question reference with scoring guidance + Practice tab
+    │   │   ├── CaspObsChecklist.jsx ← ✅ CASP-SR (Obs) 10-question reference for SR/MA of observational studies — 5 sections A–E (design / methodology / trustworthy / local / value), 17 cards including sub-parts (Q3a–d, Q5a–b, Q6.1–2, Q7.1–2), Yes/No/Can't Tell scoring, PECOT(S) framework accordion, RCT-vs-Obs differences, NRSI tools (NOS, ROBINS-I/E, CLARITY) + Practice tab
     │   │   ├── EtdFramework.jsx     ← ✅ Evidence-to-Decision 5-tab guide (Core GRADE Paper 7)
-    │   │   ├── MidGuide.jsx         ← ✅ MID Determination 5-tab guide (Carrasco-Labra 2021 + Devji 2020)
+    │   │   ├── MidGuide.jsx         ← ✅ MID Determination 7-tab guide (what is MID, thresholds with 7-category EffectScale, 4 methods, credibility, imprecision OIS/RIS, worked examples, practice) — based on GRADE Guidance 35 + Carrasco-Labra 2021 + Devji 2020 + Jaeschke 1989
     │   │   ├── PicotWorksheet.jsx   ← ✅ PICOT 5-tab guide (5 elements, types, selection, checklist, practice)
     │   │   ├── PubmedSearchGuide.jsx ← ✅ PubMed search strategy 3-tab guide (build, databases, tips)
     │   │   ├── SraGuide.jsx         ← ✅ SRA Polyglot 3-tab guide (why, how, vocabulary map)
@@ -645,16 +648,18 @@ ebmouse/
     └── data/
         ├── teachingContent.js       ← ✅ NEW: 27 bilingual teaching blocks (concept/steps/example/pitfall/checklist)
         ├── cases/                   ← annotated case data (JSON)
-        └── practice/                ← ✅ interactive practice questions (72 total, 9 per section)
-            ├── index.js             ← re-exports all sections as { picot, casp, grade_rob, grade_inconsistency, grade_indirectness, grade_imprecision, grade_pub_bias, etd }
+        └── practice/                ← ✅ interactive practice questions (87 total across 10 sections)
+            ├── index.js             ← re-exports all sections as { picot, casp, casp_obs, mid, grade_rob, grade_inconsistency, grade_indirectness, grade_imprecision, grade_pub_bias, etd }
             ├── picotPractice.js     ← ✅ 9 Qs (3 MC + 3 fill + 3 error)
-            ├── caspPractice.js      ← ✅ 9 Qs (3 MC + 3 fill + 3 error)
+            ├── caspPractice.js      ← ✅ 9 Qs (3 MC + 3 fill + 3 error) — RCT SR/MA
+            ├── caspObsPractice.js   ← ✅ 10 Qs covering Q1–Q10 of CASP-SR (Obs) including Q7-1/Q7-2 sub-parts (6 MC + 3 fill + 1 error)
+            ├── midPractice.js       ← ✅ 5 MC Qs (threshold choice, CI vs MID, double-threshold, baseline-risk dependence, MID credibility)
             ├── gradeRobPractice.js  ← ✅ 9 Qs (3 MC + 3 fill + 3 error)
             ├── gradeInconsistencyPractice.js ← ✅ 9 Qs (3 MC + 3 fill + 3 error)
-            ├── gradeIndirectnessPractice.js  ← 9 Qs (TODO)
-            ├── gradeImprecisionPractice.js   ← 9 Qs (TODO)
-            ├── gradePubBiasPractice.js       ← 9 Qs (TODO)
-            └── etdPractice.js       ← 9 Qs (TODO)
+            ├── gradeIndirectnessPractice.js  ← ✅ 9 Qs (3 MC + 3 fill + 3 error)
+            ├── gradeImprecisionPractice.js   ← ✅ 9 Qs (3 MC + 3 fill + 3 error)
+            ├── gradePubBiasPractice.js       ← ✅ 9 Qs (3 MC + 3 fill + 3 error)
+            └── etdPractice.js       ← ✅ 9 Qs (3 MC + 3 fill + 3 error)
 ```
 
 ### Design
@@ -691,11 +696,12 @@ ebmouse/
   - Case 2: CPM for Post-TKA Rehab (2025, 三練) — 55 slides, 672-line data file. Single GRADE assessment (Low), continuous outcome MID (ROM = 5°, corrected from team's 2° using Silva et al. Syst Rev 2024;13:50 anchor-based MCIC). Conditional recommendation against CPM. Corrections applied: cost data copy-paste errors, conclusion copy-paste, MID value.
   - Case 3: IV Iron for HF + IDA (2025, 二練) — 54 slides, 782-line data file. Single GRADE assessment (Moderate), binary outcome null threshold (OR = 1) + OIS, NNT = 16. Conditional recommendation for IV iron. Corrections applied: slide 8 treatment regimen copy-paste, slide 37 MID copy-paste (atropine SE → null threshold for binary OR), slide 5 typo, slide 25 dual Kappa values. Supporting RCT: FAIR-HF2 (Anker et al. JAMA 2025).
   - Shared `CaseDetail.jsx` renderer (946 lines): sticky phase nav, PICOT comparison cards, PRISMA flow, CASP emoji table + collapsible evidence, number line SVG for imprecision, GRADE scorecards, EtD direction bars, cost/benefit-risk tables, NNT display with collapsible derivation. Handles both continuous (MID) and binary (null threshold) outcomes, optional keyOutcome subgroups, optional regimen rows, optional visitCost rows. GRADE heading uses `assessment.label` for generic case support.
-- Reference: Toolbox — all 8 interactive guides built (toolbox complete)
-  - Core GRADE Quick Guide (`/toolbox/core-grade`): 7-tab page covering overview, imprecision (with interactive SVG number-line diagrams), inconsistency, risk of bias, indirectness, publication bias, and SoF tables. Based on BMJ 2025 Core GRADE Papers 1–6 + GRADE Guidelines 6. Bilingual with visual decision flows, domain cards, plain language statement table.
-  - CASP-SR Checklist (`/toolbox/casp-sr`): All 13 questions as expandable cards with color-coded sections (validity/results/applicability), per-question "what to look for" checklists, 3-column scoring guidance (😀/😟/😐), common pitfall callouts, section filter, Cohen's Kappa interpretation table, and Practice tab with 9 interactive questions.
+- Reference: Toolbox — all 9 interactive guides built (toolbox complete; covers both RCT and observational SR/MA)
+  - Core GRADE Quick Guide (`/toolbox/core-grade`): 8-tab page covering overview, NRSI/observational, imprecision (with interactive SVG number-line diagrams), inconsistency, risk of bias, indirectness, publication bias, and SoF tables. Based on BMJ 2025 Core GRADE Papers 1–6 + GRADE Guidelines 6. NRSI tab covers starting point at Low (★★), NRSI tools (NOS, CLARITY, ROBINS-I), case-series rules including harms-only special case, direction-of-bias logic, rate-up criteria (RR>2/<0.5 → +1; RR>5/<0.2 → +2). Cross-references in RoB / Pub Bias / SoF tabs link back to NRSI tab.
+  - CASP-SR (RCT) Checklist (`/toolbox/casp-sr`): All 13 questions as expandable cards with color-coded sections (validity/results/applicability), per-question "what to look for" checklists, 3-column scoring guidance (😀/😟/😐), common pitfall callouts, section filter, Cohen's Kappa interpretation table, and Practice tab with 9 interactive questions.
+  - CASP-SR (Obs) Checklist (`/toolbox/casp-sr-obs`): 10 main questions across 5 colored sections (A Design / B Methodology / C Trustworthy / D Local / E Value), 17 cards including sub-parts (Q3a–d, Q5a–b, Q6.1–2, Q7.1–2). Yes/No/Can't Tell scoring (mirrors official CASP wording for observational checklists). Includes PECOT(S) framework accordion (Population, Exposure, Detection, Comparator, Outcome, Time, Setting), RCT-vs-Obs differences table, NRSI-specific tools (Newcastle-Ottawa, ROBINS-I, ROBINS-E, CLARITY), per-question pitfalls, and Practice tab.
   - Evidence-to-Decision Framework (`/toolbox/etd`): 5-tab page covering overview (4 recommendation categories, 7-step decision flow), 7 EtD factors (3 primary + 4 secondary as expandable cards with questions and impact), strength determination (certainty×strength matrix, strong vs conditional implications, exceptional circumstances), MID & values (why MID matters for EtD, value gradient, 4 methods, WHO COVID-19 value statement examples), and presentation (wording rules, 5-element structure, multilayered format, for-vs-against guidance). Based on Core GRADE Paper 7 (BMJ 2025;389:e083867).
-  - MID Determination Guide (`/toolbox/mid`): 5-tab page covering what MID is (definition, anchor-based vs distribution-based, value gradient table), 4 methods (literature search, clinician experience, patient focus group, panel survey with pros/cons/examples), credibility assessment (5 core criteria + 4 GRC extension criteria with statistics from Carrasco-Labra 2021's 5,324 MID estimates), 3 roles in GRADE (imprecision threshold, inconsistency reference, EtD decision basis), and practical guide (step-by-step workflow, 2024 competition worked example with SE MID = 0.25D derivation, presentation checklist, common mistakes). Based on Core GRADE Papers 2 & 7, Carrasco-Labra et al. (JCE 2021;133:61–71), Devji et al. (BMJ 2020;369:m1714).
+  - MID Determination Guide (`/toolbox/mid`): 7-tab page covering (1) What is MID (definition, value gradient table, anchor-vs-distribution methods, 3 contextualisation approaches: minimally / partially / fully), (2) Thresholds (null-vs-MID decision, plain-language statements table, 7-category EffectScale visualization, three rate-down examples 1/2/3 levels, dual-threshold vasculitis-style example), (3) Methods (4 method cards + reference table for 11 common instruments: VAS, KOOS, WOMAC, Oswestry, SF-36, CRQ, mortality, hospitalization, Cohen's SMD), (4) Credibility (5 core + 4 GRC extension criteria from Carrasco-Labra 2021's 5,324 MID estimates), (5) Imprecision (OIS vs RIS, RIS calculator link to gradepro.org, implausibly large-effect table with RIS thresholds, tocilizumab worked example), (6) Worked Examples (4 examples with EffectScale: myopia atropine, corticosteroids/CAP, vasculitis bidirectional, SGLT-2 risk groups), and (7) Practice (5 MC Qs). Based on GRADE Guidance 35 (J Clin Epidemiol 2022;150:225–242) + Core GRADE Papers 2 & 7 + Carrasco-Labra 2021 + Devji 2020 + Jaeschke 1989.
   - PICOT Worksheet (`/toolbox/picot`): 5-tab page covering 5 elements (P/I/C/O/T as color-coded cards with tips and 2024 atropine worked example), question types (4-type × study design table with treatment-type emphasis for competitions), selection strategy (PICOT-1 vs PICOT-2 side-by-side from 2024 case, 3 selection principles: patient preference → feasibility → evidence availability), quality checklist (per-element color-coded checklist items covering specificity, measurability, scenario alignment), and practice (9 interactive questions).
   - PubMed Search Strategy Template (`/toolbox/pubmed-search`): 3-tab page covering build strategy (3-step PICOT→Boolean with worked example and PubMed Advanced Search workflow), 3 databases (PubMed/Embase/Cochrane strengths comparison), and search tips (Boolean operators quick reference table, common mistakes, MeSH term finding guide).
   - SRA Keyword Conversion Guide (`/toolbox/sra`): 3-tab page covering why convert (different databases use different controlled vocabularies — MeSH vs Emtree vs Cochrane syntax), how to (6-step Polyglot workflow with warnings about Emtree over-indexing), and vocabulary map (cross-database syntax comparison table for subject headings, title, title+abstract, truncation, exact phrase). Based on Clark et al. (JMLA 2020;108:195–207).
@@ -708,20 +714,18 @@ ebmouse/
 - Phase 4 Appraise (7): CASP-SR Q1-Q7 overview, scoring pitfalls, results summary (WMD/CI/forest plot), MID 4-method explanation, Core GRADE 5-domain flowcharts with BMJ 2025 refs, imprecision number-line worked example, GRADE summary calculation
 - Phase 5 Apply (5): CASP Q9 applicability table, benefit-risk method, cost analysis breakdown, EtD 6-dimension framework, patient summary writing
 
-**Practice Question System (72 questions across 8 sections):**
-- Shared renderer: `PracticeQuestion.jsx` — auto-detects question type (PICOT/CASP/GRADE/EtD) from data shape, renders all 3 formats (MC, fill-in-blank, error-spotting). `PracticeSection` convenience wrapper for toolbox page integration.
+**Practice Question System (87 questions across 10 sections):**
+- Shared renderer: `PracticeQuestion.jsx` — auto-detects question type (PICOT/CASP/GRADE/EtD/MID) from data shape, renders all 3 formats (MC, fill-in-blank, error-spotting). `PracticeSection` convenience wrapper for toolbox page integration. CASP keys cover Q1–Q10 plus Q3a–d, Q5a–b, Q6/Q6-1/Q6-2, Q7/Q7-1/Q7-2 sub-parts (RCT + Obs).
 - Source mix: ~60% from 3 existing cases (Atropine/CPM/IV Iron), ~40% new pharmacy scenarios
-- Integration pattern: toolbox pages import from `../../data/practice` and add a Practice tab (PICOT, CASP, EtD) or append practice questions at the bottom of each domain tab (Core GRADE)
-- DONE (36 questions, 4 files): picotPractice.js ✅, caspPractice.js ✅, gradeRobPractice.js ✅, gradeInconsistencyPractice.js ✅
-- TODO (36 questions, 4 files): gradeIndirectnessPractice.js, gradeImprecisionPractice.js, gradePubBiasPractice.js, etdPractice.js
-- TODO (integration): index.js re-export, CoreGradeGuide practice at bottom of domain tabs, EtdFramework Practice tab
+- Integration pattern: toolbox pages import from `../../data/practice` and add a Practice tab (PICOT, CASP-RCT, CASP-Obs, MID, EtD) or append practice questions at the bottom of each domain tab (Core GRADE)
+- DONE (87 questions, 10 files): picotPractice.js ✅ (9), caspPractice.js ✅ (9 RCT), caspObsPractice.js ✅ (10 Obs), midPractice.js ✅ (5), gradeRobPractice.js ✅ (9), gradeInconsistencyPractice.js ✅ (9), gradeIndirectnessPractice.js ✅ (9), gradeImprecisionPractice.js ✅ (9), gradePubBiasPractice.js ✅ (9), etdPractice.js ✅ (9)
 
 **Not yet built:**
 - AI integration (users complete workflow without AI feedback)
 - PPTX generation via PptxGenJS
 - 1-page summary and GRADE table generators
 - Reference: Roadmap guide (standalone educational content pages)
-- Toolbox: ✅ COMPLETE — all 8 interactive reference guides built
+- Toolbox: ✅ COMPLETE — all 9 interactive reference guides built (RCT + Obs SR/MA coverage)
 
 ### Phase 2 — AI + Output Generation (Target: next)
 
@@ -738,10 +742,10 @@ ebmouse/
 **Add:**
 - Supabase migration for persistence + team collaboration
 - New competition cases added yearly to Case Library
-- Practice mode: remaining 4 data files (indirectness, imprecision, pub bias, EtD) + CoreGradeGuide/EtdFramework integration
 - Search Strategy Workshop (Module 2.2 from original spec)
 - Analytics: track where users spend most time / get stuck
 - Public sharing: anonymized project export for other hospital teams
+- Add an observational case study to Case Library to complement the new CASP-Obs / NRSI Core GRADE content
 
 ---
 
@@ -778,7 +782,25 @@ ebmouse/
 
 ### CASP
 
-- CASP Systematic Review Checklist (2024 version)
+- CASP Systematic Review Checklist (RCT version, 2024) — 13 questions
+- CASP Systematic Review of Observational Studies Checklist — 10 questions, Yes / No / Can't Tell scoring
+- CASP Cohort Study Checklist
+- CASP Cross-Sectional Study Checklist
+
+### NRSI Risk-of-Bias Tools
+
+- Newcastle-Ottawa Scale (NOS) — for cohort and case-control studies
+- ROBINS-I (Risk Of Bias In Non-randomised Studies — of Interventions). Sterne JAC et al. *BMJ.* 2016;355:i4919.
+- ROBINS-E (Risk Of Bias In Non-randomised Studies — of Exposures). Higgins JPT et al. 2024.
+- CLARITY Group RoB tools (McMaster) — observational cohort / case-control prognosis & exposure tools
+
+### MID / Imprecision
+
+- Jaeschke R, Singer J, Guyatt GH. Measurement of health status: ascertaining the minimal clinically important difference. *Control Clin Trials.* 1989;10(4):407–15. (Original MID concept; CRQ small/moderate/large = 0.5/1.0/1.5)
+- GRADE Guidance 35 — Zeng L, Brignardello-Petersen R, Hultcrantz M, et al. GRADE guidance 34: update on rating the certainty of an effect estimate due to imprecision using a contextualised approach. *J Clin Epidemiol.* 2022;150:225–242. (7-category effect-size scale, RIS, rate-down 1/2/3 levels)
+- Carrasco-Labra A, Devji T, Qasim A, et al. Minimal important difference estimates for patient-reported outcomes: a systematic survey. *J Clin Epidemiol.* 2021;133:61–71. (5,324 MID estimates across 338 PROs)
+- Devji T, Carrasco-Labra A, Qasim A, et al. Evaluating the credibility of anchor-based estimates of minimal important differences for patient-reported outcomes: instrument development and reliability study. *BMJ.* 2020;369:m1714. (5 core + 4 GRC criteria)
+- Cohen J. *Statistical Power Analysis for the Behavioral Sciences* (1988) — SMD thresholds 0.2 / 0.5 / 0.8
 
 ### Competition-Specific
 
