@@ -805,6 +805,29 @@ export default function CoreGradeGuide() {
               : 'Inconsistency = unexplained variability in results across studies that could lead to different clinical decisions.'}
           </p>
 
+          <div className="bg-amber-50 border border-amber-200 rounded-lg p-3 mb-4">
+            <p className="text-xs font-bold text-amber-800 mb-2">
+              {lang === 'zh' ? '⚠️ 關鍵區分：Heterogeneity ≠ Inconsistency' : '⚠️ Key Distinction: Heterogeneity ≠ Inconsistency'}
+            </p>
+            <ul className="text-xs text-amber-700 leading-relaxed space-y-1 list-disc list-inside">
+              <li>
+                {lang === 'zh'
+                  ? 'Heterogeneity = 統計上的變異 (statistical phenomenon)'
+                  : 'Heterogeneity = the statistical phenomenon'}
+              </li>
+              <li>
+                {lang === 'zh'
+                  ? 'Inconsistency = GRADE 對「heterogeneity 是否影響 certainty」的概念判斷'
+                  : 'Inconsistency = the GRADE judgment about whether heterogeneity affects certainty'}
+              </li>
+              <li>
+                {lang === 'zh'
+                  ? '兩者相關但不等同 — 高 I² 不必然導致 inconsistency rate-down'
+                  : 'Related but not equivalent — high I² does not automatically warrant a rate-down for inconsistency'}
+              </li>
+            </ul>
+          </div>
+
           <Accordion title={lang === 'zh' ? '二元結果看相對效果，連續結果看絕對效果' : 'Binary: Relative Effects; Continuous: Absolute Effects'} icon="📐" defaultOpen>
             <div className="mt-3 grid grid-cols-1 sm:grid-cols-2 gap-3">
               <div className="rounded-lg border p-3">
@@ -844,7 +867,24 @@ export default function CoreGradeGuide() {
                   <p className="text-xs text-gray-600 mt-1 leading-relaxed">{lang === 'zh' ? descZh : descEn}</p>
                 </div>
               ))}
+              <div className="bg-teal-50 border border-teal-200 rounded-lg p-3 mt-2">
+                <p className="text-xs text-teal-800 leading-relaxed">
+                  <span className="font-bold">{lang === 'zh' ? '⚠️ 重要原則：' : '⚠️ Important principle: '}</span>
+                  {lang === 'zh'
+                    ? '即使 Criterion ① 滿足（PEs 差異大），若 CIs 大幅重疊（Criterion ② 否定）且 I² 低（e.g., 0%）→ 表示 PE 差異純粹是 sampling error，不下調。'
+                    : 'Even if Criterion ① is met (large PE spread), if CIs overlap substantially (Criterion ② is negative) AND I² is low (e.g., 0%) → the PE spread is pure sampling error → do not rate down.'}
+                </p>
+              </div>
             </div>
+          </Accordion>
+
+          <Accordion title={lang === 'zh' ? '決策流程 (Decision Flowchart)' : 'Decision Flowchart'} icon="🗺️">
+            <StepFlow lang={lang} steps={[
+              { zh: '研究數 ≥ 2？否 → 跳過此 domain，無法評估', en: 'Studies ≥ 2? If no → skip this domain (cannot assess)' },
+              { zh: 'PEs 差異大 且 CIs 重疊不足？否 → 不下調', en: 'PEs differ substantially AND CIs fail to overlap? If no → do not rate down' },
+              { zh: 'PEs 多數落在 threshold 同側？是 → 不下調', en: 'PEs mostly on the same side of threshold? If yes → do not rate down' },
+              { zh: 'A priori 子族群假設可解釋差異？是 → 分開呈現各 subgroup [用 ICEMAN 評估可信度]；否 → 下調 1 級', en: 'A priori subgroup hypothesis explains it? If yes → present subgroups separately [use ICEMAN]; if no → rate down 1 level' },
+            ]} />
           </Accordion>
 
           <Accordion title={lang === 'zh' ? 'I² 統計量：謹慎使用' : 'I² Statistic: Use with Caution'} icon="📉">
@@ -868,11 +908,33 @@ export default function CoreGradeGuide() {
                   <span className="text-xs text-gray-600">{lang === 'zh' ? '可能有嚴重問題，但不能只看數字' : 'May be serious, but don\'t rely on the number alone'}</span>
                 </div>
               </div>
-              <div className="bg-amber-50 rounded-lg p-3 mt-3">
-                <p className="text-xs text-amber-800">
+              <div className="bg-amber-50 rounded-lg p-3 mt-3 space-y-2">
+                <p className="text-xs font-bold text-amber-800">
+                  {lang === 'zh' ? '⚠️ I² 的兩個陷阱：' : '⚠️ Two pitfalls of I²:'}
+                </p>
+                <ol className="text-xs text-amber-800 list-decimal list-inside space-y-1">
+                  <li>
+                    {lang === 'zh'
+                      ? '個別研究 CI 很窄 → I² 會被人為灌高 (artificially inflated)，不一定代表真實異質性'
+                      : 'Narrow individual CIs artificially inflate I² — high I² does not always mean true heterogeneity'}
+                  </li>
+                  <li>
+                    {lang === 'zh'
+                      ? 'PEs 多數落在 threshold 同側 → I² 再高也不太重要'
+                      : 'If PEs mostly lie on the same side of the threshold → high I² is not particularly important'}
+                  </li>
+                </ol>
+                <div className="bg-white/60 rounded p-2 mt-2">
+                  <p className="text-xs text-amber-900">
+                    <span className="font-bold">{lang === 'zh' ? '📌 經典範例（Karlsen 2017，膝關節術後疼痛）：' : '📌 Classic example (Karlsen 2017, post-knee-surgery pain):'}</span>
+                    {' '}
+                    {lang === 'zh' ? 'I² = 95% 但 12/13 研究都在 null 同側 → 不下調' : 'I² = 95% but 12 of 13 studies on the same side of null → do not rate down'}
+                  </p>
+                </div>
+                <p className="text-xs text-amber-800 italic">
                   {lang === 'zh'
-                    ? '⚠️ 如果研究精確度很高（CI 窄），即使點估計值都在閾值同一側，I² 也可能很高。此時不一定需要扣分。永遠以視覺判斷為主。'
-                    : '⚠️ If studies are very precise (narrow CIs), I² can be high even when all point estimates are on the same side of the threshold. Don\'t downgrade based on I² alone.'}
+                    ? '💡 下調 2 級在 inconsistency 極罕見（Core GRADE 3 §3.6），實務上通常下調 1 級即可。'
+                    : '💡 Rate-down by 2 levels is extremely rare for inconsistency (Core GRADE 3 §3.6); in practice, 1 level is the usual choice.'}
                 </p>
               </div>
             </div>
@@ -893,6 +955,77 @@ export default function CoreGradeGuide() {
               ]} />
             </div>
           </Accordion>
+
+          <Accordion title={lang === 'zh' ? '常見陷阱 (Common Pitfalls)' : 'Common Pitfalls'} icon="🚧">
+            <div className="mt-3 overflow-x-auto">
+              <table className="w-full text-xs border-collapse">
+                <thead>
+                  <tr style={{ background: C.tealLight }}>
+                    <th className="text-left px-3 py-2 font-semibold text-teal-800 border border-teal-200 w-1/2">{lang === 'zh' ? '陷阱' : 'Pitfall'}</th>
+                    <th className="text-left px-3 py-2 font-semibold text-teal-800 border border-teal-200">{lang === 'zh' ? '正確處理' : 'Correct handling'}</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {[
+                    { pZh: '看到 I² 高就下調', pEn: 'Downgrading on high I² alone',
+                      fZh: '還要看 PE 相對 threshold 位置 + 個別 CI 寬度', fEn: 'Also check PE position vs threshold + individual CI widths' },
+                    { pZh: '看到 PE 差異就下調', pEn: 'Downgrading on PE spread alone',
+                      fZh: '還要看 CIs 是否重疊', fEn: 'Also check whether CIs overlap' },
+                    { pZh: '看到一個 outlier 就下調', pEn: 'Downgrading because of a single outlier',
+                      fZh: '看其權重與 CI 寬度；sparse-data 雜訊 ≠ inconsistency', fEn: 'Check its weight and CI width; sparse-data noise ≠ inconsistency' },
+                    { pZh: '用 absolute effect 評 binary inconsistency', pEn: 'Assessing binary inconsistency via absolute effect',
+                      fZh: 'Binary outcomes 應看 relative effect (RR/OR)', fEn: 'Binary outcomes → use relative effect (RR/OR)' },
+                    { pZh: 'Subgroup effect 沒檢驗 credibility 就下結論', pEn: 'Concluding a subgroup effect without credibility check',
+                      fZh: '必須用 ICEMAN 評 credibility', fEn: 'Must assess credibility via ICEMAN' },
+                    { pZh: 'Inconsistency 下調 2 級', pEn: 'Rate-down 2 levels for inconsistency',
+                      fZh: '極罕見，通常只下調 1 級', fEn: 'Extremely rare; usually 1 level only' },
+                    { pZh: '只有 1 篇研究時還評 inconsistency', pEn: 'Assessing inconsistency with only 1 study',
+                      fZh: '無法評估，直接跳過此 domain', fEn: 'Cannot be assessed; skip this domain entirely' },
+                  ].map(({ pZh, pEn, fZh, fEn }, i) => (
+                    <tr key={i} className="hover:bg-gray-50">
+                      <td className="px-3 py-2 border border-gray-200 text-gray-700">❌ {lang === 'zh' ? pZh : pEn}</td>
+                      <td className="px-3 py-2 border border-gray-200 text-gray-600">✅ {lang === 'zh' ? fZh : fEn}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </Accordion>
+
+          <Accordion title={lang === 'zh' ? '與其他 domain 區別 (vs Other Domains)' : 'vs Other Domains'} icon="🔀">
+            <div className="mt-3 overflow-x-auto">
+              <table className="w-full text-xs border-collapse">
+                <thead>
+                  <tr style={{ background: C.tealLight }}>
+                    <th className="text-left px-3 py-2 font-semibold text-teal-800 border border-teal-200">{lang === 'zh' ? 'Domain' : 'Domain'}</th>
+                    <th className="text-left px-3 py-2 font-semibold text-teal-800 border border-teal-200">{lang === 'zh' ? '核心問題' : 'Core question'}</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr className="bg-teal-50">
+                    <td className="px-3 py-2 border border-gray-200 font-bold text-teal-800">{lang === 'zh' ? 'Inconsistency (本 domain)' : 'Inconsistency (this domain)'}</td>
+                    <td className="px-3 py-2 border border-gray-200 text-gray-700">{lang === 'zh' ? '跨研究間 unexplained variability' : 'Unexplained variability across studies'}</td>
+                  </tr>
+                  {[
+                    { dZh: 'Imprecision', dEn: 'Imprecision',
+                      qZh: '單一 pooled estimate 的 CI 寬度與 threshold 關係', qEn: 'Width of the single pooled CI vs threshold' },
+                    { dZh: 'Indirectness', dEn: 'Indirectness',
+                      qZh: 'Target PICO 與 Study PICO 的 mismatch', qEn: 'Target PICO vs Study PICO mismatch' },
+                    { dZh: 'Risk of bias', dEn: 'Risk of bias',
+                      qZh: '個別研究的設計/執行問題', qEn: 'Flaws in individual study design / conduct' },
+                    { dZh: 'Publication bias', dEn: 'Publication bias',
+                      qZh: '未發表研究造成的系統性偏倚', qEn: 'Systematic bias from unpublished studies' },
+                  ].map(({ dZh, dEn, qZh, qEn }, i) => (
+                    <tr key={i} className="hover:bg-gray-50">
+                      <td className="px-3 py-2 border border-gray-200 font-medium">{lang === 'zh' ? dZh : dEn}</td>
+                      <td className="px-3 py-2 border border-gray-200 text-gray-600">{lang === 'zh' ? qZh : qEn}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </Accordion>
+
           <div className="mt-8 pt-6 border-t border-gray-200">
             <PracticeSection questions={practiceQuestions.grade_inconsistency} title={{ zh: '不一致性 練習題', en: 'Inconsistency Practice' }} />
           </div>
