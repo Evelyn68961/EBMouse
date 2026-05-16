@@ -653,6 +653,50 @@ export default function CoreGradeGuide() {
               : 'Core question: How wide is the plausible range of the effect estimate? Can we be sure the effect is meaningful or trivial?'}
           </p>
 
+          <div className="bg-amber-50 border border-amber-200 rounded-lg p-3 mb-4">
+            <p className="text-xs font-bold text-amber-800 mb-2">
+              {lang === 'zh' ? '⚠️ 核心觀念' : '⚠️ Core Concept'}
+            </p>
+            <ul className="text-xs text-amber-700 leading-relaxed space-y-1 list-disc list-inside">
+              <li>
+                {lang === 'zh'
+                  ? 'Imprecision 看的是「單一 pooled estimate」的 CI 寬度'
+                  : 'Imprecision concerns the CI width of a SINGLE pooled estimate'}
+              </li>
+              <li>
+                {lang === 'zh'
+                  ? '關鍵問題：CI 兩端 (lower & upper) 會導致「相同」還是「不同」的臨床決策？'
+                  : 'Key question: do the two ends of the CI (lower & upper) lead to the SAME or DIFFERENT clinical decisions?'}
+              </li>
+              <li>
+                {lang === 'zh'
+                  ? '若兩端決策一致 → CI 已夠精確，不下調'
+                  : 'If both ends agree on the decision → CI is precise enough; do not rate down'}
+              </li>
+            </ul>
+          </div>
+
+          <Accordion title={lang === 'zh' ? '評估對象：Binary 看 Relative，Continuous 看 Absolute' : 'What to Look At: Binary → Relative; Continuous → Absolute'} icon="📐" defaultOpen>
+            <div className="mt-3 grid grid-cols-1 sm:grid-cols-2 gap-3">
+              <div className="rounded-lg border p-3">
+                <p className="text-sm font-bold text-gray-800 mb-1">{lang === 'zh' ? '二元結果 (Binary)' : 'Binary Outcomes'}</p>
+                <p className="text-xs text-gray-600 leading-relaxed">
+                  {lang === 'zh'
+                    ? '看 RR / OR / HR 的 95% CI。相對效果跨族群一致，且 baseline risk 可換算成 absolute effect。'
+                    : 'Use the 95% CI of the relative effect (RR/OR/HR). Relative effects are consistent across baseline risks; absolute effects can be derived.'}
+                </p>
+              </div>
+              <div className="rounded-lg border p-3">
+                <p className="text-sm font-bold text-gray-800 mb-1">{lang === 'zh' ? '連續型結果 (Continuous)' : 'Continuous Outcomes'}</p>
+                <p className="text-xs text-gray-600 leading-relaxed">
+                  {lang === 'zh'
+                    ? '看 mean difference (MD) 的 95% CI。連續結果不換算成 relative effect。'
+                    : 'Use the 95% CI of the mean difference (MD). Continuous outcomes are not converted to relative effects.'}
+                </p>
+              </div>
+            </div>
+          </Accordion>
+
           {/* Step 1: Choose threshold */}
           <Accordion title={lang === 'zh' ? 'Step 1：選擇閾值（Null 或 MID）' : 'Step 1: Choose Threshold (Null or MID)'} icon="1️⃣" defaultOpen>
             <div className="mt-3 grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -728,6 +772,64 @@ export default function CoreGradeGuide() {
                     : 'Point estimate (0.54) and CI lower bound (0.43) both > MID → CI does not cross MID → no downgrade.'}
                 </p>
               </div>
+
+              <div className="bg-teal-50 border border-teal-200 rounded-lg p-3 mt-3">
+                <p className="text-xs text-teal-800 leading-relaxed">
+                  <span className="font-bold">{lang === 'zh' ? '⚠️ 重要原則：' : '⚠️ Important principle: '}</span>
+                  {lang === 'zh'
+                    ? 'CI 兩端的臨床決策「相同」→ 不下調，即便 CI 看似較寬；CI 兩端決策「不同」→ 下調，即便 CI 看似較窄。'
+                    : 'If both ends of the CI lead to the SAME clinical decision → do not rate down, even if the CI looks wide. If the two ends lead to DIFFERENT decisions → rate down, even if the CI looks narrow.'}
+                </p>
+              </div>
+            </div>
+          </Accordion>
+
+          <Accordion title={lang === 'zh' ? 'CI Ratio 快速法則 (Schünemann)' : 'CI Ratio Quick Rule (Schünemann)'} icon="📏">
+            <div className="mt-3">
+              <p className="text-sm text-gray-600 leading-relaxed mb-3">
+                {lang === 'zh'
+                  ? 'CI 寬度的快速量化：CI ratio = upper bound / lower bound。提供 at-a-glance 的精確度感覺。'
+                  : 'A quick way to quantify CI width: CI ratio = upper bound / lower bound. Useful at-a-glance precision check.'}
+              </p>
+              <div className="overflow-x-auto">
+                <table className="w-full text-xs border-collapse">
+                  <thead>
+                    <tr style={{ background: C.tealLight }}>
+                      <th className="text-left px-3 py-2 font-semibold text-teal-800 border border-teal-200">{lang === 'zh' ? 'CI ratio' : 'CI ratio'}</th>
+                      <th className="text-left px-3 py-2 font-semibold text-teal-800 border border-teal-200">{lang === 'zh' ? '判讀' : 'Interpretation'}</th>
+                      <th className="text-left px-3 py-2 font-semibold text-teal-800 border border-teal-200">{lang === 'zh' ? '行動' : 'Action'}</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {[
+                      { ratio: '≤ 2.5', interpZh: '緊 / Narrow', interpEn: 'Narrow', actZh: '支持不下調', actEn: 'Supports no downgrade' },
+                      { ratio: '2.5 – 3.0', interpZh: '灰色地帶 / Grey zone', interpEn: 'Grey zone', actZh: '視 threshold 位置而定', actEn: 'Depends on threshold position' },
+                      { ratio: '> 3', interpZh: '寬 / Wide', interpEn: 'Wide', actZh: '仔細審視兩端決策差異', actEn: 'Scrutinize the two-end decisions' },
+                    ].map(({ ratio, interpZh, interpEn, actZh, actEn }, i) => (
+                      <tr key={i} className="hover:bg-gray-50">
+                        <td className="px-3 py-2 border border-gray-200 font-mono font-medium">{ratio}</td>
+                        <td className="px-3 py-2 border border-gray-200 text-gray-700">{lang === 'zh' ? interpZh : interpEn}</td>
+                        <td className="px-3 py-2 border border-gray-200 text-gray-600">{lang === 'zh' ? actZh : actEn}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+              <div className="bg-gray-50 rounded-lg p-3 mt-3">
+                <p className="text-xs font-bold text-gray-700 mb-2">{lang === 'zh' ? '範例 (Worked numbers)' : 'Worked numbers'}</p>
+                <ul className="text-xs text-gray-600 leading-relaxed space-y-1 list-disc list-inside">
+                  <li>RR 0.72 [0.60, 0.86] → 0.86 / 0.60 = <span className="font-mono font-bold">1.43</span> {lang === 'zh' ? '(緊)' : '(narrow)'}</li>
+                  <li>RR 0.36 [0.23, 0.56] → 0.56 / 0.23 = <span className="font-mono font-bold">2.43</span> {lang === 'zh' ? '(尚屬 moderate)' : '(moderate)'}</li>
+                  <li>RR 1.10 [0.50, 2.40] → 2.40 / 0.50 = <span className="font-mono font-bold">4.80</span> {lang === 'zh' ? '(寬)' : '(wide)'}</li>
+                </ul>
+              </div>
+              <div className="bg-amber-50 rounded-lg p-3 mt-2">
+                <p className="text-xs text-amber-800">
+                  {lang === 'zh'
+                    ? '💡 CI ratio 是輔助工具，最終仍應看「CI 兩端臨床決策是否一致」。'
+                    : '💡 CI ratio is a helper; the final call still rests on whether both ends of the CI lead to the same clinical decision.'}
+                </p>
+              </div>
             </div>
           </Accordion>
 
@@ -755,6 +857,16 @@ export default function CoreGradeGuide() {
           {/* OIS */}
           <Accordion title={lang === 'zh' ? 'OIS：效果大但樣本小時的額外檢查' : 'OIS: Extra Check for Large Effects with Small Samples'} icon="🔢">
             <div className="mt-3">
+              <div className="bg-teal-50 border border-teal-200 rounded-lg p-3 mb-3">
+                <p className="text-xs font-bold text-teal-800 mb-1">
+                  {lang === 'zh' ? '💡 Core GRADE 4 §4.3 重點' : '💡 Core GRADE 4 §4.3 Key Point'}
+                </p>
+                <p className="text-xs text-teal-700 leading-relaxed">
+                  {lang === 'zh'
+                    ? 'OIS 是「次要工具 (secondary tool)」。當 CI 已不跨越 threshold 且兩端決策一致時，通常「不需要計算 OIS」。OIS 主要用於判斷「需要多少樣本才能得到精確結論」——若已有精確 CI，OIS 不必要。'
+                    : 'OIS is a SECONDARY tool. When the CI already lies on one side of the threshold and both ends agree on the decision, OIS calculation is usually NOT required. OIS exists to estimate how many subjects are needed for a precise conclusion — if your CI is already precise, OIS is unnecessary.'}
+                </p>
+              </div>
               <p className="text-sm text-gray-600 leading-relaxed mb-3">
                 {lang === 'zh'
                   ? '即使 CI 看起來很窄，如果效果量很大但事件數很少，結果可能是脆弱的。此時需要計算 OIS（Optimal Information Size）。'
@@ -785,6 +897,77 @@ export default function CoreGradeGuide() {
               { zh: 'OIS 通過 → 不扣分。OIS 未通過 → 扣 1 分。', en: 'OIS met → no downgrade. OIS not met → downgrade 1.' },
             ]} />
           </Accordion>
+
+          <Accordion title={lang === 'zh' ? '常見陷阱 (Common Pitfalls)' : 'Common Pitfalls'} icon="🚧">
+            <div className="mt-3 overflow-x-auto">
+              <table className="w-full text-xs border-collapse">
+                <thead>
+                  <tr style={{ background: C.tealLight }}>
+                    <th className="text-left px-3 py-2 font-semibold text-teal-800 border border-teal-200 w-1/2">{lang === 'zh' ? '陷阱' : 'Pitfall'}</th>
+                    <th className="text-left px-3 py-2 font-semibold text-teal-800 border border-teal-200">{lang === 'zh' ? '正確處理' : 'Correct handling'}</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {[
+                    { pZh: '看到事件數少就下調', pEn: 'Downgrading on low event count alone',
+                      fZh: '先看 CI vs threshold；事件數是次要', fEn: 'First check CI vs threshold; event count is secondary' },
+                    { pZh: '強行計算 OIS', pEn: 'Forcing an OIS calculation',
+                      fZh: 'CI 兩端決策一致時不需 OIS', fEn: 'OIS is unnecessary when both ends agree on the decision' },
+                    { pZh: 'CI 跨 null 就下調 2 級', pEn: 'Downgrading 2 levels just because CI crosses null',
+                      fZh: '還要看兩端是否分別示 benefit vs harm', fEn: 'Also check whether the two ends span benefit vs harm' },
+                    { pZh: '用 P-value 取代 CI 判讀', pEn: 'Using P-value instead of CI interpretation',
+                      fZh: 'Core GRADE 強調 CI > P-value', fEn: 'Core GRADE prioritizes CI over P-value' },
+                    { pZh: '把 inconsistency 混入 imprecision', pEn: 'Confounding inconsistency with imprecision',
+                      fZh: 'Random-effects pooling 已分離兩者', fEn: 'Random-effects pooling already separates them' },
+                    { pZh: '只看 lower bound', pEn: 'Looking only at the lower bound',
+                      fZh: '必須同時看 upper bound 的臨床意涵', fEn: 'Must also examine the clinical meaning of the upper bound' },
+                    { pZh: '看到 CI ratio > 3 立刻下調', pEn: 'Downgrading immediately when CI ratio > 3',
+                      fZh: 'Ratio 只是提示，仍要看 threshold 位置', fEn: 'Ratio is only a hint; check threshold position' },
+                  ].map(({ pZh, pEn, fZh, fEn }, i) => (
+                    <tr key={i} className="hover:bg-gray-50">
+                      <td className="px-3 py-2 border border-gray-200 text-gray-700">❌ {lang === 'zh' ? pZh : pEn}</td>
+                      <td className="px-3 py-2 border border-gray-200 text-gray-600">✅ {lang === 'zh' ? fZh : fEn}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </Accordion>
+
+          <Accordion title={lang === 'zh' ? '與其他 domain 區別 (vs Other Domains)' : 'vs Other Domains'} icon="🔀">
+            <div className="mt-3 overflow-x-auto">
+              <table className="w-full text-xs border-collapse">
+                <thead>
+                  <tr style={{ background: C.tealLight }}>
+                    <th className="text-left px-3 py-2 font-semibold text-teal-800 border border-teal-200">{lang === 'zh' ? 'Domain' : 'Domain'}</th>
+                    <th className="text-left px-3 py-2 font-semibold text-teal-800 border border-teal-200">{lang === 'zh' ? '核心問題' : 'Core question'}</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr className="bg-teal-50">
+                    <td className="px-3 py-2 border border-gray-200 font-bold text-teal-800">{lang === 'zh' ? 'Imprecision (本 domain)' : 'Imprecision (this domain)'}</td>
+                    <td className="px-3 py-2 border border-gray-200 text-gray-700">{lang === 'zh' ? '單一 pooled estimate 的 CI 寬度與 threshold 關係' : 'Width of the single pooled CI vs threshold'}</td>
+                  </tr>
+                  {[
+                    { dZh: 'Inconsistency', dEn: 'Inconsistency',
+                      qZh: '跨研究間 unexplained variability', qEn: 'Unexplained variability across studies' },
+                    { dZh: 'Indirectness', dEn: 'Indirectness',
+                      qZh: 'Target PICO 與 Study PICO 的 mismatch', qEn: 'Target PICO vs Study PICO mismatch' },
+                    { dZh: 'Risk of bias', dEn: 'Risk of bias',
+                      qZh: '個別研究的設計/執行問題', qEn: 'Flaws in individual study design / conduct' },
+                    { dZh: 'Publication bias', dEn: 'Publication bias',
+                      qZh: '未發表研究造成的系統性偏倚', qEn: 'Systematic bias from unpublished studies' },
+                  ].map(({ dZh, dEn, qZh, qEn }, i) => (
+                    <tr key={i} className="hover:bg-gray-50">
+                      <td className="px-3 py-2 border border-gray-200 font-medium">{lang === 'zh' ? dZh : dEn}</td>
+                      <td className="px-3 py-2 border border-gray-200 text-gray-600">{lang === 'zh' ? qZh : qEn}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </Accordion>
+
           <div className="mt-8 pt-6 border-t border-gray-200">
             <PracticeSection questions={practiceQuestions.grade_imprecision} title={{ zh: '不精確性 練習題', en: 'Imprecision Practice' }} />
           </div>
