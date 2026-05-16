@@ -1467,12 +1467,35 @@ export default function CoreGradeGuide() {
               : 'Indirectness = the best available evidence\'s PICO doesn\'t fully match our target PICO.'}
           </p>
 
-          <Accordion title={lang === 'zh' ? '四個 PICO 元素逐項比較' : 'Compare Each PICO Element'} icon="🔎" defaultOpen>
+          <div className="bg-amber-50 border border-amber-200 rounded-lg p-3 mb-4">
+            <p className="text-xs font-bold text-amber-800 mb-2">
+              {lang === 'zh' ? '⚠️ 核心觀念' : '⚠️ Core Concept'}
+            </p>
+            <ul className="text-xs text-amber-700 leading-relaxed space-y-1 list-disc list-inside">
+              <li>
+                {lang === 'zh'
+                  ? 'Indirectness 看的是「target PICO vs study PICO 的 mismatch」，不是研究品質'
+                  : 'Indirectness is about target-PICO vs study-PICO mismatch — not study quality'}
+              </li>
+              <li>
+                {lang === 'zh'
+                  ? '即使研究品質完美 (low RoB)，若 PICO 不匹配仍應下調 indirectness'
+                  : 'Even with perfect study quality (low RoB), PICO mismatch warrants rate-down for indirectness'}
+              </li>
+              <li>
+                {lang === 'zh'
+                  ? '評估四個 PICO 元素 + Setting（地理、醫療體系、時代）逐一比對'
+                  : 'Assess the four PICO elements + Setting (geography, healthcare system, era), element by element'}
+              </li>
+            </ul>
+          </div>
+
+          <Accordion title={lang === 'zh' ? 'PICO + Setting 五個元素逐項比較' : 'Compare Each PICO + Setting Element'} icon="🔎" defaultOpen>
             <div className="mt-3 overflow-x-auto">
               <table className="w-full text-xs border-collapse">
                 <thead>
                   <tr style={{ background: C.tealLight }}>
-                    <th className="text-left px-3 py-2 font-semibold text-teal-800 border border-teal-200">PICO</th>
+                    <th className="text-left px-3 py-2 font-semibold text-teal-800 border border-teal-200">PICO+</th>
                     <th className="text-left px-3 py-2 font-semibold text-teal-800 border border-teal-200">{lang === 'zh' ? '常見問題' : 'Common Issues'}</th>
                     <th className="text-left px-3 py-2 font-semibold text-teal-800 border border-teal-200">{lang === 'zh' ? '扣分可能性' : 'Likelihood of Downgrading'}</th>
                   </tr>
@@ -1483,6 +1506,7 @@ export default function CoreGradeGuide() {
                     { pico: 'I', issueZh: '劑量/療程不同、依從性低、技術演進', issueEn: 'Dose/duration differences, non-adherence, technology evolution', likeZh: '中等（取決於生物學合理性和差異大小）', likeEn: 'Moderate (depends on biology and magnitude)' },
                     { pico: 'C', issueZh: '用安慰劑而非活性對照、次優對照組', issueEn: 'Placebo instead of active comparator, suboptimal control', likeZh: '高（企業贊助研究常選用次優對照）', likeEn: 'High (industry trials often use suboptimal comparators)' },
                     { pico: 'O', issueZh: '替代結果指標（surrogates）、追蹤時間不同', issueEn: 'Surrogate outcomes, different follow-up duration', likeZh: '高（替代指標常令人失望）', likeEn: 'High (surrogates frequently disappoint)' },
+                    { pico: 'Setting', issueZh: '地理差異、醫療體系、護病比、文化、時代', issueEn: 'Geography, healthcare system, nurse:patient ratio, culture, era', likeZh: '通常 minor（若核心臨床原則跨文化一致）', likeEn: 'Usually minor (if core clinical principles are cross-cultural)' },
                   ].map(({ pico, issueZh, issueEn, likeZh, likeEn }) => (
                     <tr key={pico} className="hover:bg-gray-50">
                       <td className="px-3 py-2 border border-gray-200 font-bold text-teal-700">{pico}</td>
@@ -1493,6 +1517,15 @@ export default function CoreGradeGuide() {
                 </tbody>
               </table>
             </div>
+          </Accordion>
+
+          <Accordion title={lang === 'zh' ? '決策流程 (Decision Flowchart)' : 'Decision Flowchart'} icon="🗺️">
+            <StepFlow lang={lang} steps={[
+              { zh: 'Step 1：逐一比對 target vs study 的 P / I / C / O / Setting', en: 'Step 1: Compare target vs study P / I / C / O / Setting element by element' },
+              { zh: 'Step 2：任何元素存在「臨床上重要的 mismatch」？否 → 不下調', en: 'Step 2: Any element with clinically important mismatch? If no → do not rate down' },
+              { zh: 'Step 3：此 mismatch 是否「合理可能影響效果」？否 → 不下調或下調 1 級', en: 'Step 3: Is this mismatch plausibly able to alter the effect? If no → no downgrade or downgrade 1 level' },
+              { zh: 'Step 4：Mismatch 嚴重程度？中度 → 下調 1 級；嚴重 (e.g., 兒科證據用於成人) → 下調 2 級（罕見）', en: 'Step 4: Severity of mismatch? Moderate → rate down 1 level; severe (e.g., paediatric evidence for adults) → rate down 2 levels (rare)' },
+            ]} />
           </Accordion>
 
           <Accordion title={lang === 'zh' ? '替代結果指標（Surrogates）：最大的陷阱' : 'Surrogate Outcomes: The Biggest Pitfall'} icon="🪤">
@@ -1523,6 +1556,77 @@ export default function CoreGradeGuide() {
               </p>
             </div>
           </Accordion>
+
+          <Accordion title={lang === 'zh' ? '常見陷阱 (Common Pitfalls)' : 'Common Pitfalls'} icon="🚧">
+            <div className="mt-3 overflow-x-auto">
+              <table className="w-full text-xs border-collapse">
+                <thead>
+                  <tr style={{ background: C.tealLight }}>
+                    <th className="text-left px-3 py-2 font-semibold text-teal-800 border border-teal-200 w-1/2">{lang === 'zh' ? '陷阱' : 'Pitfall'}</th>
+                    <th className="text-left px-3 py-2 font-semibold text-teal-800 border border-teal-200">{lang === 'zh' ? '正確處理' : 'Correct handling'}</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {[
+                    { pZh: '看到「不同地理」就下調', pEn: 'Downgrading just because the geography differs',
+                      fZh: '看核心臨床原則是否跨文化一致', fEn: 'Check whether core clinical principles are cross-cultural' },
+                    { pZh: '看到 surrogate outcome 就下調', pEn: 'Downgrading on any surrogate outcome',
+                      fZh: '看 surrogate 與 patient-important outcome 的關聯強度', fEn: 'Check the strength of the surrogate–patient-outcome link' },
+                    { pZh: '把 measurement variation 算 indirectness', pEn: 'Treating measurement variation as indirectness',
+                      fZh: '通常屬 inconsistency 範疇', fEn: 'Usually belongs to inconsistency' },
+                    { pZh: '用「沒做台灣人研究」直接下調', pEn: 'Downgrading just because no local-population study exists',
+                      fZh: '看 mechanism 是否族群依賴', fEn: 'Check whether the mechanism is population-dependent' },
+                    { pZh: '將執行細節差異算 indirectness', pEn: 'Counting implementation-detail differences as indirectness',
+                      fZh: '此屬於 implementation feasibility，反映在 EtR', fEn: 'This is implementation feasibility — belongs to EtR' },
+                    { pZh: '忽略 Setting 維度', pEn: 'Ignoring the Setting dimension',
+                      fZh: 'Setting 是合法的 indirectness 來源（geography, healthcare system, era）', fEn: 'Setting is a legitimate indirectness source (geography, healthcare system, era)' },
+                    { pZh: '把 indirectness 與研究品質混淆', pEn: 'Confounding indirectness with study quality',
+                      fZh: 'Indirectness 與 RoB 是獨立 domain', fEn: 'Indirectness is independent of RoB' },
+                  ].map(({ pZh, pEn, fZh, fEn }, i) => (
+                    <tr key={i} className="hover:bg-gray-50">
+                      <td className="px-3 py-2 border border-gray-200 text-gray-700">❌ {lang === 'zh' ? pZh : pEn}</td>
+                      <td className="px-3 py-2 border border-gray-200 text-gray-600">✅ {lang === 'zh' ? fZh : fEn}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </Accordion>
+
+          <Accordion title={lang === 'zh' ? '與其他 domain 區別 (vs Other Domains)' : 'vs Other Domains'} icon="🔀">
+            <div className="mt-3 overflow-x-auto">
+              <table className="w-full text-xs border-collapse">
+                <thead>
+                  <tr style={{ background: C.tealLight }}>
+                    <th className="text-left px-3 py-2 font-semibold text-teal-800 border border-teal-200">{lang === 'zh' ? 'Domain' : 'Domain'}</th>
+                    <th className="text-left px-3 py-2 font-semibold text-teal-800 border border-teal-200">{lang === 'zh' ? '核心問題' : 'Core question'}</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr className="bg-teal-50">
+                    <td className="px-3 py-2 border border-gray-200 font-bold text-teal-800">{lang === 'zh' ? 'Indirectness (本 domain)' : 'Indirectness (this domain)'}</td>
+                    <td className="px-3 py-2 border border-gray-200 text-gray-700">{lang === 'zh' ? 'Target PICO 與 Study PICO 的 mismatch（含 Setting）' : 'Target PICO vs Study PICO mismatch (incl. Setting)'}</td>
+                  </tr>
+                  {[
+                    { dZh: 'Risk of bias', dEn: 'Risk of bias',
+                      qZh: '個別研究的設計/執行問題', qEn: 'Flaws in individual study design / conduct' },
+                    { dZh: 'Inconsistency', dEn: 'Inconsistency',
+                      qZh: '跨研究間 unexplained variability', qEn: 'Unexplained variability across studies' },
+                    { dZh: 'Imprecision', dEn: 'Imprecision',
+                      qZh: '單一 pooled estimate 的 CI 寬度與 threshold 關係', qEn: 'Width of the single pooled CI vs threshold' },
+                    { dZh: 'Publication bias', dEn: 'Publication bias',
+                      qZh: '未發表研究造成的系統性偏倚', qEn: 'Systematic bias from unpublished studies' },
+                  ].map(({ dZh, dEn, qZh, qEn }, i) => (
+                    <tr key={i} className="hover:bg-gray-50">
+                      <td className="px-3 py-2 border border-gray-200 font-medium">{lang === 'zh' ? dZh : dEn}</td>
+                      <td className="px-3 py-2 border border-gray-200 text-gray-600">{lang === 'zh' ? qZh : qEn}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </Accordion>
+
           <div className="mt-8 pt-6 border-t border-gray-200">
             <PracticeSection questions={practiceQuestions.grade_indirectness} title={{ zh: '不直接性 練習題', en: 'Indirectness Practice' }} />
           </div>
