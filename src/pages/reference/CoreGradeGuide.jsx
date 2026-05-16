@@ -1261,62 +1261,54 @@ export default function CoreGradeGuide() {
             </span>
           </div>
 
-          <Accordion title={lang === 'zh' ? 'RCT 的主要誤差來源' : 'Key Bias Sources in RCTs'} icon="🏥" defaultOpen>
-            <div className="mt-3 space-y-2">
-              {[
-                { zh: '隨機序列產生不當', en: 'Inadequate random sequence generation' },
-                { zh: '分配隱匿不當', en: 'Inadequate allocation concealment' },
-                { zh: '受試者未設盲', en: 'Participants not blinded' },
-                { zh: '醫療提供者未設盲', en: 'Healthcare providers not blinded' },
-                { zh: '結果評估者未設盲', en: 'Outcome assessors not blinded' },
-                { zh: '結果資料遺失', en: 'Missing outcome data' },
-              ].map((item, i) => (
-                <div key={i} className="flex items-center gap-2 bg-gray-50 rounded-lg px-3 py-2">
-                  <span className="text-xs text-gray-400">{i + 1}.</span>
-                  <span className="text-sm text-gray-700">{lang === 'zh' ? item.zh : item.en}</span>
-                </div>
-              ))}
-            </div>
-            <div className="mt-4">
-              <p className="text-xs font-bold text-teal-700 mb-2">
-                {lang === 'zh' ? '📋 RoB 2（現代 Cochrane 標準）的 5 個 domain' : '📋 RoB 2 (modern Cochrane standard) — 5 domains'}
-              </p>
-              <div className="overflow-x-auto">
-                <table className="w-full text-xs border-collapse">
-                  <thead>
-                    <tr style={{ background: C.tealLight }}>
-                      <th className="text-left px-3 py-2 font-semibold text-teal-800 border border-teal-200">#</th>
-                      <th className="text-left px-3 py-2 font-semibold text-teal-800 border border-teal-200">RoB 2 Domain</th>
-                      <th className="text-left px-3 py-2 font-semibold text-teal-800 border border-teal-200">{lang === 'zh' ? '對應舊版項目' : 'Covers (vs RoB 1)'}</th>
+          <Accordion title={lang === 'zh' ? 'RCT 的主要誤差來源（RoB 2 的 5 個 domain）' : 'Key Bias Sources in RCTs (RoB 2 — 5 Domains)'} icon="🏥" defaultOpen>
+            <p className="text-xs text-gray-600 leading-relaxed mt-3 mb-3">
+              {lang === 'zh'
+                ? '本頁採用 Cochrane RoB 2 (2019 版) 的 5 個 domain 框架。每個 domain 由一組 signaling questions 引導判讀，最後得出 Low / Some concerns / High 的判斷。'
+                : 'This page follows the Cochrane RoB 2 (2019) 5-domain framework. Each domain is judged via signaling questions, yielding Low / Some concerns / High risk.'}
+            </p>
+            <div className="overflow-x-auto">
+              <table className="w-full text-xs border-collapse">
+                <thead>
+                  <tr style={{ background: C.tealLight }}>
+                    <th className="text-left px-3 py-2 font-semibold text-teal-800 border border-teal-200">#</th>
+                    <th className="text-left px-3 py-2 font-semibold text-teal-800 border border-teal-200">RoB 2 Domain</th>
+                    <th className="text-left px-3 py-2 font-semibold text-teal-800 border border-teal-200">{lang === 'zh' ? '包含內容' : 'What it covers'}</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {[
+                    { n: '1', dZh: 'Randomization process', dEn: 'Randomization process',
+                      cZh: '隨機序列產生 + 分配隱匿', cEn: 'Sequence generation + allocation concealment' },
+                    { n: '2', dZh: 'Deviations from intended interventions', dEn: 'Deviations from intended interventions',
+                      cZh: '受試者/醫療提供者盲化 + adherence + protocol 偏離', cEn: 'Participant/provider blinding + adherence + protocol deviations' },
+                    { n: '3', dZh: 'Missing outcome data', dEn: 'Missing outcome data',
+                      cZh: '結果資料遺失與其影響', cEn: 'Loss to follow-up and its impact' },
+                    { n: '4', dZh: 'Measurement of the outcome', dEn: 'Measurement of the outcome',
+                      cZh: '結果評估者盲化 + detection bias', cEn: 'Outcome assessor blinding + detection bias' },
+                    { n: '5', dZh: 'Selection of the reported result', dEn: 'Selection of the reported result',
+                      cZh: '選擇性報告 + protocol 一致性', cEn: 'Selective outcome reporting + protocol adherence' },
+                  ].map(({ n, dZh, dEn, cZh, cEn }) => (
+                    <tr key={n} className="hover:bg-gray-50">
+                      <td className="px-3 py-2 border border-gray-200 font-mono font-bold text-teal-700">{n}</td>
+                      <td className="px-3 py-2 border border-gray-200 font-medium">{lang === 'zh' ? dZh : dEn}</td>
+                      <td className="px-3 py-2 border border-gray-200 text-gray-600">{lang === 'zh' ? cZh : cEn}</td>
                     </tr>
-                  </thead>
-                  <tbody>
-                    {[
-                      { n: '1', dZh: 'Randomization process', dEn: 'Randomization process',
-                        cZh: '隨機序列產生 + 分配隱匿（合併）', cEn: 'Sequence generation + allocation concealment (combined)' },
-                      { n: '2', dZh: 'Deviations from intended interventions', dEn: 'Deviations from intended interventions',
-                        cZh: '受試者/醫療提供者盲化 + adherence', cEn: 'Participant/provider blinding + adherence' },
-                      { n: '3', dZh: 'Missing outcome data', dEn: 'Missing outcome data',
-                        cZh: '結果資料遺失（同舊版）', cEn: 'Same as RoB 1' },
-                      { n: '4', dZh: 'Measurement of the outcome', dEn: 'Measurement of the outcome',
-                        cZh: '結果評估者盲化 + detection bias', cEn: 'Outcome assessor blinding + detection bias' },
-                      { n: '5', dZh: 'Selection of the reported result', dEn: 'Selection of the reported result',
-                        cZh: '選擇性報告 + protocol adherence', cEn: 'Reporting bias / protocol adherence' },
-                    ].map(({ n, dZh, dEn, cZh, cEn }) => (
-                      <tr key={n} className="hover:bg-gray-50">
-                        <td className="px-3 py-2 border border-gray-200 font-mono font-bold text-teal-700">{n}</td>
-                        <td className="px-3 py-2 border border-gray-200 font-medium">{lang === 'zh' ? dZh : dEn}</td>
-                        <td className="px-3 py-2 border border-gray-200 text-gray-600">{lang === 'zh' ? cZh : cEn}</td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+            <div className="bg-amber-50 rounded-lg p-3 mt-3">
+              <p className="text-xs text-amber-800 leading-relaxed">
+                {lang === 'zh'
+                  ? '⚠️ 注意 RoB 2 vs 舊版 Cochrane RoB 的差異：(1) 整體領域從 7 個合併為 5 個 (allocation concealment 與 sequence generation 合併、blinding 從 3 個合併為 2 個)；(2) 判讀以 per-outcome 為單位而非整篇 study；(3) 使用 signaling questions + decision tree 取代主觀判斷。'
+                  : '⚠️ RoB 2 vs older Cochrane RoB: (1) 7 domains reduced to 5 (allocation concealment merged with sequence generation; blinding consolidated); (2) assessment is per-outcome, not whole-study; (3) signaling questions + decision tree replace subjective judgment.'}
+              </p>
             </div>
             <p className="text-xs text-gray-500 mt-3">
               {lang === 'zh'
-                ? '推薦工具：ROBUST-RCT（簡潔嚴謹）或 RoB 2（Cochrane 標準，較複雜）。'
-                : 'Recommended tools: ROBUST-RCT (simple yet rigorous) or RoB 2 (Cochrane standard, more complex).'}
+                ? '推薦工具：RoB 2（Cochrane 標準）或 ROBUST-RCT（簡化版，適合快速評估）。'
+                : 'Recommended tools: RoB 2 (Cochrane standard) or ROBUST-RCT (simplified, for quick appraisal).'}
             </p>
           </Accordion>
 
