@@ -1229,6 +1229,29 @@ export default function CoreGradeGuide() {
               : 'Risk of bias = the likelihood that flaws in study design or execution have distorted results from the true effect.'}
           </p>
 
+          <div className="bg-amber-50 border border-amber-200 rounded-lg p-3 mb-4">
+            <p className="text-xs font-bold text-amber-800 mb-2">
+              {lang === 'zh' ? '⚠️ 核心觀念' : '⚠️ Core Concept'}
+            </p>
+            <ul className="text-xs text-amber-700 leading-relaxed space-y-1 list-disc list-inside">
+              <li>
+                {lang === 'zh'
+                  ? 'RoB 評估「個別研究的設計/執行」，再彙整到 outcome 層級（per-outcome，not whole-study）'
+                  : 'RoB is judged per study, then rolled up per outcome (per-outcome, not whole-study)'}
+              </li>
+              <li>
+                {lang === 'zh'
+                  ? '一個 outcome 的 RoB 由「有充足權重的研究」(≥ 5–10% weight) 共同決定，不是平均所有研究'
+                  : 'The RoB for an outcome is driven by studies with substantial weight (≥ 5–10%), not by averaging all studies'}
+              </li>
+              <li>
+                {lang === 'zh'
+                  ? '同篇研究在不同 outcome 上 RoB 可能不同（e.g., 主觀 vs 客觀 outcome 對 blinding 的需求不同）'
+                  : 'The same study can have different RoB across outcomes (e.g., subjective vs objective outcomes have different blinding requirements)'}
+              </li>
+            </ul>
+          </div>
+
           <div className="bg-blue-50 border border-blue-100 rounded-lg px-3 py-2 mb-4 text-xs text-blue-800 flex items-start gap-2">
             <span className="text-blue-500 flex-shrink-0">ℹ️</span>
             <span>
@@ -1254,6 +1277,42 @@ export default function CoreGradeGuide() {
                 </div>
               ))}
             </div>
+            <div className="mt-4">
+              <p className="text-xs font-bold text-teal-700 mb-2">
+                {lang === 'zh' ? '📋 RoB 2（現代 Cochrane 標準）的 5 個 domain' : '📋 RoB 2 (modern Cochrane standard) — 5 domains'}
+              </p>
+              <div className="overflow-x-auto">
+                <table className="w-full text-xs border-collapse">
+                  <thead>
+                    <tr style={{ background: C.tealLight }}>
+                      <th className="text-left px-3 py-2 font-semibold text-teal-800 border border-teal-200">#</th>
+                      <th className="text-left px-3 py-2 font-semibold text-teal-800 border border-teal-200">RoB 2 Domain</th>
+                      <th className="text-left px-3 py-2 font-semibold text-teal-800 border border-teal-200">{lang === 'zh' ? '對應舊版項目' : 'Covers (vs RoB 1)'}</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {[
+                      { n: '1', dZh: 'Randomization process', dEn: 'Randomization process',
+                        cZh: '隨機序列產生 + 分配隱匿（合併）', cEn: 'Sequence generation + allocation concealment (combined)' },
+                      { n: '2', dZh: 'Deviations from intended interventions', dEn: 'Deviations from intended interventions',
+                        cZh: '受試者/醫療提供者盲化 + adherence', cEn: 'Participant/provider blinding + adherence' },
+                      { n: '3', dZh: 'Missing outcome data', dEn: 'Missing outcome data',
+                        cZh: '結果資料遺失（同舊版）', cEn: 'Same as RoB 1' },
+                      { n: '4', dZh: 'Measurement of the outcome', dEn: 'Measurement of the outcome',
+                        cZh: '結果評估者盲化 + detection bias', cEn: 'Outcome assessor blinding + detection bias' },
+                      { n: '5', dZh: 'Selection of the reported result', dEn: 'Selection of the reported result',
+                        cZh: '選擇性報告 + protocol adherence', cEn: 'Reporting bias / protocol adherence' },
+                    ].map(({ n, dZh, dEn, cZh, cEn }) => (
+                      <tr key={n} className="hover:bg-gray-50">
+                        <td className="px-3 py-2 border border-gray-200 font-mono font-bold text-teal-700">{n}</td>
+                        <td className="px-3 py-2 border border-gray-200 font-medium">{lang === 'zh' ? dZh : dEn}</td>
+                        <td className="px-3 py-2 border border-gray-200 text-gray-600">{lang === 'zh' ? cZh : cEn}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </div>
             <p className="text-xs text-gray-500 mt-3">
               {lang === 'zh'
                 ? '推薦工具：ROBUST-RCT（簡潔嚴謹）或 RoB 2（Cochrane 標準，較複雜）。'
@@ -1269,6 +1328,16 @@ export default function CoreGradeGuide() {
               { zh: '如果低誤差風險研究有相當比例（≥ 35%）：比較高/低誤差風險研究的結果。', en: 'If low-risk studies have substantial weight (≥ 35%): compare results of high vs low risk studies.' },
               { zh: '結果相似 → 使用全部研究，不扣分。結果不同 → 只使用低誤差風險研究，不扣分。', en: 'Similar results → use all studies, no downgrade. Different results → use only low-risk studies, no downgrade.' },
             ]} />
+            <div className="bg-teal-50 border border-teal-200 rounded-lg p-3 mt-3">
+              <p className="text-xs font-bold text-teal-800 mb-1">
+                {lang === 'zh' ? '💡 Leave-one-out sensitivity analysis' : '💡 Leave-one-out sensitivity analysis'}
+              </p>
+              <p className="text-xs text-teal-700 leading-relaxed">
+                {lang === 'zh'
+                  ? '逐一移除每篇（尤其 high-RoB）研究，觀察 pooled estimate 變化方向與大小。穩定 → 支持「不下調」；結果反轉或大幅變化 → 強烈考慮下調。常作為答辯支持證據。'
+                  : 'Iteratively drop each study (especially high-RoB ones) and observe how the pooled estimate shifts. Stable → supports "do not rate down"; reversal or large change → strongly consider downgrading. Often used as defense evidence.'}
+              </p>
+            </div>
           </Accordion>
 
           <Accordion title={lang === 'zh' ? '偏差方向的重要性' : 'Direction of Bias Matters'} icon="↔️">
@@ -1290,7 +1359,102 @@ export default function CoreGradeGuide() {
                 </p>
               </div>
             </div>
+            <div className="bg-blue-50 border border-blue-200 rounded-lg p-3 mt-3">
+              <p className="text-xs font-bold text-blue-800 mb-2">
+                {lang === 'zh' ? '🎯 Outcome 客觀程度的影響' : '🎯 How Outcome Objectivity Affects RoB'}
+              </p>
+              <ul className="text-xs text-blue-700 leading-relaxed space-y-1 list-disc list-inside">
+                <li>
+                  <span className="font-bold">{lang === 'zh' ? '客觀 outcome' : 'Objective outcomes'}</span>
+                  {lang === 'zh'
+                    ? '（death, lab values, hard count events）：對 blinding 要求低，detection bias 影響有限 → 即便未盲化，通常不下調'
+                    : ' (death, lab values, hard count events): low blinding requirement; detection bias limited → usually no downgrade even when unblinded'}
+                </li>
+                <li>
+                  <span className="font-bold">{lang === 'zh' ? '主觀 outcome' : 'Subjective outcomes'}</span>
+                  {lang === 'zh'
+                    ? '（pain, function scales, quality-of-life）：對 blinding 要求高 → 未盲化需謹慎評估'
+                    : ' (pain, function scales, quality-of-life): high blinding requirement → unblinded studies need careful assessment'}
+                </li>
+              </ul>
+              <p className="text-xs text-blue-800 italic mt-2">
+                {lang === 'zh'
+                  ? '💡 Core GRADE 2 §2.4：「無法盲化 ≠ high RoB」— outcome 客觀程度可緩解此疑慮。'
+                  : '💡 Core GRADE 2 §2.4: "Inability to blind ≠ high RoB" — outcome objectivity moderates the requirement.'}
+              </p>
+            </div>
           </Accordion>
+
+          <Accordion title={lang === 'zh' ? '常見陷阱 (Common Pitfalls)' : 'Common Pitfalls'} icon="🚧">
+            <div className="mt-3 overflow-x-auto">
+              <table className="w-full text-xs border-collapse">
+                <thead>
+                  <tr style={{ background: C.tealLight }}>
+                    <th className="text-left px-3 py-2 font-semibold text-teal-800 border border-teal-200 w-1/2">{lang === 'zh' ? '陷阱' : 'Pitfall'}</th>
+                    <th className="text-left px-3 py-2 font-semibold text-teal-800 border border-teal-200">{lang === 'zh' ? '正確處理' : 'Correct handling'}</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {[
+                    { pZh: '看到任何 high-RoB 研究就下調', pEn: 'Downgrading because any high-RoB study exists',
+                      fZh: '看權重；小研究 high-RoB 影響有限', fEn: 'Check weight; small high-RoB studies have limited impact' },
+                    { pZh: '把 RoB 平均處理所有研究', pEn: 'Averaging RoB across all studies',
+                      fZh: '應以「有充足權重的研究」為主', fEn: 'Anchor on studies with substantial weight' },
+                    { pZh: '認為「無法盲化」=「high RoB」', pEn: 'Equating "cannot blind" with "high RoB"',
+                      fZh: '客觀 outcome 可緩解此問題', fEn: 'Objective outcomes mitigate this concern' },
+                    { pZh: '同篇研究的 RoB 套用到所有 outcomes', pEn: 'Applying one study\'s RoB to all its outcomes',
+                      fZh: '應 per-outcome 評估', fEn: 'Assess per outcome, not per whole study' },
+                    { pZh: '忽略 leave-one-out sensitivity analysis', pEn: 'Ignoring leave-one-out sensitivity analysis',
+                      fZh: 'Leave-one-out 是支持判斷的關鍵', fEn: 'Leave-one-out is the key evidence for the judgment' },
+                    { pZh: '把 RoB 與 inconsistency 混淆', pEn: 'Confounding RoB with inconsistency',
+                      fZh: 'RoB 看研究品質，inconsistency 看跨研究變異', fEn: 'RoB looks at study quality; inconsistency at across-study variability' },
+                    { pZh: '用舊版 Cochrane RoB 工具評 RCT', pEn: 'Using the old Cochrane RoB tool for RCTs',
+                      fZh: '應升級為 RoB 2', fEn: 'Use RoB 2 instead' },
+                  ].map(({ pZh, pEn, fZh, fEn }, i) => (
+                    <tr key={i} className="hover:bg-gray-50">
+                      <td className="px-3 py-2 border border-gray-200 text-gray-700">❌ {lang === 'zh' ? pZh : pEn}</td>
+                      <td className="px-3 py-2 border border-gray-200 text-gray-600">✅ {lang === 'zh' ? fZh : fEn}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </Accordion>
+
+          <Accordion title={lang === 'zh' ? '與其他 domain 區別 (vs Other Domains)' : 'vs Other Domains'} icon="🔀">
+            <div className="mt-3 overflow-x-auto">
+              <table className="w-full text-xs border-collapse">
+                <thead>
+                  <tr style={{ background: C.tealLight }}>
+                    <th className="text-left px-3 py-2 font-semibold text-teal-800 border border-teal-200">{lang === 'zh' ? 'Domain' : 'Domain'}</th>
+                    <th className="text-left px-3 py-2 font-semibold text-teal-800 border border-teal-200">{lang === 'zh' ? '核心問題' : 'Core question'}</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr className="bg-teal-50">
+                    <td className="px-3 py-2 border border-gray-200 font-bold text-teal-800">{lang === 'zh' ? 'Risk of Bias (本 domain)' : 'Risk of Bias (this domain)'}</td>
+                    <td className="px-3 py-2 border border-gray-200 text-gray-700">{lang === 'zh' ? '個別研究的設計/執行偏倚（per-outcome）' : 'Per-outcome bias from individual study design / conduct'}</td>
+                  </tr>
+                  {[
+                    { dZh: 'Inconsistency', dEn: 'Inconsistency',
+                      qZh: '跨研究間 unexplained variability', qEn: 'Unexplained variability across studies' },
+                    { dZh: 'Imprecision', dEn: 'Imprecision',
+                      qZh: '單一 pooled estimate 的 CI 寬度與 threshold 關係', qEn: 'Width of the single pooled CI vs threshold' },
+                    { dZh: 'Indirectness', dEn: 'Indirectness',
+                      qZh: 'Target PICO 與 Study PICO 的 mismatch', qEn: 'Target PICO vs Study PICO mismatch' },
+                    { dZh: 'Publication bias', dEn: 'Publication bias',
+                      qZh: '未發表研究造成的系統性偏倚', qEn: 'Systematic bias from unpublished studies' },
+                  ].map(({ dZh, dEn, qZh, qEn }, i) => (
+                    <tr key={i} className="hover:bg-gray-50">
+                      <td className="px-3 py-2 border border-gray-200 font-medium">{lang === 'zh' ? dZh : dEn}</td>
+                      <td className="px-3 py-2 border border-gray-200 text-gray-600">{lang === 'zh' ? qZh : qEn}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </Accordion>
+
           <div className="mt-8 pt-6 border-t border-gray-200">
             <PracticeSection questions={practiceQuestions.grade_rob} title={{ zh: '誤差風險 練習題', en: 'Risk of Bias Practice' }} />
           </div>
