@@ -784,31 +784,32 @@ export default function CoreGradeGuide() {
             </div>
           </Accordion>
 
-          <Accordion title={lang === 'zh' ? 'CI Ratio 快速法則 (Schünemann)' : 'CI Ratio Quick Rule (Schünemann)'} icon="📏">
+          <Accordion title={lang === 'zh' ? 'CI Ratio 快速法則 (Core GRADE 2 Fig 4)' : 'CI Ratio Quick Rule (Core GRADE 2 Fig 4)'} icon="📏">
             <div className="mt-3">
               <p className="text-sm text-gray-600 leading-relaxed mb-3">
                 {lang === 'zh'
-                  ? 'CI 寬度的快速量化：CI ratio = upper bound / lower bound。提供 at-a-glance 的精確度感覺。'
-                  : 'A quick way to quantify CI width: CI ratio = upper bound / lower bound. Useful at-a-glance precision check.'}
+                  ? 'CI 寬度的快速量化：CI ratio = upper bound / lower bound。Core GRADE 2 Fig 4 對 RR 與 OR 給出不同的 cutoff（不可混用）。'
+                  : 'A quick way to quantify CI width: CI ratio = upper bound / lower bound. Core GRADE 2 Fig 4 specifies DIFFERENT cutoffs for RR vs OR (do not mix them).'}
               </p>
               <div className="overflow-x-auto">
                 <table className="w-full text-xs border-collapse">
                   <thead>
                     <tr style={{ background: C.tealLight }}>
+                      <th className="text-left px-3 py-2 font-semibold text-teal-800 border border-teal-200">{lang === 'zh' ? '效果類型' : 'Effect type'}</th>
                       <th className="text-left px-3 py-2 font-semibold text-teal-800 border border-teal-200">{lang === 'zh' ? 'CI ratio' : 'CI ratio'}</th>
-                      <th className="text-left px-3 py-2 font-semibold text-teal-800 border border-teal-200">{lang === 'zh' ? '判讀' : 'Interpretation'}</th>
                       <th className="text-left px-3 py-2 font-semibold text-teal-800 border border-teal-200">{lang === 'zh' ? '行動' : 'Action'}</th>
                     </tr>
                   </thead>
                   <tbody>
                     {[
-                      { ratio: '≤ 2.5', interpZh: '緊 / Narrow', interpEn: 'Narrow', actZh: '支持不下調', actEn: 'Supports no downgrade' },
-                      { ratio: '2.5 – 3.0', interpZh: '灰色地帶 / Grey zone', interpEn: 'Grey zone', actZh: '視 threshold 位置而定', actEn: 'Depends on threshold position' },
-                      { ratio: '> 3', interpZh: '寬 / Wide', interpEn: 'Wide', actZh: '仔細審視兩端決策差異', actEn: 'Scrutinize the two-end decisions' },
-                    ].map(({ ratio, interpZh, interpEn, actZh, actEn }, i) => (
+                      { type: 'RR', ratio: '< 3', actZh: '支持不下調', actEn: 'Supports no downgrade' },
+                      { type: 'RR', ratio: '≥ 3', actZh: '進入 OIS 步驟（可能下調）', actEn: 'Proceed to OIS step (may downgrade)' },
+                      { type: 'OR', ratio: '< 2.5', actZh: '支持不下調', actEn: 'Supports no downgrade' },
+                      { type: 'OR', ratio: '≥ 2.5', actZh: '進入 OIS 步驟（可能下調）', actEn: 'Proceed to OIS step (may downgrade)' },
+                    ].map(({ type, ratio, actZh, actEn }, i) => (
                       <tr key={i} className="hover:bg-gray-50">
+                        <td className="px-3 py-2 border border-gray-200 font-bold text-teal-700">{type}</td>
                         <td className="px-3 py-2 border border-gray-200 font-mono font-medium">{ratio}</td>
-                        <td className="px-3 py-2 border border-gray-200 text-gray-700">{lang === 'zh' ? interpZh : interpEn}</td>
                         <td className="px-3 py-2 border border-gray-200 text-gray-600">{lang === 'zh' ? actZh : actEn}</td>
                       </tr>
                     ))}
@@ -816,11 +817,11 @@ export default function CoreGradeGuide() {
                 </table>
               </div>
               <div className="bg-gray-50 rounded-lg p-3 mt-3">
-                <p className="text-xs font-bold text-gray-700 mb-2">{lang === 'zh' ? '範例 (Worked numbers)' : 'Worked numbers'}</p>
+                <p className="text-xs font-bold text-gray-700 mb-2">{lang === 'zh' ? '範例 (Worked numbers, RR)' : 'Worked numbers (RR)'}</p>
                 <ul className="text-xs text-gray-600 leading-relaxed space-y-1 list-disc list-inside">
-                  <li>RR 0.72 [0.60, 0.86] → 0.86 / 0.60 = <span className="font-mono font-bold">1.43</span> {lang === 'zh' ? '(緊)' : '(narrow)'}</li>
-                  <li>RR 0.36 [0.23, 0.56] → 0.56 / 0.23 = <span className="font-mono font-bold">2.43</span> {lang === 'zh' ? '(尚屬 moderate)' : '(moderate)'}</li>
-                  <li>RR 1.10 [0.50, 2.40] → 2.40 / 0.50 = <span className="font-mono font-bold">4.80</span> {lang === 'zh' ? '(寬)' : '(wide)'}</li>
+                  <li>RR 0.72 [0.60, 0.86] → 0.86 / 0.60 = <span className="font-mono font-bold">1.43</span> {lang === 'zh' ? '(< 3 → 支持不下調)' : '(< 3 → supports no downgrade)'}</li>
+                  <li>RR 0.36 [0.23, 0.56] → 0.56 / 0.23 = <span className="font-mono font-bold">2.43</span> {lang === 'zh' ? '(< 3 → 支持不下調)' : '(< 3 → supports no downgrade)'}</li>
+                  <li>RR 1.10 [0.50, 2.40] → 2.40 / 0.50 = <span className="font-mono font-bold">4.80</span> {lang === 'zh' ? '(≥ 3 → 進入 OIS 步驟)' : '(≥ 3 → proceed to OIS step)'}</li>
                 </ul>
               </div>
               <div className="bg-amber-50 rounded-lg p-3 mt-2">
@@ -859,7 +860,7 @@ export default function CoreGradeGuide() {
             <div className="mt-3">
               <div className="bg-teal-50 border border-teal-200 rounded-lg p-3 mb-3">
                 <p className="text-xs font-bold text-teal-800 mb-1">
-                  {lang === 'zh' ? '💡 Core GRADE 4 §4.3 重點' : '💡 Core GRADE 4 §4.3 Key Point'}
+                  {lang === 'zh' ? '💡 Core GRADE 2 Fig 4 重點' : '💡 Core GRADE 2 Fig 4 Key Point'}
                 </p>
                 <p className="text-xs text-teal-700 leading-relaxed">
                   {lang === 'zh'
@@ -881,20 +882,21 @@ export default function CoreGradeGuide() {
               <div className="bg-amber-50 rounded-lg p-3 mt-2">
                 <p className="text-xs text-amber-800">
                   {lang === 'zh'
-                    ? '💡 連續型結果的經驗法則：總樣本 < 800 人（每組 400 人）時，應考慮是否需要扣分。'
-                    : '💡 Rule of thumb for continuous outcomes: consider downgrading if total sample < 800 (400 per group).'}
+                    ? '💡 連續型結果的經驗法則（Core GRADE 2 Fig 4）：N ≥ OIS（或 400/組、總計 800）→ 不扣分；N < OIS → 扣 1 分；N < 30% OIS → 考慮扣 2 分。'
+                    : '💡 Rule of thumb for continuous outcomes (Core GRADE 2 Fig 4): N ≥ OIS (or 400/group, 800 total) → no downgrade; N < OIS → downgrade 1; N < 30% of OIS → consider downgrade 2.'}
                 </p>
               </div>
             </div>
           </Accordion>
 
           {/* Quick decision flowchart */}
-          <Accordion title={lang === 'zh' ? '快速決策流程' : 'Quick Decision Flow'} icon="🗺️">
+          <Accordion title={lang === 'zh' ? '快速決策流程 (Core GRADE 2 Fig 4)' : 'Quick Decision Flow (Core GRADE 2 Fig 4)'} icon="🗺️">
             <StepFlow lang={lang} steps={[
-              { zh: 'CI 是否跨越你選的閾值？', en: 'Does CI cross your chosen threshold?' },
-              { zh: '是 → 扣 1 分。CI 是否跨越兩個閾值（benefit + harm）？→ 考慮扣 2 分。', en: 'Yes → downgrade 1. Does CI cross both thresholds (benefit + harm)? → consider downgrade 2.' },
-              { zh: '否 → 效果量大嗎？如果 RRR > 30–40%，進入 OIS 檢查。', en: 'No → Is the effect large? If RRR > 30–40%, proceed to OIS check.' },
-              { zh: 'OIS 通過 → 不扣分。OIS 未通過 → 扣 1 分。', en: 'OIS met → no downgrade. OIS not met → downgrade 1.' },
+              { zh: 'Step 1：CI 是否跨越你選的閾值？是 → 扣 1 分；CI 同時跨越兩個閾值（benefit + harm）→ 考慮扣 2 分（不需考慮 sample size）。', en: 'Step 1: Does CI cross your chosen threshold? Yes → downgrade 1; if CI crosses BOTH thresholds (benefit + harm) → consider downgrade 2 (no need to check sample size).' },
+              { zh: 'Step 2 (二元結果)：CI 未跨閾值 → 檢查 CI ratio。RR < 3 或 OR < 2.5 → 不扣分。RR ≥ 3 或 OR ≥ 2.5 → 進入 OIS 計算。', en: 'Step 2 (binary): CI doesn\'t cross threshold → check CI ratio. RR < 3 or OR < 2.5 → no downgrade. RR ≥ 3 or OR ≥ 2.5 → calculate OIS.' },
+              { zh: 'Step 2 (連續結果)：直接計算 OIS（用 MID + SD），或用經驗法則 400/組（總計 800）。', en: 'Step 2 (continuous): Calculate OIS directly (using MID + SD), or use the rule of thumb 400/group (800 total).' },
+              { zh: 'Step 3：N ≥ OIS → 不扣分；N < OIS → 扣 1 分；N < 30% OIS → 考慮扣 2 分（僅連續結果分支）。', en: 'Step 3: N ≥ OIS → no downgrade; N < OIS → downgrade 1; N < 30% of OIS → consider downgrade 2 (continuous branch only).' },
+              { zh: '附註：當 CI 不跨閾值但二元效果「implausibly large」(RRR > 40%，可能 > 30%) 且事件/樣本有限 → 也應考慮扣分（Core GRADE 2 narrative）。', en: 'Addendum: Even when CI doesn\'t cross threshold, if a binary effect is "implausibly large" (RRR > 40%, possibly > 30%) AND events/sample are limited → also consider downgrading (Core GRADE 2 narrative).' },
             ]} />
           </Accordion>
 
@@ -1116,8 +1118,8 @@ export default function CoreGradeGuide() {
                 </div>
                 <p className="text-xs text-amber-800 italic">
                   {lang === 'zh'
-                    ? '💡 下調 2 級在 inconsistency 極罕見（Core GRADE 3 §3.6），實務上通常下調 1 級即可。'
-                    : '💡 Rate-down by 2 levels is extremely rare for inconsistency (Core GRADE 3 §3.6); in practice, 1 level is the usual choice.'}
+                    ? '💡 下調 2 級在 inconsistency 極罕見（Core GRADE 3），實務上通常下調 1 級即可。'
+                    : '💡 Rate-down by 2 levels is extremely rare for inconsistency (Core GRADE 3); in practice, 1 level is the usual choice.'}
                 </p>
               </div>
             </div>
@@ -1371,8 +1373,8 @@ export default function CoreGradeGuide() {
               </ul>
               <p className="text-xs text-blue-800 italic mt-2">
                 {lang === 'zh'
-                  ? '💡 Core GRADE 2 §2.4：「無法盲化 ≠ high RoB」— outcome 客觀程度可緩解此疑慮。'
-                  : '💡 Core GRADE 2 §2.4: "Inability to blind ≠ high RoB" — outcome objectivity moderates the requirement.'}
+                  ? '💡 Core GRADE 4：「無法盲化 ≠ high RoB」— outcome 客觀程度可緩解此疑慮。'
+                  : '💡 Core GRADE 4: "Inability to blind ≠ high RoB" — outcome objectivity moderates the requirement.'}
               </p>
             </div>
           </Accordion>
