@@ -1111,7 +1111,7 @@ export default function CoreGradeGuide() {
                 </ol>
                 <div className="bg-white/60 rounded p-2 mt-2">
                   <p className="text-xs text-amber-900">
-                    <span className="font-bold">{lang === 'zh' ? '📌 經典範例（Karlsen 2017，膝關節術後疼痛）：' : '📌 Classic example (Karlsen 2017, post-knee-surgery pain):'}</span>
+                    <span className="font-bold">{lang === 'zh' ? '📌 經典範例（Core GRADE 3 Fig 4，膝關節術後疼痛 SR；資料源自 Karlsen et al.）：' : '📌 Classic example (Core GRADE 3 Fig 4, post-knee-arthroplasty pain SR; data from Karlsen et al.):'}</span>
                     {' '}
                     {lang === 'zh' ? 'I² = 95% 但 12/13 研究都在 null 同側 → 不下調' : 'I² = 95% but 12 of 13 studies on the same side of null → do not rate down'}
                   </p>
@@ -1486,18 +1486,18 @@ export default function CoreGradeGuide() {
               </li>
               <li>
                 {lang === 'zh'
-                  ? '評估四個 PICO 元素 + Setting（地理、醫療體系、時代）逐一比對'
-                  : 'Assess the four PICO elements + Setting (geography, healthcare system, era), element by element'}
+                  ? '評估 P / I / C / O 四個 Core GRADE indirectness 元素 (Setting/context 為實務補充考量，常歸入 Population)'
+                  : 'Assess the four Core GRADE indirectness elements: P / I / C / O (Setting/context is a practical supplement, often subsumed under Population)'}
               </li>
             </ul>
           </div>
 
-          <Accordion title={lang === 'zh' ? 'PICO + Setting 五個元素逐項比較' : 'Compare Each PICO + Setting Element'} icon="🔎" defaultOpen>
+          <Accordion title={lang === 'zh' ? 'PICO 元素逐項比較（附補充：Setting）' : 'Compare Each PICO Element (with supplementary Setting note)'} icon="🔎" defaultOpen>
             <div className="mt-3 overflow-x-auto">
               <table className="w-full text-xs border-collapse">
                 <thead>
                   <tr style={{ background: C.tealLight }}>
-                    <th className="text-left px-3 py-2 font-semibold text-teal-800 border border-teal-200">PICO+</th>
+                    <th className="text-left px-3 py-2 font-semibold text-teal-800 border border-teal-200">PICO</th>
                     <th className="text-left px-3 py-2 font-semibold text-teal-800 border border-teal-200">{lang === 'zh' ? '常見問題' : 'Common Issues'}</th>
                     <th className="text-left px-3 py-2 font-semibold text-teal-800 border border-teal-200">{lang === 'zh' ? '扣分可能性' : 'Likelihood of Downgrading'}</th>
                   </tr>
@@ -1508,7 +1508,7 @@ export default function CoreGradeGuide() {
                     { pico: 'I', issueZh: '劑量/療程不同、依從性低、技術演進', issueEn: 'Dose/duration differences, non-adherence, technology evolution', likeZh: '中等（取決於生物學合理性和差異大小）', likeEn: 'Moderate (depends on biology and magnitude)' },
                     { pico: 'C', issueZh: '用安慰劑而非活性對照、次優對照組', issueEn: 'Placebo instead of active comparator, suboptimal control', likeZh: '高（企業贊助研究常選用次優對照）', likeEn: 'High (industry trials often use suboptimal comparators)' },
                     { pico: 'O', issueZh: '替代結果指標（surrogates）、追蹤時間不同', issueEn: 'Surrogate outcomes, different follow-up duration', likeZh: '高（替代指標常令人失望）', likeEn: 'High (surrogates frequently disappoint)' },
-                    { pico: 'Setting', issueZh: '地理差異、醫療體系、護病比、文化、時代', issueEn: 'Geography, healthcare system, nurse:patient ratio, culture, era', likeZh: '通常 minor（若核心臨床原則跨文化一致）', likeEn: 'Usually minor (if core clinical principles are cross-cultural)' },
+                    { pico: 'Setting †', issueZh: '地理差異、醫療體系、護病比、文化、時代', issueEn: 'Geography, healthcare system, nurse:patient ratio, culture, era', likeZh: '通常 minor（若核心臨床原則跨文化一致）', likeEn: 'Usually minor (if core clinical principles are cross-cultural)' },
                   ].map(({ pico, issueZh, issueEn, likeZh, likeEn }) => (
                     <tr key={pico} className="hover:bg-gray-50">
                       <td className="px-3 py-2 border border-gray-200 font-bold text-teal-700">{pico}</td>
@@ -1519,6 +1519,11 @@ export default function CoreGradeGuide() {
                 </tbody>
               </table>
             </div>
+            <p className="text-xs text-gray-500 italic mt-3 leading-relaxed">
+              {lang === 'zh'
+                ? '† Setting 並非 Core GRADE 5 (Paper 5, BMJ 2025;389:e083865) 正式列出的 indirectness 類別。Paper 5 僅列出 P / I / C / O 四個類別。Setting 在實務上常作為補充考量，通常歸入 Population indirectness 範疇。'
+                : '† Setting is not a formal Core GRADE indirectness category in Paper 5 (BMJ 2025;389:e083865), which lists only P / I / C / O. In practice, Setting is treated as a supplementary consideration and commonly subsumed under Population indirectness.'}
+            </p>
           </Accordion>
 
           <Accordion title={lang === 'zh' ? '決策流程 (Decision Flowchart)' : 'Decision Flowchart'} icon="🗺️">
