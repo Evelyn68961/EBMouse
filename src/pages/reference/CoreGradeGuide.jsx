@@ -1654,6 +1654,41 @@ export default function CoreGradeGuide() {
               : 'Publication bias = studies with unfavorable results were not published, inflating the pooled estimate.'}
           </p>
 
+          <div className="bg-amber-50 border border-amber-200 rounded-lg p-3 mb-4">
+            <p className="text-xs font-bold text-amber-800 mb-2">
+              {lang === 'zh' ? '⚠️ 核心觀念' : '⚠️ Core Concept'}
+            </p>
+            <ul className="text-xs text-amber-700 leading-relaxed space-y-1 list-disc list-inside">
+              <li>
+                {lang === 'zh'
+                  ? 'Publication bias = 整篇研究未發表造成的 systematic 偏倚 (drawer effect)'
+                  : 'Publication bias = systematic bias caused by entire studies being unpublished (drawer effect)'}
+              </li>
+              <li>
+                {lang === 'zh'
+                  ? 'Core GRADE 4 將 Selective outcome reporting (SOR) 分為兩類：'
+                  : 'Core GRADE 4 splits Selective outcome reporting (SOR) into two types:'}
+                <ul className="ml-5 mt-1 space-y-0.5 list-disc list-inside">
+                  <li>
+                    {lang === 'zh'
+                      ? 'Type 1 — 整個 outcome 因結果不利而未報告 → 屬於 Publication bias domain'
+                      : 'Type 1 — entire outcome unreported because result was unfavorable → Publication bias domain'}
+                  </li>
+                  <li>
+                    {lang === 'zh'
+                      ? 'Type 2 — 在多個 effect estimate 中選擇性報告其一 → 屬於 RoB domain (Domain 5)'
+                      : 'Type 2 — selecting one estimate from multiple available → RoB domain (Domain 5)'}
+                  </li>
+                </ul>
+              </li>
+              <li>
+                {lang === 'zh'
+                  ? '此 domain 是 GRADE 中最難評估的（缺失證據本質上看不到）— 須結合 comprehensive search + funnel plot + 臨床判斷'
+                  : 'This is the hardest GRADE domain to assess (the missing evidence is by definition invisible) — combine comprehensive search + funnel plot + clinical judgment'}
+              </li>
+            </ul>
+          </div>
+
           <div className="bg-amber-50 border border-amber-100 rounded-lg px-3 py-2 mb-4 text-xs text-amber-800 flex items-start gap-2">
             <span className="text-amber-500 flex-shrink-0">⚠️</span>
             <span>
@@ -1662,6 +1697,50 @@ export default function CoreGradeGuide() {
                 : 'Publication bias is typically more severe in NRSI than in RCTs (especially industry-funded observational studies) — selective non-publication is more common. The decision flow is the same, but be more inclined to downgrade for NRSI.'}
             </span>
           </div>
+
+          <Accordion title={lang === 'zh' ? '評估方法 (Assessment Methods)' : 'Assessment Methods'} icon="🛠️">
+            <div className="mt-3 overflow-x-auto">
+              <table className="w-full text-xs border-collapse">
+                <thead>
+                  <tr style={{ background: C.tealLight }}>
+                    <th className="text-left px-3 py-2 font-semibold text-teal-800 border border-teal-200">{lang === 'zh' ? '方法' : 'Method'}</th>
+                    <th className="text-left px-3 py-2 font-semibold text-teal-800 border border-teal-200">{lang === 'zh' ? '適用條件' : 'When applicable'}</th>
+                    <th className="text-left px-3 py-2 font-semibold text-teal-800 border border-teal-200">{lang === 'zh' ? 'Core GRADE 4 立場' : 'Core GRADE 4 stance'}</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {[
+                    { mZh: 'Funnel plot (視覺檢測)', mEn: 'Funnel plot (visual)',
+                      wZh: '一律可用', wEn: 'Always applicable',
+                      sZh: '對稱 → 較無疑慮；不對稱 → 需排除其他原因', sEn: 'Symmetric → less concern; asymmetric → must rule out other causes' },
+                    { mZh: '統計檢定 (Egger\'s, Begg\'s 等)', mEn: 'Statistical tests (Egger\'s, Begg\'s, etc.)',
+                      wZh: '需 ≥ 10 篇研究', wEn: 'Requires ≥ 10 studies',
+                      sZh: '信度有限；Paper 4 明確指出 false negative / false positive rate 問題', sEn: 'Limited reliability; Paper 4 explicitly notes false negative / false positive rate concerns' },
+                    { mZh: 'Comprehensive search', mEn: 'Comprehensive search',
+                      wZh: '必要前提', wEn: 'Foundational requirement',
+                      sZh: '涵蓋資料庫 + trial registries (ClinicalTrials.gov, EMA/FDA) + 多語言', sEn: 'Cover databases + trial registries (ClinicalTrials.gov, EMA/FDA) + multiple languages' },
+                    { mZh: 'Trim-and-fill', mEn: 'Trim-and-fill',
+                      wZh: 'Sensitivity analysis', wEn: 'Sensitivity analysis',
+                      sZh: '估算若有未發表研究, pooled effect 會如何變化', sEn: 'Estimates how the pooled effect would shift if hypothetical missing studies were added' },
+                  ].map(({ mZh, mEn, wZh, wEn, sZh, sEn }, i) => (
+                    <tr key={i} className="hover:bg-gray-50">
+                      <td className="px-3 py-2 border border-gray-200 font-medium">{lang === 'zh' ? mZh : mEn}</td>
+                      <td className="px-3 py-2 border border-gray-200 text-gray-600">{lang === 'zh' ? wZh : wEn}</td>
+                      <td className="px-3 py-2 border border-gray-200 text-gray-600">{lang === 'zh' ? sZh : sEn}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+            <div className="bg-teal-50 border border-teal-200 rounded-lg p-3 mt-3">
+              <p className="text-xs text-teal-800 leading-relaxed">
+                <span className="font-bold">{lang === 'zh' ? '💡 重點：' : '💡 Key point: '}</span>
+                {lang === 'zh'
+                  ? 'Core GRADE 4 強調統計檢定的限制 — 主要證據仍來自 comprehensive search + visual inspection + 臨床/領域知識判斷。'
+                  : 'Core GRADE 4 emphasizes the limitations of statistical tests — primary evidence still comes from comprehensive search + visual inspection + clinical/domain judgment.'}
+              </p>
+            </div>
+          </Accordion>
 
           <Accordion title={lang === 'zh' ? '決策流程' : 'Decision Flow'} icon="🗺️" defaultOpen>
             <StepFlow lang={lang} steps={[
@@ -1692,13 +1771,117 @@ export default function CoreGradeGuide() {
                   <p className="text-xs text-red-700">{lang === 'zh' ? '→ 可能有小型負面研究未發表' : '→ Small negative studies may be unpublished'}</p>
                 </div>
               </div>
-              <p className="text-xs text-gray-500 mt-3">
-                {lang === 'zh'
-                  ? '⚠️ 不對稱不一定等於發表偏誤，也可能是小研究效應（small study effects）。'
-                  : '⚠️ Asymmetry doesn\'t always mean publication bias — it could also be small study effects.'}
-              </p>
+              <div className="bg-amber-50 border border-amber-200 rounded-lg p-3 mt-3">
+                <p className="text-xs font-bold text-amber-800 mb-2">
+                  {lang === 'zh' ? '⚠️ 不對稱不一定 = publication bias' : '⚠️ Asymmetry ≠ publication bias automatically'}
+                </p>
+                <p className="text-xs text-amber-700 mb-2">
+                  {lang === 'zh' ? 'Core GRADE 4 明確提到的替代解釋：' : 'Alternative explanations explicitly mentioned in Core GRADE 4:'}
+                </p>
+                <ol className="text-xs text-amber-700 leading-relaxed space-y-1 list-decimal list-inside ml-2">
+                  <li>
+                    <span className="font-bold">Publication bias</span>
+                    {lang === 'zh' ? ' — 小型負向研究被「藏起來」' : ' — small negative studies are "hidden away"'}
+                  </li>
+                  <li>
+                    <span className="font-bold">{lang === 'zh' ? 'Small-study RoB' : 'Small-study RoB'}</span>
+                    {lang === 'zh' ? ' — 小研究方法品質較差，effect 被誇大' : ' — small studies have poorer methodology and inflate effects'}
+                  </li>
+                  <li>
+                    <span className="font-bold">{lang === 'zh' ? 'Small-study clinical/methodological differences' : 'Small-study clinical/methodological differences'}</span>
+                    {lang === 'zh' ? ' — 小研究執行較嚴謹或族群不同，得到較大 effect' : ' — small studies execute the intervention more faithfully or have different populations, yielding larger effects'}
+                  </li>
+                </ol>
+                <p className="text-xs text-amber-700 mt-2 mb-1">
+                  {lang === 'zh' ? '廣義 meta-analysis 文獻 (Sterne, Egger) 另加：' : 'Broader meta-analysis literature (Sterne, Egger) adds:'}
+                </p>
+                <ol className="text-xs text-amber-700 leading-relaxed space-y-1 list-decimal list-inside ml-2" start="4">
+                  <li>
+                    <span className="font-bold">Chance</span>
+                    {lang === 'zh' ? ' — random variation' : ' — random variation'}
+                  </li>
+                  <li>
+                    <span className="font-bold">{lang === 'zh' ? 'Selective outcome reporting (Type 1)' : 'Selective outcome reporting (Type 1)'}</span>
+                    {lang === 'zh' ? ' — Core GRADE 4 已將此歸入 publication bias domain' : ' — Core GRADE 4 places this within the publication bias domain'}
+                  </li>
+                </ol>
+                <p className="text-xs text-amber-800 italic mt-2">
+                  {lang === 'zh' ? '💡 判讀為 publication bias 前，應排除 #2、#3（小研究偏差）與 #4（偶然）。' : '💡 Before concluding publication bias, rule out #2, #3 (small-study confounds) and #4 (chance).'}
+                </p>
+              </div>
             </div>
           </Accordion>
+
+          <Accordion title={lang === 'zh' ? '常見陷阱 (Common Pitfalls)' : 'Common Pitfalls'} icon="🚧">
+            <div className="mt-3 overflow-x-auto">
+              <table className="w-full text-xs border-collapse">
+                <thead>
+                  <tr style={{ background: C.tealLight }}>
+                    <th className="text-left px-3 py-2 font-semibold text-teal-800 border border-teal-200 w-1/2">{lang === 'zh' ? '陷阱' : 'Pitfall'}</th>
+                    <th className="text-left px-3 py-2 font-semibold text-teal-800 border border-teal-200">{lang === 'zh' ? '正確處理' : 'Correct handling'}</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {[
+                    { pZh: 'Funnel plot 不對稱 → 直接判 publication bias', pEn: 'Concluding publication bias from funnel asymmetry alone',
+                      fZh: '排除 small-study RoB、small-study clinical 差異、chance', fEn: 'Rule out small-study RoB, small-study clinical differences, and chance first' },
+                    { pZh: '研究數 < 10 仍執行 Egger\'s test', pEn: 'Running Egger\'s test with < 10 studies',
+                      fZh: '信度低，僅供參考', fEn: 'Low reliability; treat as supplementary at best' },
+                    { pZh: '看到大量小型正向研究就下調', pEn: 'Downgrading on seeing many small positive studies',
+                      fZh: '先看 search 是否 comprehensive（含 registries）', fEn: 'First check whether the search is comprehensive (including registries)' },
+                    { pZh: '把 SOR (Type 2) 算入 publication bias', pEn: 'Counting SOR Type 2 as publication bias',
+                      fZh: 'Type 2 屬於 RoB domain 5；只有 Type 1 屬 PB', fEn: 'Type 2 belongs to RoB domain 5; only Type 1 belongs to PB' },
+                    { pZh: '視覺 funnel plot 等同統計檢定', pEn: 'Treating visual funnel plot as equivalent to statistical tests',
+                      fZh: '兩者互補，不互相取代', fEn: 'They complement each other; neither replaces the other' },
+                    { pZh: '忽略 trial registries 比對', pEn: 'Skipping trial registry checks',
+                      fZh: '是檢測未發表研究的關鍵步驟', fEn: 'Key step for detecting unpublished studies' },
+                    { pZh: '把 publication bias 的不確定性疊加到 inconsistency', pEn: 'Double-counting PB uncertainty under inconsistency',
+                      fZh: '兩者獨立評估，避免雙重下調', fEn: 'They are assessed independently; avoid double downgrading' },
+                  ].map(({ pZh, pEn, fZh, fEn }, i) => (
+                    <tr key={i} className="hover:bg-gray-50">
+                      <td className="px-3 py-2 border border-gray-200 text-gray-700">❌ {lang === 'zh' ? pZh : pEn}</td>
+                      <td className="px-3 py-2 border border-gray-200 text-gray-600">✅ {lang === 'zh' ? fZh : fEn}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </Accordion>
+
+          <Accordion title={lang === 'zh' ? '與其他 domain 區別 (vs Other Domains)' : 'vs Other Domains'} icon="🔀">
+            <div className="mt-3 overflow-x-auto">
+              <table className="w-full text-xs border-collapse">
+                <thead>
+                  <tr style={{ background: C.tealLight }}>
+                    <th className="text-left px-3 py-2 font-semibold text-teal-800 border border-teal-200">{lang === 'zh' ? 'Domain' : 'Domain'}</th>
+                    <th className="text-left px-3 py-2 font-semibold text-teal-800 border border-teal-200">{lang === 'zh' ? '核心問題' : 'Core question'}</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr className="bg-teal-50">
+                    <td className="px-3 py-2 border border-gray-200 font-bold text-teal-800">{lang === 'zh' ? 'Publication bias (本 domain)' : 'Publication bias (this domain)'}</td>
+                    <td className="px-3 py-2 border border-gray-200 text-gray-700">{lang === 'zh' ? '未發表研究造成的 systematic 偏倚（含 SOR Type 1）' : 'Systematic bias from unpublished studies (incl. SOR Type 1)'}</td>
+                  </tr>
+                  {[
+                    { dZh: 'Risk of bias', dEn: 'Risk of bias',
+                      qZh: '個別研究的設計/執行偏倚（含 SOR Type 2）', qEn: 'Per-study design / conduct flaws (incl. SOR Type 2)' },
+                    { dZh: 'Inconsistency', dEn: 'Inconsistency',
+                      qZh: '跨已發表研究的 unexplained variability', qEn: 'Unexplained variability across published studies' },
+                    { dZh: 'Imprecision', dEn: 'Imprecision',
+                      qZh: '單一 pooled estimate 的 CI 寬度與 threshold 關係', qEn: 'Width of the single pooled CI vs threshold' },
+                    { dZh: 'Indirectness', dEn: 'Indirectness',
+                      qZh: 'Target PICO 與 Study PICO 的 mismatch', qEn: 'Target PICO vs Study PICO mismatch' },
+                  ].map(({ dZh, dEn, qZh, qEn }, i) => (
+                    <tr key={i} className="hover:bg-gray-50">
+                      <td className="px-3 py-2 border border-gray-200 font-medium">{lang === 'zh' ? dZh : dEn}</td>
+                      <td className="px-3 py-2 border border-gray-200 text-gray-600">{lang === 'zh' ? qZh : qEn}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </Accordion>
+
           <div className="mt-8 pt-6 border-t border-gray-200">
             <PracticeSection questions={practiceQuestions.grade_pub_bias} title={{ zh: '發表偏誤 練習題', en: 'Publication Bias Practice' }} />
           </div>
