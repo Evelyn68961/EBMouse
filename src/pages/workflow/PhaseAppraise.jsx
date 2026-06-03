@@ -55,6 +55,27 @@ export default function PhaseAppraise() {
     });
   };
 
+  // Body-level GRADE domains (assessed once across all studies). Imprecision &
+  // inconsistency are handled per-outcome below, so they're excluded here.
+  const bodyDomains = ["riskOfBias", "indirectness", "publicationBias"];
+  const bodyTotal = bodyDomains.reduce((s, k) => s + (data.grade.domains[k]?.decision || 0), 0);
+  // Ensure an outcome has the per-outcome GRADE shape (older saved projects may not).
+  const ensureGrade = (o) => {
+    if (!o.grade) o.grade = { imprecision: { decision: 0, magnitude: "" }, inconsistency: { decision: 0, i2: "", overlap: "", distribution: "" } };
+    if (!o.grade.imprecision) o.grade.imprecision = { decision: 0, magnitude: "" };
+    if (!o.grade.inconsistency) o.grade.inconsistency = { decision: 0, i2: "", overlap: "", distribution: "" };
+    return o.grade;
+  };
+
+  // PICO comparison (study vs case) for the indirectness slides (S20/S43).
+  const pico = data.grade.domains.indirectness.picoComparison || {};
+  const updatePC = (k, field, value) => updateAppraise((app) => {
+    const ind = app.grade.domains.indirectness;
+    if (!ind.picoComparison) ind.picoComparison = {};
+    if (!ind.picoComparison[k]) ind.picoComparison[k] = { study: "", case_: "", similarity: "" };
+    ind.picoComparison[k][field] = value;
+  });
+
   const tabs = [
     { id: "casp", label: lang === "zh" ? "CASP 評讀" : "CASP Appraisal" },
     { id: "results", label: lang === "zh" ? "結果摘要" : "Results Summary" },
@@ -212,11 +233,15 @@ export default function PhaseAppraise() {
             </div>
           </div>
 
-          {/* GRADE domains */}
-          {Object.entries(gradeLabels).map(([domain, labels]) => (
+          {/* GRADE domains — BODY-LEVEL (apply to the whole body of evidence:
+              risk of bias S36, indirectness S43, publication bias S44) */}
+          <h4 className="font-semibold text-gray-600 text-sm mt-2 mb-2">
+            {lang === "zh" ? "① 整體層級評估（適用於所有結果指標）" : "① Body-level (applies to all outcomes)"}
+          </h4>
+          {bodyDomains.map((domain) => (
             <div key={domain} className="bg-white rounded-xl border border-gray-100 p-4 mb-3">
               <div className="flex items-center justify-between mb-3">
-                <h4 className="font-semibold text-gray-700 text-sm">{labels[lang]}</h4>
+                <h4 className="font-semibold text-gray-700 text-sm">{gradeLabels[domain][lang]}</h4>
                 <div className="flex gap-1">
                   {[0, -1, -2].map((val) => (
                     <button
@@ -244,6 +269,122 @@ export default function PhaseAppraise() {
               />
             </div>
           ))}
+
+          {/* PICO comparison (study vs case) — fills the indirectness slides S20/S43 */}
+          <h4 className="font-semibold text-gray-600 text-sm mt-5 mb-2">
+            {lang === "zh" ? "PICO 比較（文獻 vs 案例）" : "PICO comparison (study vs case)"}
+          </h4>
+          <div className="bg-white rounded-xl border border-gray-100 p-4 mb-3 space-y-2">
+            <div className="grid grid-cols-[3rem_1fr_1fr] gap-2 items-center">
+              <span></span>
+              <span className="text-xs text-gray-400">{lang === "zh" ? "文獻" : "Study"}</span>
+              <span className="text-xs text-gray-400">{lang === "zh" ? "案例" : "Case"}</span>
+              {[
+                { k: "age", label: lang === "zh" ? "年齡" : "Age" },
+                { k: "eth", label: lang === "zh" ? "種族" : "Ethnicity" },
+                { k: "setting", label: lang === "zh" ? "情境" : "Setting" },
+                { k: "p", label: "P" },
+                { k: "i", label: "I" },
+                { k: "c", label: "C" },
+                { k: "o", label: "O" },
+              ].map(({ k, label }) => (
+                <React.Fragment key={k}>
+                  <span className="text-xs font-bold text-teal-700">{label}</span>
+                  <input type="text" value={pico[k]?.study || ""}
+                    onChange={(e) => updatePC(k, "study", e.target.value)}
+                    placeholder={lang === "zh" ? "文獻" : "study"}
+                    className="px-2 py-1.5 rounded-lg border border-gray-200 focus:border-teal-300 focus:outline-none text-xs" />
+                  <input type="text" value={pico[k]?.case_ || ""}
+                    onChange={(e) => updatePC(k, "case_", e.target.value)}
+                    placeholder={lang === "zh" ? "案例" : "case"}
+                    className="px-2 py-1.5 rounded-lg border border-gray-200 focus:border-teal-300 focus:outline-none text-xs" />
+                </React.Fragment>
+              ))}
+            </div>
+          </div>
+
+          {/* GRADE per-outcome — imprecision (S37-39) + inconsistency (S40-42).
+              Reads the outcomes entered in the 結果摘要 tab (first 3 → S37-47). */}
+          <h4 className="font-semibold text-gray-600 text-sm mt-5 mb-2">
+            {lang === "zh" ? "② 各結果指標評估（不精確性 + 不一致性）" : "② Per-outcome (imprecision + inconsistency)"}
+          </h4>
+          {data.results.outcomes.length === 0 && (
+            <p className="text-xs text-gray-400 mb-3">
+              {lang === "zh" ? "請先到「結果摘要」分頁新增結果指標。" : "Add outcomes in the Results Summary tab first."}
+            </p>
+          )}
+          {data.results.outcomes.slice(0, 3).map((o, idx) => {
+            const g = o.grade || { imprecision: { decision: 0 }, inconsistency: { decision: 0 } };
+            const total = bodyTotal + (g.imprecision?.decision || 0) + (g.inconsistency?.decision || 0);
+            const certainty = total >= 0 ? (lang === "zh" ? "高" : "High")
+              : total === -1 ? (lang === "zh" ? "中" : "Moderate")
+              : total === -2 ? (lang === "zh" ? "低" : "Low") : (lang === "zh" ? "很低" : "Very low");
+            return (
+              <div key={idx} className="bg-white rounded-xl border border-gray-100 p-4 mb-3">
+                <div className="flex items-center justify-between mb-3">
+                  <h5 className="font-semibold text-teal-700 text-sm">
+                    {o.name || (lang === "zh" ? `結果 ${idx + 1}` : `Outcome ${idx + 1}`)}
+                  </h5>
+                  <span className="text-xs font-bold text-teal-800 bg-teal-50 px-2 py-1 rounded-lg">
+                    {lang === "zh" ? "證據品質: " : "Certainty: "}{certainty}
+                    <span className="text-gray-400 font-normal"> ({total})</span>
+                  </span>
+                </div>
+
+                {/* imprecision */}
+                <div className="flex items-center justify-between mb-2">
+                  <span className="text-xs text-gray-500">{lang === "zh" ? "不精確性" : "Imprecision"}</span>
+                  <div className="flex gap-1">
+                    {[0, -1, -2].map((val) => (
+                      <button key={val}
+                        onClick={() => updateAppraise((app) => { ensureGrade(app.results.outcomes[idx]).imprecision.decision = val; })}
+                        className={`px-2.5 py-1 rounded-lg text-xs font-bold border transition-all ${
+                          (g.imprecision?.decision || 0) === val
+                            ? val === 0 ? "bg-green-100 text-green-700 border-green-300" : "bg-red-100 text-red-700 border-red-300"
+                            : "bg-gray-50 text-gray-400 border-gray-200"}`}>
+                        {val === 0 ? (lang === "zh" ? "不扣分" : "0") : `${val}`}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+                <input type="text" value={g.imprecision?.magnitude || ""}
+                  onChange={(e) => updateAppraise((app) => { ensureGrade(app.results.outcomes[idx]).imprecision.magnitude = e.target.value; })}
+                  placeholder={lang === "zh" ? "作用大小，例：屬於 Moderate effect" : "Effect magnitude, e.g. Moderate effect"}
+                  className="w-full px-3 py-1.5 mb-3 rounded-lg border border-gray-200 focus:border-teal-300 focus:outline-none text-xs" />
+
+                {/* inconsistency */}
+                <div className="flex items-center justify-between mb-2">
+                  <span className="text-xs text-gray-500">{lang === "zh" ? "不一致性" : "Inconsistency"}</span>
+                  <div className="flex gap-1">
+                    {[0, -1, -2].map((val) => (
+                      <button key={val}
+                        onClick={() => updateAppraise((app) => { ensureGrade(app.results.outcomes[idx]).inconsistency.decision = val; })}
+                        className={`px-2.5 py-1 rounded-lg text-xs font-bold border transition-all ${
+                          (g.inconsistency?.decision || 0) === val
+                            ? val === 0 ? "bg-green-100 text-green-700 border-green-300" : "bg-red-100 text-red-700 border-red-300"
+                            : "bg-gray-50 text-gray-400 border-gray-200"}`}>
+                        {val === 0 ? (lang === "zh" ? "不扣分" : "0") : `${val}`}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+                <div className="grid grid-cols-2 gap-2">
+                  <input type="text" value={g.inconsistency?.i2 || ""}
+                    onChange={(e) => updateAppraise((app) => { ensureGrade(app.results.outcomes[idx]).inconsistency.i2 = e.target.value; })}
+                    placeholder={lang === "zh" ? "I² 值，例：95%" : "I², e.g. 95%"}
+                    className="px-3 py-1.5 rounded-lg border border-gray-200 focus:border-teal-300 focus:outline-none text-xs" />
+                  <input type="text" value={g.inconsistency?.overlap || ""}
+                    onChange={(e) => updateAppraise((app) => { ensureGrade(app.results.outcomes[idx]).inconsistency.overlap = e.target.value; })}
+                    placeholder={lang === "zh" ? "信賴區間重疊，例：部分重疊不足" : "CI overlap"}
+                    className="px-3 py-1.5 rounded-lg border border-gray-200 focus:border-teal-300 focus:outline-none text-xs" />
+                  <input type="text" value={g.inconsistency?.distribution || ""}
+                    onChange={(e) => updateAppraise((app) => { ensureGrade(app.results.outcomes[idx]).inconsistency.distribution = e.target.value; })}
+                    placeholder={lang === "zh" ? "點估計值分布，例：有些跨越 null" : "Point estimate distribution"}
+                    className="col-span-2 px-3 py-1.5 rounded-lg border border-gray-200 focus:border-teal-300 focus:outline-none text-xs" />
+                </div>
+              </div>
+            );
+          })}
 
           {/* GRADE summary */}
           <div className="mt-4 p-4 rounded-xl bg-teal-50 border border-teal-200">

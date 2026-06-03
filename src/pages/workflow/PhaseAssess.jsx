@@ -3,6 +3,7 @@ import { useProject } from './WorkflowRouter';
 import { useLang } from '../../App';
 import { t } from '../../i18n';
 import HintCard from '../../components/HintCard';
+import FitHint from '../../components/FitHint';
 import Hamster from '../../components/Hamster';
 import teachingContent from '../../data/teachingContent';
 import { TeachingBlocksForSection, PhaseIntro } from '../../components/TeachingBlock';
@@ -24,6 +25,22 @@ export default function PhaseAssess() {
       return next;
     });
   };
+
+  const members = project.meta?.members || [];
+  const updateMembers = (fn) => updateProject((prev) => {
+    const next = JSON.parse(JSON.stringify(prev));
+    if (!next.meta.members) next.meta.members = [];
+    fn(next.meta.members);
+    return next;
+  });
+  const arms = data.treatmentArms || [];
+  const updateArm = (i, field, value) => updateProject((prev) => {
+    const next = JSON.parse(JSON.stringify(prev));
+    if (!next.assess.treatmentArms) next.assess.treatmentArms = [];
+    while (next.assess.treatmentArms.length <= i) next.assess.treatmentArms.push({ name: "", course: "", issue: "" });
+    next.assess.treatmentArms[i][field] = value;
+    return next;
+  });
 
   return (
     <div>
@@ -47,6 +64,30 @@ export default function PhaseAssess() {
         <p className="text-sm text-amber-800">{t("hamsterPhase1Start", lang)}</p>
       </div>
 
+      {/* Section 0: Team members (title slide) */}
+      <section className="mb-8">
+        <h3 className="font-semibold text-gray-700 mb-3">
+          {lang === "zh" ? "👥 團隊成員（封面）" : "👥 Team Members (title slide)"}
+        </h3>
+        {members.map((m, i) => (
+          <div key={i} className="flex gap-2 mb-2">
+            <input
+              type="text"
+              value={m}
+              onChange={(e) => updateMembers((arr) => { arr[i] = e.target.value; })}
+              placeholder={lang === "zh" ? "例：王小明 藥師" : "e.g., Name, role"}
+              className="flex-1 px-3 py-2 rounded-lg border border-gray-200 focus:border-teal-300 focus:outline-none text-sm"
+            />
+            <button onClick={() => updateMembers((arr) => { arr.splice(i, 1); })}
+              className="px-2 text-gray-400 hover:text-red-500" title="remove">✕</button>
+          </div>
+        ))}
+        <button onClick={() => updateMembers((arr) => { arr.push(""); })}
+          className="text-sm text-teal-500 hover:text-teal-600 font-medium">
+          + {lang === "zh" ? "新增成員" : "Add member"}
+        </button>
+      </section>
+
       {/* Section 1: Clinical Scenario */}
       <section className="mb-8">
         <label className="block font-semibold text-gray-700 mb-2">
@@ -61,6 +102,7 @@ export default function PhaseAssess() {
           rows={5}
           className="w-full px-4 py-3 rounded-xl border-2 border-gray-100 focus:border-teal-300 focus:outline-none resize-y text-sm leading-relaxed"
         />
+        <FitHint value={data.scenario} max={75} />
       </section>
 
       {/* Section 2: Patient Profile */}
@@ -115,6 +157,19 @@ export default function PhaseAssess() {
         {/* Teaching blocks for background knowledge */}
         <TeachingBlocksForSection blocks={phase.blocks} section="backgroundKnowledge" />
 
+        <div className="mb-4">
+          <label className="block text-sm font-medium text-gray-600 mb-1">
+            {lang === "zh" ? "主題（背景搜尋對象）" : "Topic (subject of background search)"}
+          </label>
+          <input
+            type="text"
+            value={data.topic || ""}
+            onChange={(e) => update("topic", e.target.value)}
+            placeholder={lang === "zh" ? "例：物理約束 / 連續被動性運動" : "e.g., the subject of the search"}
+            className="w-full px-3 py-2 rounded-lg border border-gray-200 focus:border-teal-300 focus:outline-none text-sm"
+          />
+        </div>
+
         {[
           { key: "diseaseOverview", label: t("assessDisease", lang), placeholder: lang === "zh" ? "疾病定義、病生理機轉..." : "Disease definition, pathophysiology...", rows: 3 },
           { key: "riskFactors", label: t("assessRisk", lang), placeholder: lang === "zh" ? "好發族群、危險因子..." : "At-risk populations, risk factors...", rows: 2 },
@@ -128,6 +183,38 @@ export default function PhaseAssess() {
               placeholder={placeholder}
               rows={rows}
               className="w-full px-4 py-3 rounded-xl border-2 border-gray-100 focus:border-teal-300 focus:outline-none resize-y text-sm"
+            />
+          </div>
+        ))}
+      </section>
+
+      {/* Section 4b: Two treatment approaches (background comparison, slide 6) */}
+      <section className="mb-8">
+        <h3 className="font-semibold text-gray-700 mb-3">
+          {lang === "zh" ? "⚖️ 兩種處置比較（背景）" : "⚖️ Two treatment approaches"}
+        </h3>
+        {[0, 1].map((i) => (
+          <div key={i} className="bg-white rounded-xl border border-gray-100 p-4 mb-3">
+            <input
+              type="text"
+              value={arms[i]?.name || ""}
+              onChange={(e) => updateArm(i, "name", e.target.value)}
+              placeholder={lang === "zh" ? `處置 ${i + 1} 名稱` : `Approach ${i + 1} name`}
+              className="w-full px-3 py-2 mb-2 rounded-lg border border-gray-200 focus:border-teal-300 focus:outline-none text-sm font-medium"
+            />
+            <input
+              type="text"
+              value={arms[i]?.course || ""}
+              onChange={(e) => updateArm(i, "course", e.target.value)}
+              placeholder={lang === "zh" ? "療程（會自動加上「療程: 」）" : "Course"}
+              className="w-full px-3 py-2 mb-2 rounded-lg border border-gray-200 focus:border-teal-300 focus:outline-none text-sm"
+            />
+            <input
+              type="text"
+              value={arms[i]?.issue || ""}
+              onChange={(e) => updateArm(i, "issue", e.target.value)}
+              placeholder={lang === "zh" ? "議題（會自動加上「議題: 」）" : "Issue"}
+              className="w-full px-3 py-2 rounded-lg border border-gray-200 focus:border-teal-300 focus:outline-none text-sm"
             />
           </div>
         ))}

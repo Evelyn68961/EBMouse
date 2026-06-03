@@ -22,6 +22,13 @@ export default function PhaseAcquire() {
     });
   };
 
+  // Ensure the first alternative-article entry exists (older saved projects had [])
+  const ensureAlt = (acq) => {
+    if (!Array.isArray(acq.alternativeArticles) || acq.alternativeArticles.length === 0)
+      acq.alternativeArticles = [{ title: "", studyCount: 0, participants: 0, brief: "" }];
+    return acq.alternativeArticles[0];
+  };
+
   return (
     <div>
       <div className="flex items-center gap-3 mb-6">
@@ -127,6 +134,25 @@ export default function PhaseAcquire() {
                 <span className="text-xs text-gray-400">{lang === "zh" ? "篇" : "articles"}</span>
               </div>
             ))}
+            <hr className="border-gray-100" />
+            <p className="text-xs text-gray-400">{lang === "zh" ? "LitSuggest 機器篩選（S14）" : "LitSuggest ML screen (S14)"}</p>
+            {[
+              { label: lang === "zh" ? "PubMed 初步檢索" : "PubMed initial", key: "pubmedInitial" },
+              { label: "Positive", key: "litPositive" },
+              { label: "Negative", key: "litNegative" },
+            ].map(({ label, key }) => (
+              <div key={key} className="flex items-center gap-3">
+                <span className="text-sm text-gray-500 w-36">{label}</span>
+                <input
+                  type="number"
+                  value={data.screeningFlow[key] || ""}
+                  onChange={(e) => update((acq) => { acq.screeningFlow[key] = parseInt(e.target.value) || 0; })}
+                  placeholder="0"
+                  className="w-24 px-3 py-1.5 rounded-lg border border-gray-200 focus:border-teal-300 focus:outline-none text-sm text-center"
+                />
+                <span className="text-xs text-gray-400">{lang === "zh" ? "篇" : "articles"}</span>
+              </div>
+            ))}
           </div>
         </div>
       </section>
@@ -177,7 +203,42 @@ export default function PhaseAcquire() {
               className="w-full px-3 py-2 rounded-lg border border-gray-200 focus:border-teal-300 focus:outline-none text-sm resize-y"
             />
           </div>
+          <div>
+            <label className="block text-xs font-medium text-gray-500 mb-1">{lang === "zh" ? "文獻簡介（S18）" : "Article brief (S18)"}</label>
+            <textarea
+              value={data.selectedArticle.brief || ""}
+              onChange={(e) => update((acq) => { acq.selectedArticle.brief = e.target.value; })}
+              placeholder={lang === "zh" ? "一句話描述這篇文獻在做什麼" : "One-line description of the study"}
+              rows={2}
+              className="w-full px-3 py-2 rounded-lg border border-gray-200 focus:border-teal-300 focus:outline-none text-sm resize-y"
+            />
+          </div>
         </div>
+      </section>
+
+      {/* Alternative (rejected) article — shown alongside the selected one on S18 */}
+      <section className="mb-4">
+        <h3 className="font-semibold text-gray-700 mb-3">{lang === "zh" ? "📄 候選文獻（未選用）" : "📄 Alternative Article"}</h3>
+        <div className="flex gap-3 mb-3">
+          <div className="flex-1">
+            <label className="block text-xs font-medium text-gray-500 mb-1">{lang === "zh" ? "研究數量" : "Study count"}</label>
+            <input type="number" value={data.alternativeArticles?.[0]?.studyCount || ""}
+              onChange={(e) => update((acq) => { ensureAlt(acq).studyCount = parseInt(e.target.value) || 0; })}
+              className="w-full px-3 py-2 rounded-lg border border-gray-200 focus:border-teal-300 focus:outline-none text-sm" />
+          </div>
+          <div className="flex-1">
+            <label className="block text-xs font-medium text-gray-500 mb-1">{lang === "zh" ? "受試者數量" : "Participants"}</label>
+            <input type="number" value={data.alternativeArticles?.[0]?.participants || ""}
+              onChange={(e) => update((acq) => { ensureAlt(acq).participants = parseInt(e.target.value) || 0; })}
+              className="w-full px-3 py-2 rounded-lg border border-gray-200 focus:border-teal-300 focus:outline-none text-sm" />
+          </div>
+        </div>
+        <label className="block text-xs font-medium text-gray-500 mb-1">{lang === "zh" ? "文獻簡介" : "Article brief"}</label>
+        <textarea value={data.alternativeArticles?.[0]?.brief || ""}
+          onChange={(e) => update((acq) => { ensureAlt(acq).brief = e.target.value; })}
+          placeholder={lang === "zh" ? "一句話描述這篇候選文獻" : "One-line description"}
+          rows={2}
+          className="w-full px-3 py-2 rounded-lg border border-gray-200 focus:border-teal-300 focus:outline-none text-sm resize-y" />
       </section>
     </div>
   );

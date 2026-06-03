@@ -3,12 +3,37 @@ import { useProject } from './WorkflowRouter';
 import { useLang } from '../../App';
 import { t } from '../../i18n';
 import HintCard from '../../components/HintCard';
+import FitHint from '../../components/FitHint';
 import Hamster from '../../components/Hamster';
 import teachingContent from '../../data/teachingContent';
 import { TeachingBlocksForSection, PhaseIntro } from '../../components/TeachingBlock';
 import ToolboxLinks from '../../components/ToolboxLinks';
 
 const phase = teachingContent.apply;
+
+// Coerce string (old data) or array -> array of items (>=1 for an empty input).
+const toArr = (v) => (Array.isArray(v) ? (v.length ? v : [""]) : (typeof v === "string" && v.trim() ? v.split("\n") : [""]));
+
+// Editable list of bullet items (matches the slide's bullet points).
+function ListField({ items, onChange, placeholder, addLabel }) {
+  return (
+    <div className="space-y-1">
+      {items.map((it, i) => (
+        <div key={i} className="flex gap-1">
+          <input
+            value={it}
+            onChange={(e) => { const a = items.slice(); a[i] = e.target.value; onChange(a); }}
+            placeholder={placeholder}
+            className="flex-1 px-2 py-1 rounded border border-gray-200 focus:border-teal-300 focus:outline-none text-xs"
+          />
+          <button onClick={() => { const a = items.slice(); a.splice(i, 1); onChange(a.length ? a : [""]); }}
+            className="px-1 text-gray-300 hover:text-red-400 text-xs" title="remove">✕</button>
+        </div>
+      ))}
+      <button onClick={() => onChange([...items, ""])} className="text-xs text-teal-500 hover:text-teal-600">+ {addLabel}</button>
+    </div>
+  );
+}
 
 const etdFactors = [
   { key: "benefitRisk", zh: "利益風險", en: "Benefit vs. Risk" },
@@ -83,19 +108,19 @@ export default function PhaseApply() {
               className="w-full px-3 py-2 rounded-lg border border-gray-200 focus:border-teal-300 focus:outline-none text-sm font-medium mb-2" />
             <div className="grid grid-cols-2 gap-3">
               <div>
-                <label className="block text-xs font-medium text-green-600 mb-1">{lang === "zh" ? "利益" : "Benefits"}</label>
-                <textarea value={opt.benefits} onChange={(e) => updateApply((app) => { app.benefitRisk.options[idx].benefits = e.target.value; })}
-                  rows={2} className="w-full px-3 py-2 rounded-lg border border-gray-200 focus:border-teal-300 focus:outline-none text-xs resize-y" />
+                <label className="block text-xs font-medium text-green-600 mb-1">{lang === "zh" ? "利益（每項一條，對應投影片項目符號）" : "Benefits (one per line = one bullet)"}</label>
+                <ListField items={toArr(opt.benefits)} placeholder={lang === "zh" ? "一項利益" : "a benefit"} addLabel={lang === "zh" ? "新增利益" : "add benefit"}
+                  onChange={(arr) => updateApply((app) => { app.benefitRisk.options[idx].benefits = arr; })} />
               </div>
               <div>
-                <label className="block text-xs font-medium text-red-500 mb-1">{lang === "zh" ? "風險" : "Risks"}</label>
-                <textarea value={opt.risks} onChange={(e) => updateApply((app) => { app.benefitRisk.options[idx].risks = e.target.value; })}
-                  rows={2} className="w-full px-3 py-2 rounded-lg border border-gray-200 focus:border-teal-300 focus:outline-none text-xs resize-y" />
+                <label className="block text-xs font-medium text-red-500 mb-1">{lang === "zh" ? "風險（每項一條）" : "Risks (one per line)"}</label>
+                <ListField items={toArr(opt.risks)} placeholder={lang === "zh" ? "一項風險" : "a risk"} addLabel={lang === "zh" ? "新增風險" : "add risk"}
+                  onChange={(arr) => updateApply((app) => { app.benefitRisk.options[idx].risks = arr; })} />
               </div>
             </div>
           </div>
         ))}
-        <button onClick={() => updateApply((app) => { app.benefitRisk.options.push({ name: "", benefits: "", risks: "" }); })}
+        <button onClick={() => updateApply((app) => { app.benefitRisk.options.push({ name: "", benefits: [""], risks: [""] }); })}
           className="text-sm text-teal-500 hover:text-teal-600 font-medium">
           + {lang === "zh" ? "新增治療選項" : "Add treatment option"}
         </button>
@@ -110,22 +135,26 @@ export default function PhaseApply() {
             <input type="text" value={opt.name} onChange={(e) => updateApply((app) => { app.costAnalysis.options[idx].name = e.target.value; })}
               placeholder={lang === "zh" ? "治療選項" : "Treatment option"}
               className="w-full px-3 py-2 rounded-lg border border-gray-200 focus:border-teal-300 focus:outline-none text-sm font-medium mb-2" />
-            <div className="grid grid-cols-3 gap-3">
-              {[
-                { key: "directCost", label: lang === "zh" ? "直接成本" : "Direct cost" },
-                { key: "indirectCost", label: lang === "zh" ? "間接成本" : "Indirect cost" },
-                { key: "totalCost", label: lang === "zh" ? "總額" : "Total" },
-              ].map(({ key, label }) => (
-                <div key={key}>
-                  <label className="block text-xs font-medium text-gray-500 mb-1">{label}</label>
-                  <input type="text" value={opt[key]} onChange={(e) => updateApply((app) => { app.costAnalysis.options[idx][key] = e.target.value; })}
-                    className="w-full px-3 py-2 rounded-lg border border-gray-200 focus:border-teal-300 focus:outline-none text-sm" />
-                </div>
-              ))}
+            <div className="grid grid-cols-2 gap-3">
+              <div>
+                <label className="block text-xs font-medium text-gray-500 mb-1">{lang === "zh" ? "直接成本（每項一條）" : "Direct cost (one per line)"}</label>
+                <ListField items={toArr(opt.directCost)} placeholder={lang === "zh" ? "一項直接成本" : "a direct cost"} addLabel={lang === "zh" ? "新增" : "add"}
+                  onChange={(arr) => updateApply((app) => { app.costAnalysis.options[idx].directCost = arr; })} />
+              </div>
+              <div>
+                <label className="block text-xs font-medium text-gray-500 mb-1">{lang === "zh" ? "間接成本（每項一條）" : "Indirect cost (one per line)"}</label>
+                <ListField items={toArr(opt.indirectCost)} placeholder={lang === "zh" ? "一項間接成本" : "an indirect cost"} addLabel={lang === "zh" ? "新增" : "add"}
+                  onChange={(arr) => updateApply((app) => { app.costAnalysis.options[idx].indirectCost = arr; })} />
+              </div>
+            </div>
+            <div className="mt-2">
+              <label className="block text-xs font-medium text-gray-500 mb-1">{lang === "zh" ? "總額" : "Total"}</label>
+              <input type="text" value={opt.totalCost} onChange={(e) => updateApply((app) => { app.costAnalysis.options[idx].totalCost = e.target.value; })}
+                className="w-full px-3 py-2 rounded-lg border border-gray-200 focus:border-teal-300 focus:outline-none text-sm" />
             </div>
           </div>
         ))}
-        <button onClick={() => updateApply((app) => { app.costAnalysis.options.push({ name: "", directCost: "", indirectCost: "", totalCost: "" }); })}
+        <button onClick={() => updateApply((app) => { app.costAnalysis.options.push({ name: "", directCost: [""], indirectCost: [""], totalCost: "" }); })}
           className="text-sm text-teal-500 hover:text-teal-600 font-medium">
           + {lang === "zh" ? "新增選項" : "Add option"}
         </button>
@@ -205,6 +234,7 @@ export default function PhaseApply() {
           rows={5}
           className="w-full px-4 py-3 rounded-xl border-2 border-gray-100 focus:border-teal-300 focus:outline-none resize-y text-sm"
         />
+        <FitHint value={data.patientSummary} max={160} />
       </section>
     </div>
   );

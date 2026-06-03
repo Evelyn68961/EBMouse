@@ -22,6 +22,19 @@ export default function WorkflowRouter() {
   const [project, setProject] = useState(null);
   const [saveStatus, setSaveStatus] = useState("");
   const [sidebarOpen, setSidebarOpen] = useState(true);
+  const [exporting, setExporting] = useState(false);
+
+  const handleDownloadPptx = async () => {
+    try {
+      setExporting(true);
+      const { downloadPptx } = await import('../../pptx/fillPptx');
+      await downloadPptx(project);
+    } catch (e) {
+      alert((lang === "zh" ? "匯出失敗：" : "Export failed: ") + e.message);
+    } finally {
+      setExporting(false);
+    }
+  };
 
   useEffect(() => {
     const p = getProject(projectId);
@@ -109,6 +122,10 @@ export default function WorkflowRouter() {
                   <span className="text-xs font-medium text-gray-500">{lang === "zh" ? "簡報預覽" : "Slide Preview"}</span>
                   <span className="text-xs text-gray-300">— {lang === "zh" ? "即時更新" : "live"}</span>
                 </div>
+                <button onClick={handleDownloadPptx} disabled={exporting}
+                  className="w-full mb-3 px-3 py-2 rounded-lg bg-teal-500 text-white text-xs font-semibold hover:bg-teal-600 disabled:opacity-50 transition-colors">
+                  {exporting ? (lang === "zh" ? "產生中…" : "Generating…") : t("exportPptx", lang)}
+                </button>
                 <SlidePreview project={project} currentPhase={phase} />
               </div>
             )}
@@ -144,6 +161,10 @@ function MobilePreview({ project, currentPhase, lang }) {
             </button>
           </div>
           <div className="px-4 py-4 max-w-sm mx-auto">
+            <button onClick={async () => { try { const { downloadPptx } = await import('../../pptx/fillPptx'); await downloadPptx(project); } catch (e) { alert((lang === "zh" ? "匯出失敗：" : "Export failed: ") + e.message); } }}
+              className="w-full mb-3 px-3 py-2 rounded-lg bg-teal-500 text-white text-xs font-semibold hover:bg-teal-600 transition-colors">
+              {t("exportPptx", lang)}
+            </button>
             <SlidePreview project={project} currentPhase={currentPhase} />
           </div>
         </div>

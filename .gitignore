@@ -3,3 +3,7 @@ dist/
 ref/
 .env
 .DS_Store
+
+# pptx build/diagnostic scratch artifacts
+tools/_*
+

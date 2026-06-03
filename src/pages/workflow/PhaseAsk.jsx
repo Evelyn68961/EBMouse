@@ -2,6 +2,7 @@ import React from 'react';
 import { useProject } from './WorkflowRouter';
 import { useLang } from '../../App';
 import { t } from '../../i18n';
+import FitHint from '../../components/FitHint';
 import Hamster from '../../components/Hamster';
 import teachingContent from '../../data/teachingContent';
 import { TeachingBlocksForSection, PhaseIntro } from '../../components/TeachingBlock';
@@ -170,6 +171,7 @@ export default function PhaseAsk() {
                     placeholder={placeholder}
                     className="w-full px-3 py-2 rounded-lg border border-gray-200 focus:border-teal-300 focus:outline-none text-sm"
                   />
+                  <FitHint value={picot[key]} max={30} />
                 </div>
               </div>
             ))}

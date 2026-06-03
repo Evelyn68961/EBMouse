@@ -9,12 +9,20 @@ export function createNewProject(title = "", lang = "zh") {
       updatedAt: new Date().toISOString(),
       currentPhase: 1,
       lang,
+      members: [],
     },
     assess: {
       scenario: "",
+      topic: "",
+      situation: [],
+      clinicalQuestions: [],
       patientProfile: { age: "", sex: "", condition: "", setting: "" },
       patientPreferences: "",
       backgroundKnowledge: { diseaseOverview: "", riskFactors: "", treatmentOptions: "" },
+      treatmentArms: [
+        { name: "", course: "", issue: "" },
+        { name: "", course: "", issue: "" },
+      ],
       sources: "",
     },
     ask: {
@@ -43,14 +51,18 @@ export function createNewProject(title = "", lang = "zh") {
         afterTitleAbstract: 0,
         afterFullText: 0,
         finalIncluded: 0,
+        // S14 LitSuggest machine-learning screen
+        pubmedInitial: 0,
+        litPositive: 0,
+        litNegative: 0,
       },
       selectedArticle: {
         title: "", authors: "", journal: "", year: "",
         pmid: "", studyType: "",
         rctCount: 0, totalParticipants: 0,
-        selectionRationale: "",
+        selectionRationale: "", brief: "",
       },
-      alternativeArticles: [],
+      alternativeArticles: [{ title: "", studyCount: 0, participants: 0, brief: "" }],
     },
     appraise: {
       casp: {
@@ -77,6 +89,10 @@ export function createNewProject(title = "", lang = "zh") {
             name: "", sampleSize: 0, rctCount: 0,
             effectSize: "", ci95: "", pValue: "",
             subgroups: [],
+            grade: {
+              imprecision: { decision: 0, magnitude: "" },
+              inconsistency: { decision: 0, i2: "", overlap: "", distribution: "" },
+            },
           },
         ],
         forestPlotImage: null,
@@ -94,6 +110,9 @@ export function createNewProject(title = "", lang = "zh") {
               i: { study: "", case_: "", similarity: "" },
               c: { study: "", case_: "", similarity: "" },
               o: { study: "", case_: "", similarity: "" },
+              age: { study: "", case_: "" },
+              eth: { study: "", case_: "" },
+              setting: { study: "", case_: "" },
             },
             decision: 0, rationale: "",
           },
@@ -106,8 +125,8 @@ export function createNewProject(title = "", lang = "zh") {
     },
     apply: {
       applicability: { overallSimilarity: "", rationale: "" },
-      benefitRisk: { options: [{ name: "", benefits: "", risks: "" }] },
-      costAnalysis: { options: [{ name: "", directCost: "", indirectCost: "", totalCost: "" }] },
+      benefitRisk: { options: [{ name: "", benefits: [""], risks: [""] }] },
+      costAnalysis: { options: [{ name: "", directCost: [""], indirectCost: [""], totalCost: "" }] },
       evidenceToDecision: {
         benefitRisk: { assessment: "", direction: 0 },
         evidenceQuality: { assessment: "", direction: 0 },
