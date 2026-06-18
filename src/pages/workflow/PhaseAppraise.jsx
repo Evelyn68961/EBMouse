@@ -7,8 +7,24 @@ import Hamster from '../../components/Hamster';
 import teachingContent from '../../data/teachingContent';
 import { TeachingBlocksForSection, PhaseIntro } from '../../components/TeachingBlock';
 import ToolboxLinks from '../../components/ToolboxLinks';
+import { newOutcome, newOutcomeGrade } from '../../projectSchema';
 
 const phase = teachingContent.appraise;
+
+// The five GRADE domains, now assessed per-outcome.
+const outcomeDomains = [
+  { key: "riskOfBias", zh: "誤差風險", en: "Risk of Bias" },
+  { key: "imprecision", zh: "不精確性", en: "Imprecision" },
+  { key: "inconsistency", zh: "不一致性", en: "Inconsistency" },
+  { key: "indirectness", zh: "不直接性", en: "Indirectness" },
+  { key: "publicationBias", zh: "發表偏誤", en: "Publication Bias" },
+];
+
+const categoryOptions = [
+  { value: "benefit", zh: "利益", en: "Benefit" },
+  { value: "harm", zh: "傷害", en: "Harm" },
+  { value: "neutral", zh: "中性", en: "Neutral" },
+];
 
 const caspQuestions = {
   q1: { zh: "Q1. 是否明確提出研究問題？", en: "Q1. Was there a clear research question?" },
@@ -55,17 +71,23 @@ export default function PhaseAppraise() {
     });
   };
 
-  // Body-level GRADE domains (assessed once across all studies). Imprecision &
-  // inconsistency are handled per-outcome below, so they're excluded here.
-  const bodyDomains = ["riskOfBias", "indirectness", "publicationBias"];
-  const bodyTotal = bodyDomains.reduce((s, k) => s + (data.grade.domains[k]?.decision || 0), 0);
-  // Ensure an outcome has the per-outcome GRADE shape (older saved projects may not).
+  // Ensure an outcome has the full per-outcome 5-domain GRADE shape (older saved
+  // projects may only have imprecision/inconsistency).
   const ensureGrade = (o) => {
-    if (!o.grade) o.grade = { imprecision: { decision: 0, magnitude: "" }, inconsistency: { decision: 0, i2: "", overlap: "", distribution: "" } };
-    if (!o.grade.imprecision) o.grade.imprecision = { decision: 0, magnitude: "" };
-    if (!o.grade.inconsistency) o.grade.inconsistency = { decision: 0, i2: "", overlap: "", distribution: "" };
+    const base = newOutcomeGrade();
+    if (!o.grade) o.grade = base;
+    for (const k of Object.keys(base)) {
+      if (k === "certainty") { if (typeof o.grade.certainty !== "string") o.grade.certainty = ""; continue; }
+      if (!o.grade[k]) o.grade[k] = base[k];
+      else if (typeof o.grade[k].decision !== "number") o.grade[k].decision = 0;
+      if (o.grade[k] && typeof o.grade[k].note !== "string") o.grade[k].note = "";
+    }
     return o.grade;
   };
+  const outcomeTotal = (o) => outcomeDomains.reduce((s, d) => s + (Number(o?.grade?.[d.key]?.decision) || 0), 0);
+  const certaintyWord = (total) => total >= 0 ? (lang === "zh" ? "高" : "High")
+    : total === -1 ? (lang === "zh" ? "中" : "Moderate")
+    : total === -2 ? (lang === "zh" ? "低" : "Low") : (lang === "zh" ? "很低" : "Very low");
 
   // PICO comparison (study vs case) for the indirectness slides (S20/S43).
   const pico = data.grade.domains.indirectness.picoComparison || {};
@@ -80,6 +102,7 @@ export default function PhaseAppraise() {
     { id: "casp", label: lang === "zh" ? "CASP 評讀" : "CASP Appraisal" },
     { id: "results", label: lang === "zh" ? "結果摘要" : "Results Summary" },
     { id: "grade", label: lang === "zh" ? "GRADE 評估" : "GRADE Assessment" },
+    { id: "evidence", label: lang === "zh" ? "佐證與額外分析" : "Supporting & Analyses" },
   ];
 
   return (
@@ -121,6 +144,29 @@ export default function PhaseAppraise() {
         <div>
           {/* Teaching blocks for CASP */}
           <TeachingBlocksForSection blocks={phase.blocks} section="casp" />
+
+          <div className="bg-white rounded-xl border border-gray-100 p-4 mt-4 grid grid-cols-2 gap-3">
+            <div>
+              <label className="block text-xs font-medium text-gray-500 mb-1">{lang === "zh" ? "評讀工具" : "Tool"}</label>
+              <input type="text" value={data.casp.tool || ""}
+                onChange={(e) => updateAppraise((app) => { app.casp.tool = e.target.value; })}
+                placeholder="CASP-SR"
+                className="w-full px-3 py-2 rounded-lg border border-gray-200 focus:border-teal-300 focus:outline-none text-sm" />
+            </div>
+            <div>
+              <label className="block text-xs font-medium text-gray-500 mb-1">Kappa</label>
+              <input type="text" value={data.casp.kappa ?? ""}
+                onChange={(e) => updateAppraise((app) => { app.casp.kappa = e.target.value; })}
+                placeholder={lang === "zh" ? "人機一致性，例：0.8" : "e.g., 0.8"}
+                className="w-full px-3 py-2 rounded-lg border border-gray-200 focus:border-teal-300 focus:outline-none text-sm" />
+            </div>
+            <div className="col-span-2">
+              <label className="block text-xs font-medium text-gray-500 mb-1">{lang === "zh" ? "評讀備註" : "Comment"}</label>
+              <textarea value={data.casp.comment || ""}
+                onChange={(e) => updateAppraise((app) => { app.casp.comment = e.target.value; })}
+                rows={2} className="w-full px-3 py-2 rounded-lg border border-gray-200 focus:border-teal-300 focus:outline-none text-xs resize-y" />
+            </div>
+          </div>
 
           <div className="space-y-4 mt-4">
             {Object.entries(caspQuestions).map(([key, labels]) => (
@@ -170,14 +216,29 @@ export default function PhaseAppraise() {
                     placeholder={lang === "zh" ? "例：球面等效屈光度 (SE)" : "e.g., Spherical Equivalent (SE)"}
                     className="w-full px-3 py-2 rounded-lg border border-gray-200 focus:border-teal-300 focus:outline-none text-sm" />
                 </div>
+                <div className="col-span-2">
+                  <label className="block text-xs font-medium text-gray-500 mb-1">{lang === "zh" ? "類別" : "Category"}</label>
+                  <div className="flex gap-2">
+                    {categoryOptions.map(({ value, zh, en }) => (
+                      <button key={value}
+                        onClick={() => updateAppraise((app) => { app.results.outcomes[idx].category = app.results.outcomes[idx].category === value ? "" : value; })}
+                        className={`px-3 py-1.5 rounded-lg text-xs font-medium border transition-all ${
+                          outcome.category === value ? "bg-teal-100 text-teal-700 border-teal-300" : "bg-gray-50 text-gray-400 border-gray-200 hover:bg-gray-100"}`}>
+                        {lang === "zh" ? zh : en}
+                      </button>
+                    ))}
+                  </div>
+                </div>
                 {[
-                  { key: "sampleSize", label: lang === "zh" ? "樣本數" : "Sample size", type: "number" },
-                  { key: "rctCount", label: lang === "zh" ? "RCT 數量" : "RCT count", type: "number" },
+                  { key: "sampleSize", label: lang === "zh" ? "樣本數（可含 RCT 數，如 91,122 人 (8 RCT)）" : "Sample size", wide: true },
+                  { key: "rctCount", label: lang === "zh" ? "RCT 數量（簡報用）" : "RCT count (slides)", type: "number" },
                   { key: "effectSize", label: lang === "zh" ? "效應量 (WMD/OR/RR)" : "Effect size (WMD/OR/RR)" },
                   { key: "ci95", label: "95% CI", placeholder: "e.g., [0.23, 0.54]" },
                   { key: "pValue", label: "p-value" },
-                ].map(({ key, label, type, placeholder }) => (
-                  <div key={key}>
+                  { key: "nnt", label: "NNT" },
+                  { key: "nnh", label: "NNH" },
+                ].map(({ key, label, type, placeholder, wide }) => (
+                  <div key={key} className={wide ? "col-span-2" : ""}>
                     <label className="block text-xs font-medium text-gray-500 mb-1">{label}</label>
                     <input type={type || "text"} value={outcome[key] || ""}
                       onChange={(e) => updateAppraise((app) => { app.results.outcomes[idx][key] = type === "number" ? parseInt(e.target.value) || 0 : e.target.value; })}
@@ -188,9 +249,67 @@ export default function PhaseAppraise() {
               </div>
             </div>
           ))}
-          <button onClick={() => updateAppraise((app) => { app.results.outcomes.push({ name: "", sampleSize: 0, rctCount: 0, effectSize: "", ci95: "", pValue: "", subgroups: [] }); })}
+          <button onClick={() => updateAppraise((app) => { app.results.outcomes.push(newOutcome()); })}
             className="text-sm text-teal-500 hover:text-teal-600 font-medium">
             + {lang === "zh" ? "新增結果指標" : "Add outcome"}
+          </button>
+        </div>
+      )}
+
+      {/* Supporting & Additional-analyses Tab */}
+      {tab === "evidence" && (
+        <div>
+          {/* Supporting RCT (case JSON appraise.supportingRCT) */}
+          <h3 className="font-semibold text-gray-700 mb-3">{lang === "zh" ? "🔬 直接佐證研究（Supporting RCT）" : "🔬 Supporting RCT"}</h3>
+          <div className="bg-white rounded-xl border border-gray-100 p-4 space-y-3">
+            {[
+              { key: "title", label: lang === "zh" ? "標題" : "Title" },
+              { key: "purpose", label: lang === "zh" ? "目的" : "Purpose" },
+              { key: "population", label: lang === "zh" ? "族群" : "Population" },
+              { key: "intervention", label: lang === "zh" ? "介入" : "Intervention" },
+              { key: "outcome", label: lang === "zh" ? "結果" : "Outcome" },
+              { key: "conclusion", label: lang === "zh" ? "結論" : "Conclusion" },
+              { key: "comment", label: lang === "zh" ? "備註" : "Comment" },
+            ].map(({ key, label }) => (
+              <div key={key}>
+                <label className="block text-xs font-medium text-gray-500 mb-1">{label}</label>
+                <textarea value={data.supportingRCT?.[key] || ""}
+                  onChange={(e) => updateAppraise((app) => { if (!app.supportingRCT) app.supportingRCT = {}; app.supportingRCT[key] = e.target.value; })}
+                  rows={key === "title" || key === "conclusion" || key === "comment" ? 2 : 1}
+                  className="w-full px-3 py-2 rounded-lg border border-gray-200 focus:border-teal-300 focus:outline-none text-xs resize-y" />
+              </div>
+            ))}
+          </div>
+
+          {/* Additional analyses (case JSON appraise.additionalAnalysis[]) */}
+          <h3 className="font-semibold text-gray-700 mt-8 mb-3">{lang === "zh" ? "🧮 額外分析（NNT 計算、破除迷思等）" : "🧮 Additional Analyses"}</h3>
+          {(data.additionalAnalysis || []).map((a, idx) => (
+            <div key={idx} className="bg-white rounded-xl border border-gray-100 p-4 mb-3 space-y-2">
+              <div className="flex items-center gap-2">
+                <input type="text" value={a.title || ""}
+                  onChange={(e) => updateAppraise((app) => { app.additionalAnalysis[idx].title = e.target.value; })}
+                  placeholder={lang === "zh" ? "標題，例：計算 1 — NNT" : "Title"}
+                  className="flex-1 px-3 py-2 rounded-lg border border-gray-200 focus:border-teal-300 focus:outline-none text-sm font-medium" />
+                <button onClick={() => updateAppraise((app) => { app.additionalAnalysis.splice(idx, 1); })}
+                  className="px-2 text-gray-300 hover:text-red-400" title="remove">✕</button>
+              </div>
+              <input type="text" value={a.method || ""}
+                onChange={(e) => updateAppraise((app) => { app.additionalAnalysis[idx].method = e.target.value; })}
+                placeholder={lang === "zh" ? "方法" : "Method"}
+                className="w-full px-3 py-2 rounded-lg border border-gray-200 focus:border-teal-300 focus:outline-none text-xs" />
+              <textarea value={a.result || ""}
+                onChange={(e) => updateAppraise((app) => { app.additionalAnalysis[idx].result = e.target.value; })}
+                placeholder={lang === "zh" ? "結果 / 結論" : "Result"}
+                rows={3} className="w-full px-3 py-2 rounded-lg border border-gray-200 focus:border-teal-300 focus:outline-none text-xs resize-y" />
+              <textarea value={a.comment || ""}
+                onChange={(e) => updateAppraise((app) => { app.additionalAnalysis[idx].comment = e.target.value; })}
+                placeholder={lang === "zh" ? "備註（選填）" : "Comment (optional)"}
+                rows={2} className="w-full px-3 py-2 rounded-lg border border-gray-200 focus:border-teal-300 focus:outline-none text-xs resize-y" />
+            </div>
+          ))}
+          <button onClick={() => updateAppraise((app) => { if (!app.additionalAnalysis) app.additionalAnalysis = []; app.additionalAnalysis.push({ title: "", method: "", result: "", comment: "" }); })}
+            className="text-sm text-teal-500 hover:text-teal-600 font-medium">
+            + {lang === "zh" ? "新增額外分析" : "Add analysis"}
           </button>
         </div>
       )}
@@ -209,66 +328,51 @@ export default function PhaseAppraise() {
             <div className="grid grid-cols-2 gap-3">
               <div>
                 <label className="block text-xs font-medium text-gray-500 mb-1">MID {lang === "zh" ? "數值" : "value"}</label>
-                <input type="number" step="0.01" value={data.grade.mid.value || ""}
-                  onChange={(e) => updateAppraise((app) => { app.grade.mid.value = parseFloat(e.target.value) || 0; })}
+                <input type="text" value={data.grade.mid.value || ""}
+                  onChange={(e) => updateAppraise((app) => { app.grade.mid.value = e.target.value; })}
+                  placeholder={lang === "zh" ? "例：0.25 或 null (RR=1)" : "e.g., 0.25 or null (RR=1)"}
+                  className="w-full px-3 py-2 rounded-lg border border-gray-200 focus:border-teal-300 focus:outline-none text-sm" />
+              </div>
+              <div>
+                <label className="block text-xs font-medium text-gray-500 mb-1">{lang === "zh" ? "單位" : "Unit"}</label>
+                <input type="text" value={data.grade.mid.unit || ""}
+                  onChange={(e) => updateAppraise((app) => { app.grade.mid.unit = e.target.value; })}
+                  placeholder={lang === "zh" ? "例：D / RR / 天" : "e.g., D / RR"}
+                  className="w-full px-3 py-2 rounded-lg border border-gray-200 focus:border-teal-300 focus:outline-none text-sm" />
+              </div>
+              <div>
+                <label className="block text-xs font-medium text-gray-500 mb-1">{lang === "zh" ? "對應結果指標" : "Outcome"}</label>
+                <input type="text" value={data.grade.mid.outcome || ""}
+                  onChange={(e) => updateAppraise((app) => { app.grade.mid.outcome = e.target.value; })}
+                  placeholder={lang === "zh" ? "例：肺癌死亡率" : "e.g., lung cancer mortality"}
                   className="w-full px-3 py-2 rounded-lg border border-gray-200 focus:border-teal-300 focus:outline-none text-sm" />
               </div>
               <div>
                 <label className="block text-xs font-medium text-gray-500 mb-1">{lang === "zh" ? "訂定方法" : "Method"}</label>
-                <select value={data.grade.mid.method} onChange={(e) => updateAppraise((app) => { app.grade.mid.method = e.target.value; })}
-                  className="w-full px-3 py-2 rounded-lg border border-gray-200 focus:border-teal-300 focus:outline-none text-sm">
-                  <option value="">{lang === "zh" ? "選擇方法" : "Select method"}</option>
-                  <option value="literature">{lang === "zh" ? "文獻基準" : "Literature benchmark"}</option>
-                  <option value="expert">{lang === "zh" ? "專家意見" : "Expert opinion"}</option>
-                  <option value="patient">{lang === "zh" ? "病人回饋" : "Patient feedback"}</option>
-                  <option value="benchmark">{lang === "zh" ? "指標性研究" : "Benchmark study"}</option>
-                </select>
+                <input type="text" value={data.grade.mid.method || ""}
+                  onChange={(e) => updateAppraise((app) => { app.grade.mid.method = e.target.value; })}
+                  placeholder={lang === "zh" ? "例：Null 閾值法（二元結果）" : "e.g., Null threshold / literature"}
+                  className="w-full px-3 py-2 rounded-lg border border-gray-200 focus:border-teal-300 focus:outline-none text-sm" />
               </div>
               <div className="col-span-2">
-                <label className="block text-xs font-medium text-gray-500 mb-1">{lang === "zh" ? "MID 訂定理由" : "MID justification"}</label>
-                <textarea value={data.grade.mid.justification} onChange={(e) => updateAppraise((app) => { app.grade.mid.justification = e.target.value; })}
-                  placeholder={lang === "zh" ? "例：根據 Smith & Walline 2015，近視平均年進展 0.5D，50% 改善 = MID 0.25D" : "e.g., Based on Smith & Walline 2015, average annual progression 0.5D, 50% improvement = MID 0.25D"}
+                <label className="block text-xs font-medium text-gray-500 mb-1">{lang === "zh" ? "MID 訂定 / 推導理由" : "Derivation"}</label>
+                <textarea value={data.grade.mid.derivation || ""} onChange={(e) => updateAppraise((app) => { app.grade.mid.derivation = e.target.value; })}
+                  placeholder={lang === "zh" ? "說明 MID 如何推導..." : "How the MID was derived..."}
                   rows={2} className="w-full px-3 py-2 rounded-lg border border-gray-200 focus:border-teal-300 focus:outline-none text-xs resize-y" />
               </div>
+              <div className="col-span-2">
+                <label className="block text-xs font-medium text-gray-500 mb-1">{lang === "zh" ? "參考文獻" : "Reference"}</label>
+                <input type="text" value={data.grade.mid.reference || ""}
+                  onChange={(e) => updateAppraise((app) => { app.grade.mid.reference = e.target.value; })}
+                  className="w-full px-3 py-2 rounded-lg border border-gray-200 focus:border-teal-300 focus:outline-none text-sm" />
+              </div>
+              <label className="col-span-2 flex items-center gap-2 text-xs text-gray-600">
+                <input type="checkbox" checked={!!data.grade.mid.isNullThreshold}
+                  onChange={(e) => updateAppraise((app) => { app.grade.mid.isNullThreshold = e.target.checked; })} />
+                {lang === "zh" ? "使用 Null 閾值（二元結果，MID = RR 1）" : "Use null threshold (binary outcome, MID = RR 1)"}
+              </label>
             </div>
           </div>
-
-          {/* GRADE domains — BODY-LEVEL (apply to the whole body of evidence:
-              risk of bias S36, indirectness S43, publication bias S44) */}
-          <h4 className="font-semibold text-gray-600 text-sm mt-2 mb-2">
-            {lang === "zh" ? "① 整體層級評估（適用於所有結果指標）" : "① Body-level (applies to all outcomes)"}
-          </h4>
-          {bodyDomains.map((domain) => (
-            <div key={domain} className="bg-white rounded-xl border border-gray-100 p-4 mb-3">
-              <div className="flex items-center justify-between mb-3">
-                <h4 className="font-semibold text-gray-700 text-sm">{gradeLabels[domain][lang]}</h4>
-                <div className="flex gap-1">
-                  {[0, -1, -2].map((val) => (
-                    <button
-                      key={val}
-                      onClick={() => updateAppraise((app) => { app.grade.domains[domain].decision = val; })}
-                      className={`px-3 py-1 rounded-lg text-xs font-bold transition-all border ${
-                        data.grade.domains[domain].decision === val
-                          ? val === 0
-                            ? "bg-green-100 text-green-700 border-green-300"
-                            : "bg-red-100 text-red-700 border-red-300"
-                          : "bg-gray-50 text-gray-400 border-gray-200"
-                      }`}
-                    >
-                      {val === 0 ? (lang === "zh" ? "不扣分" : "No downgrade") : `${val}`}
-                    </button>
-                  ))}
-                </div>
-              </div>
-              <textarea
-                value={data.grade.domains[domain].rationale}
-                onChange={(e) => updateAppraise((app) => { app.grade.domains[domain].rationale = e.target.value; })}
-                placeholder={lang === "zh" ? "判斷理由..." : "Rationale..."}
-                rows={2}
-                className="w-full px-3 py-2 rounded-lg border border-gray-200 focus:border-teal-300 focus:outline-none text-xs resize-y"
-              />
-            </div>
-          ))}
 
           {/* PICO comparison (study vs case) — fills the indirectness slides S20/S43 */}
           <h4 className="font-semibold text-gray-600 text-sm mt-5 mb-2">
@@ -303,22 +407,24 @@ export default function PhaseAppraise() {
             </div>
           </div>
 
-          {/* GRADE per-outcome — imprecision (S37-39) + inconsistency (S40-42).
-              Reads the outcomes entered in the 結果摘要 tab (first 3 → S37-47). */}
+          {/* GRADE per-outcome — all five domains per outcome (case JSON shape) */}
           <h4 className="font-semibold text-gray-600 text-sm mt-5 mb-2">
-            {lang === "zh" ? "② 各結果指標評估（不精確性 + 不一致性）" : "② Per-outcome (imprecision + inconsistency)"}
+            {lang === "zh" ? "各結果指標的 GRADE 評估（五大面向）" : "Per-outcome GRADE (all five domains)"}
           </h4>
           {data.results.outcomes.length === 0 && (
             <p className="text-xs text-gray-400 mb-3">
               {lang === "zh" ? "請先到「結果摘要」分頁新增結果指標。" : "Add outcomes in the Results Summary tab first."}
             </p>
           )}
-          {data.results.outcomes.slice(0, 3).map((o, idx) => {
-            const g = o.grade || { imprecision: { decision: 0 }, inconsistency: { decision: 0 } };
-            const total = bodyTotal + (g.imprecision?.decision || 0) + (g.inconsistency?.decision || 0);
-            const certainty = total >= 0 ? (lang === "zh" ? "高" : "High")
-              : total === -1 ? (lang === "zh" ? "中" : "Moderate")
-              : total === -2 ? (lang === "zh" ? "低" : "Low") : (lang === "zh" ? "很低" : "Very low");
+          {data.results.outcomes.map((o, idx) => {
+            const g = o.grade || newOutcomeGrade();
+            const total = outcomeTotal(o);
+            const certaintyKeys = [
+              { value: "high", zh: "高", en: "High" },
+              { value: "moderate", zh: "中", en: "Moderate" },
+              { value: "low", zh: "低", en: "Low" },
+              { value: "very-low", zh: "很低", en: "Very low" },
+            ];
             return (
               <div key={idx} className="bg-white rounded-xl border border-gray-100 p-4 mb-3">
                 <div className="flex items-center justify-between mb-3">
@@ -326,89 +432,66 @@ export default function PhaseAppraise() {
                     {o.name || (lang === "zh" ? `結果 ${idx + 1}` : `Outcome ${idx + 1}`)}
                   </h5>
                   <span className="text-xs font-bold text-teal-800 bg-teal-50 px-2 py-1 rounded-lg">
-                    {lang === "zh" ? "證據品質: " : "Certainty: "}{certainty}
-                    <span className="text-gray-400 font-normal"> ({total})</span>
+                    {lang === "zh" ? "降級: " : "Downgrade: "}{total}
+                    <span className="text-gray-400 font-normal"> → {certaintyWord(total)}</span>
                   </span>
                 </div>
 
-                {/* imprecision */}
-                <div className="flex items-center justify-between mb-2">
-                  <span className="text-xs text-gray-500">{lang === "zh" ? "不精確性" : "Imprecision"}</span>
-                  <div className="flex gap-1">
-                    {[0, -1, -2].map((val) => (
-                      <button key={val}
-                        onClick={() => updateAppraise((app) => { ensureGrade(app.results.outcomes[idx]).imprecision.decision = val; })}
-                        className={`px-2.5 py-1 rounded-lg text-xs font-bold border transition-all ${
-                          (g.imprecision?.decision || 0) === val
-                            ? val === 0 ? "bg-green-100 text-green-700 border-green-300" : "bg-red-100 text-red-700 border-red-300"
-                            : "bg-gray-50 text-gray-400 border-gray-200"}`}>
-                        {val === 0 ? (lang === "zh" ? "不扣分" : "0") : `${val}`}
-                      </button>
-                    ))}
+                {outcomeDomains.map(({ key, zh, en }) => (
+                  <div key={key} className="mb-2.5">
+                    <div className="flex items-center justify-between mb-1">
+                      <span className="text-xs text-gray-500">{lang === "zh" ? zh : en}</span>
+                      <div className="flex gap-1">
+                        {[0, -1, -2].map((val) => (
+                          <button key={val}
+                            onClick={() => updateAppraise((app) => { ensureGrade(app.results.outcomes[idx])[key].decision = val; })}
+                            className={`px-2.5 py-1 rounded-lg text-xs font-bold border transition-all ${
+                              (g[key]?.decision || 0) === val
+                                ? val === 0 ? "bg-green-100 text-green-700 border-green-300" : "bg-red-100 text-red-700 border-red-300"
+                                : "bg-gray-50 text-gray-400 border-gray-200"}`}>
+                            {val === 0 ? (lang === "zh" ? "不扣分" : "0") : `${val}`}
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+                    <input type="text" value={g[key]?.note || ""}
+                      onChange={(e) => updateAppraise((app) => { ensureGrade(app.results.outcomes[idx])[key].note = e.target.value; })}
+                      placeholder={lang === "zh" ? "判斷說明（會寫入 JSON 的 Note）" : "Note (→ case JSON *Note)"}
+                      className="w-full px-3 py-1.5 rounded-lg border border-gray-200 focus:border-teal-300 focus:outline-none text-xs" />
                   </div>
-                </div>
-                <input type="text" value={g.imprecision?.magnitude || ""}
-                  onChange={(e) => updateAppraise((app) => { ensureGrade(app.results.outcomes[idx]).imprecision.magnitude = e.target.value; })}
-                  placeholder={lang === "zh" ? "作用大小，例：屬於 Moderate effect" : "Effect magnitude, e.g. Moderate effect"}
-                  className="w-full px-3 py-1.5 mb-3 rounded-lg border border-gray-200 focus:border-teal-300 focus:outline-none text-xs" />
+                ))}
 
-                {/* inconsistency */}
-                <div className="flex items-center justify-between mb-2">
-                  <span className="text-xs text-gray-500">{lang === "zh" ? "不一致性" : "Inconsistency"}</span>
-                  <div className="flex gap-1">
-                    {[0, -1, -2].map((val) => (
-                      <button key={val}
-                        onClick={() => updateAppraise((app) => { ensureGrade(app.results.outcomes[idx]).inconsistency.decision = val; })}
-                        className={`px-2.5 py-1 rounded-lg text-xs font-bold border transition-all ${
-                          (g.inconsistency?.decision || 0) === val
-                            ? val === 0 ? "bg-green-100 text-green-700 border-green-300" : "bg-red-100 text-red-700 border-red-300"
-                            : "bg-gray-50 text-gray-400 border-gray-200"}`}>
-                        {val === 0 ? (lang === "zh" ? "不扣分" : "0") : `${val}`}
+                <div className="mt-2 flex items-center gap-2">
+                  <span className="text-xs text-gray-500">{lang === "zh" ? "證據品質" : "Certainty"}</span>
+                  <div className="flex gap-1 flex-wrap">
+                    {certaintyKeys.map(({ value, zh, en }) => (
+                      <button key={value}
+                        onClick={() => updateAppraise((app) => { ensureGrade(app.results.outcomes[idx]).certainty = app.results.outcomes[idx].grade.certainty === value ? "" : value; })}
+                        className={`px-2.5 py-1 rounded-lg text-xs font-medium border transition-all ${
+                          g.certainty === value ? "bg-teal-100 text-teal-700 border-teal-300" : "bg-gray-50 text-gray-400 border-gray-200"}`}>
+                        {lang === "zh" ? zh : en}
                       </button>
                     ))}
                   </div>
-                </div>
-                <div className="grid grid-cols-2 gap-2">
-                  <input type="text" value={g.inconsistency?.i2 || ""}
-                    onChange={(e) => updateAppraise((app) => { ensureGrade(app.results.outcomes[idx]).inconsistency.i2 = e.target.value; })}
-                    placeholder={lang === "zh" ? "I² 值，例：95%" : "I², e.g. 95%"}
-                    className="px-3 py-1.5 rounded-lg border border-gray-200 focus:border-teal-300 focus:outline-none text-xs" />
-                  <input type="text" value={g.inconsistency?.overlap || ""}
-                    onChange={(e) => updateAppraise((app) => { ensureGrade(app.results.outcomes[idx]).inconsistency.overlap = e.target.value; })}
-                    placeholder={lang === "zh" ? "信賴區間重疊，例：部分重疊不足" : "CI overlap"}
-                    className="px-3 py-1.5 rounded-lg border border-gray-200 focus:border-teal-300 focus:outline-none text-xs" />
-                  <input type="text" value={g.inconsistency?.distribution || ""}
-                    onChange={(e) => updateAppraise((app) => { ensureGrade(app.results.outcomes[idx]).inconsistency.distribution = e.target.value; })}
-                    placeholder={lang === "zh" ? "點估計值分布，例：有些跨越 null" : "Point estimate distribution"}
-                    className="col-span-2 px-3 py-1.5 rounded-lg border border-gray-200 focus:border-teal-300 focus:outline-none text-xs" />
+                  <span className="text-[10px] text-gray-300">{lang === "zh" ? `（留空＝自動：${certaintyWord(total)}）` : `(blank = auto: ${certaintyWord(total)})`}</span>
                 </div>
               </div>
             );
           })}
 
-          {/* GRADE summary */}
+          {/* Overall certainty (used as fallback for the recommendation) */}
           <div className="mt-4 p-4 rounded-xl bg-teal-50 border border-teal-200">
-            <div className="flex items-center justify-between">
-              <span className="font-semibold text-teal-700">
-                {lang === "zh" ? "總降級分數" : "Total downgrade"}
-              </span>
-              <span className="font-bold text-lg text-teal-800">
-                {Object.values(data.grade.domains).reduce((sum, d) => sum + d.decision, 0)}
-              </span>
-            </div>
-            <div className="mt-2">
-              <label className="block text-xs font-medium text-teal-600 mb-1">
-                {lang === "zh" ? "證據確定性等級" : "Certainty of Evidence"}
-              </label>
-              <select value={data.grade.certaintyLevel} onChange={(e) => updateAppraise((app) => { app.grade.certaintyLevel = e.target.value; })}
-                className="w-full px-3 py-2 rounded-lg border border-teal-300 focus:outline-none text-sm font-semibold bg-white">
-                <option value="">{lang === "zh" ? "選擇等級" : "Select level"}</option>
-                <option value="high">{lang === "zh" ? "高 (High)" : "High"}</option>
-                <option value="moderate">{lang === "zh" ? "中 (Moderate)" : "Moderate"}</option>
-                <option value="low">{lang === "zh" ? "低 (Low)" : "Low"}</option>
-                <option value="very_low">{lang === "zh" ? "很低 (Very Low)" : "Very Low"}</option>
-              </select>
-            </div>
+            <label className="block text-xs font-medium text-teal-600 mb-1">
+              {lang === "zh" ? "整體證據確定性（用於建議的備援值）" : "Overall certainty (recommendation fallback)"}
+            </label>
+            <select value={data.grade.certaintyLevel} onChange={(e) => updateAppraise((app) => { app.grade.certaintyLevel = e.target.value; })}
+              className="w-full px-3 py-2 rounded-lg border border-teal-300 focus:outline-none text-sm font-semibold bg-white">
+              <option value="">{lang === "zh" ? "選擇等級" : "Select level"}</option>
+              <option value="high">{lang === "zh" ? "高 (High)" : "High"}</option>
+              <option value="moderate">{lang === "zh" ? "中 (Moderate)" : "Moderate"}</option>
+              <option value="low">{lang === "zh" ? "低 (Low)" : "Low"}</option>
+              <option value="very-low">{lang === "zh" ? "很低 (Very Low)" : "Very Low"}</option>
+            </select>
           </div>
         </div>
       )}

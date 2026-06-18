@@ -9,6 +9,10 @@ import ToolboxLinks from '../../components/ToolboxLinks';
 
 const phase = teachingContent.acquire;
 
+// array <-> comma-separated string for keyword inputs
+const csv = (v) => (Array.isArray(v) ? v.join(", ") : (v || ""));
+const toArr = (s) => String(s).split(",").map((x) => x.trim()).filter(Boolean);
+
 export default function PhaseAcquire() {
   const { project, updateProject } = useProject();
   const { lang } = useLang();
@@ -79,6 +83,39 @@ export default function PhaseAcquire() {
         >+ {lang === "zh" ? "新增資料庫" : "Add database"}</button>
       </section>
 
+      {/* Keywords (free text + MeSH) */}
+      <section className="mb-8">
+        <h3 className="font-semibold text-gray-700 mb-3">{lang === "zh" ? "🔑 關鍵字 (Free text / MeSH)" : "🔑 Keywords (Free text / MeSH)"}</h3>
+        <p className="text-xs text-gray-400 mb-2">{lang === "zh" ? "多個關鍵字以逗號分隔。一般只填 P 與 I。" : "Separate multiple terms with commas. Usually only P and I are needed."}</p>
+        <div className="bg-white rounded-xl border border-gray-100 p-4 space-y-2">
+          <div className="grid grid-cols-[2rem_1fr_1fr] gap-2 items-center">
+            <span></span>
+            <span className="text-xs text-gray-400">{lang === "zh" ? "Free text" : "Free text"}</span>
+            <span className="text-xs text-gray-400">MeSH</span>
+            {["p", "i", "c", "o"].map((k) => (
+              <React.Fragment key={k}>
+                <span className="text-xs font-bold text-teal-700">{k.toUpperCase()}</span>
+                <input type="text" value={csv(data.keywords.freeText?.[k])}
+                  onChange={(e) => update((acq) => { acq.keywords.freeText[k] = toArr(e.target.value); })}
+                  placeholder={lang === "zh" ? "free text" : "free text"}
+                  className="px-2 py-1.5 rounded-lg border border-gray-200 focus:border-teal-300 focus:outline-none text-xs" />
+                <input type="text" value={csv(data.keywords.meshTerms?.[k])}
+                  onChange={(e) => update((acq) => { acq.keywords.meshTerms[k] = toArr(e.target.value); })}
+                  placeholder="MeSH"
+                  className="px-2 py-1.5 rounded-lg border border-gray-200 focus:border-teal-300 focus:outline-none text-xs" />
+              </React.Fragment>
+            ))}
+          </div>
+          <div>
+            <label className="block text-xs font-medium text-gray-500 mb-1 mt-2">{lang === "zh" ? "備註" : "Note"}</label>
+            <input type="text" value={data.keywords.note || ""}
+              onChange={(e) => update((acq) => { acq.keywords.note = e.target.value; })}
+              placeholder={lang === "zh" ? "例：Search on P and I only — adding C and O over-restricts." : "e.g., Search on P and I only."}
+              className="w-full px-3 py-2 rounded-lg border border-gray-200 focus:border-teal-300 focus:outline-none text-xs" />
+          </div>
+        </div>
+      </section>
+
       {/* Boolean strategy */}
       <section className="mb-8">
         <h3 className="font-semibold text-gray-700 mb-3">{lang === "zh" ? "🔗 搜尋策略 (Boolean)" : "🔗 Search Strategy (Boolean)"}</h3>
@@ -118,6 +155,8 @@ export default function PhaseAcquire() {
             <hr className="border-gray-100" />
             {[
               { label: lang === "zh" ? "去重後" : "After dedup", key: "afterDedup" },
+              { label: lang === "zh" ? "LitSuggest 篩選後" : "After LitSuggest", key: "afterLitSuggest" },
+              { label: lang === "zh" ? "SR 類型篩選後" : "After SR filter", key: "afterSRFilter" },
               { label: lang === "zh" ? "標題/摘要篩選後" : "After title/abstract", key: "afterTitleAbstract" },
               { label: lang === "zh" ? "全文篩選後" : "After full text", key: "afterFullText" },
               { label: lang === "zh" ? "最終納入" : "Final included", key: "finalIncluded" },

@@ -91,6 +91,7 @@ const translations = {
   hintCollapse: { zh: "收起", en: "Collapse" },
 
   // Export
+  exportJson: { zh: "下載成果檔 (.json)", en: "Download Case File (.json)" },
   exportPptx: { zh: "下載競賽簡報 (.pptx)", en: "Download Competition Slides (.pptx)" },
   exportSummary: { zh: "下載臨床摘要", en: "Download Clinical Summary" },
   exportGrade: { zh: "下載 GRADE 證據表", en: "Download GRADE Evidence Table" },

@@ -65,6 +65,17 @@ export default function PhaseApply() {
     });
   };
 
+  const updateMeta = (updater) => {
+    updateProject((prev) => {
+      const next = JSON.parse(JSON.stringify(prev));
+      if (!next.meta.recommendation) next.meta.recommendation = { strength: "", direction: "", label: "", certaintyLevel: "" };
+      updater(next.meta);
+      return next;
+    });
+  };
+
+  const applicRows = data.applicability?.rows || [];
+
   return (
     <div>
       <div className="flex items-center gap-3 mb-6">
@@ -88,13 +99,69 @@ export default function PhaseApply() {
       <section className="mb-8">
         <h3 className="font-semibold text-gray-700 mb-3">{lang === "zh" ? "🎯 案例適用性 (CASP Q9)" : "🎯 Case Applicability (CASP Q9)"}</h3>
         <TeachingBlocksForSection blocks={phase.blocks} section="applicability" />
+
+        {/* Applicability comparison table (case JSON apply.applicability.rows) */}
+        <div className="bg-white rounded-xl border border-gray-100 p-4 mb-3">
+          <div className="grid grid-cols-[1fr_1fr_1fr_5rem_1.5rem] gap-2 items-center text-xs text-gray-400 mb-1">
+            <span>{lang === "zh" ? "項目" : "Item"}</span>
+            <span>{lang === "zh" ? "文獻" : "Study"}</span>
+            <span>{lang === "zh" ? "案例" : "Case"}</span>
+            <span>{lang === "zh" ? "相似度" : "Similarity"}</span>
+            <span></span>
+          </div>
+          {applicRows.map((r, i) => (
+            <div key={i} className="grid grid-cols-[1fr_1fr_1fr_5rem_1.5rem] gap-2 items-center mb-1.5">
+              {["item", "study", "case_"].map((f) => (
+                <input key={f} type="text" value={r[f] || ""}
+                  onChange={(e) => updateApply((app) => { app.applicability.rows[i][f] = e.target.value; })}
+                  className="px-2 py-1.5 rounded-lg border border-gray-200 focus:border-teal-300 focus:outline-none text-xs" />
+              ))}
+              <select value={r.similarity || ""}
+                onChange={(e) => updateApply((app) => { app.applicability.rows[i].similarity = e.target.value; })}
+                className="px-1 py-1.5 rounded-lg border border-gray-200 focus:border-teal-300 focus:outline-none text-xs">
+                <option value="">—</option>
+                <option value="match">match</option>
+                <option value="partial">partial</option>
+                <option value="mismatch">mismatch</option>
+              </select>
+              <button onClick={() => updateApply((app) => { app.applicability.rows.splice(i, 1); })}
+                className="text-gray-300 hover:text-red-400" title="remove">✕</button>
+            </div>
+          ))}
+          <button onClick={() => updateApply((app) => { if (!app.applicability.rows) app.applicability.rows = []; app.applicability.rows.push({ item: "", study: "", case_: "", similarity: "" }); })}
+            className="text-xs text-teal-500 hover:text-teal-600 font-medium mt-1">
+            + {lang === "zh" ? "新增比較列" : "Add row"}
+          </button>
+        </div>
+
+        <label className="block text-xs font-medium text-gray-500 mb-1">{lang === "zh" ? "適用性結論" : "Applicability conclusion"}</label>
         <textarea
-          value={data.applicability.rationale}
-          onChange={(e) => updateApply((app) => { app.applicability.rationale = e.target.value; })}
+          value={data.applicability.conclusion || data.applicability.rationale || ""}
+          onChange={(e) => updateApply((app) => { app.applicability.conclusion = e.target.value; })}
           placeholder={lang === "zh" ? "描述文獻與案例的相似程度，以及是否適用..." : "Describe similarity between evidence and case, and applicability..."}
           rows={3}
           className="w-full px-4 py-3 rounded-xl border-2 border-gray-100 focus:border-teal-300 focus:outline-none resize-y text-sm"
         />
+      </section>
+
+      {/* Efficacy summary (case JSON apply.efficacySummary) */}
+      <section className="mb-8">
+        <h3 className="font-semibold text-gray-700 mb-3">{lang === "zh" ? "📈 效益摘要" : "📈 Efficacy Summary"}</h3>
+        <div className="bg-white rounded-xl border border-gray-100 p-4 space-y-3">
+          {[
+            { key: "effect", label: lang === "zh" ? "效益" : "Effect", rows: 2 },
+            { key: "midComparison", label: lang === "zh" ? "與 MID 比較" : "vs MID", rows: 2 },
+            { key: "certainty", label: lang === "zh" ? "確定性" : "Certainty", rows: 1 },
+            { key: "nnt", label: "NNT", rows: 1 },
+          ].map(({ key, label, rows }) => (
+            <div key={key}>
+              <label className="block text-xs font-medium text-gray-500 mb-1">{label}</label>
+              <textarea value={data.efficacySummary?.[key] || ""}
+                onChange={(e) => updateApply((app) => { if (!app.efficacySummary) app.efficacySummary = {}; app.efficacySummary[key] = e.target.value; })}
+                rows={rows} className="w-full px-3 py-2 rounded-lg border border-gray-200 focus:border-teal-300 focus:outline-none text-xs resize-y" />
+            </div>
+          ))}
+        </div>
       </section>
 
       {/* Benefit-Risk */}
@@ -165,6 +232,14 @@ export default function PhaseApply() {
         <h3 className="font-semibold text-gray-700 mb-3">{lang === "zh" ? "📋 證據到建議 (EtD)" : "📋 Evidence to Decision (EtD)"}</h3>
         <TeachingBlocksForSection blocks={phase.blocks} section="evidenceToDecision" />
 
+        <div className="mt-3">
+          <label className="block text-xs font-medium text-gray-500 mb-1">{lang === "zh" ? "EtD 參考架構" : "EtD reference"}</label>
+          <input type="text" value={data.evidenceToDecision.reference || ""}
+            onChange={(e) => updateApply((app) => { app.evidenceToDecision.reference = e.target.value; })}
+            placeholder="e.g., BMJ 2025;389:e083867"
+            className="w-full px-3 py-2 rounded-lg border border-gray-200 focus:border-teal-300 focus:outline-none text-sm" />
+        </div>
+
         <div className="space-y-3 mt-4">
           {etdFactors.map(({ key, zh, en }) => (
             <div key={key} className="bg-white rounded-xl border border-gray-100 p-4">
@@ -202,17 +277,19 @@ export default function PhaseApply() {
         </div>
       </section>
 
-      {/* Recommendation */}
+      {/* Recommendation (case JSON meta.recommendation + EtD label/reason) */}
       <section className="mb-8">
-        <h3 className="font-semibold text-gray-700 mb-3">{lang === "zh" ? "💊 推薦強度" : "💊 Recommendation Strength"}</h3>
-        <div className="flex gap-3">
+        <h3 className="font-semibold text-gray-700 mb-3">{lang === "zh" ? "💊 最終建議" : "💊 Recommendation"}</h3>
+
+        <label className="block text-xs font-medium text-gray-500 mb-1">{lang === "zh" ? "推薦強度" : "Strength"}</label>
+        <div className="flex gap-3 mb-4">
           {[
-            { value: "strong", label: lang === "zh" ? "強烈推薦" : "Strong recommendation", color: "border-green-300 bg-green-50 text-green-700" },
-            { value: "conditional", label: lang === "zh" ? "部分推薦" : "Conditional recommendation", color: "border-yellow-300 bg-yellow-50 text-yellow-700" },
+            { value: "strong", label: lang === "zh" ? "強烈推薦" : "Strong", color: "border-green-300 bg-green-50 text-green-700" },
+            { value: "conditional", label: lang === "zh" ? "部分推薦" : "Conditional", color: "border-yellow-300 bg-yellow-50 text-yellow-700" },
           ].map(({ value, label, color }) => (
             <button
               key={value}
-              onClick={() => updateApply((app) => { app.recommendationStrength = value; })}
+              onClick={() => { updateApply((app) => { app.recommendationStrength = value; }); updateMeta((m) => { m.recommendation.strength = value; }); }}
               className={`flex-1 py-3 rounded-xl font-medium border-2 transition-all ${
                 data.recommendationStrength === value ? `${color} scale-[1.02]` : "border-gray-200 text-gray-400 bg-white"
               }`}
@@ -221,6 +298,49 @@ export default function PhaseApply() {
             </button>
           ))}
         </div>
+
+        <label className="block text-xs font-medium text-gray-500 mb-1">{lang === "zh" ? "方向" : "Direction"}</label>
+        <div className="flex gap-3 mb-4">
+          {[
+            { value: "for", label: lang === "zh" ? "支持 (for)" : "For" },
+            { value: "against", label: lang === "zh" ? "反對 (against)" : "Against" },
+          ].map(({ value, label }) => (
+            <button key={value}
+              onClick={() => updateMeta((m) => { m.recommendation.direction = m.recommendation.direction === value ? "" : value; })}
+              className={`flex-1 py-2.5 rounded-xl font-medium border-2 transition-all ${
+                project.meta?.recommendation?.direction === value ? "border-teal-300 bg-teal-50 text-teal-700" : "border-gray-200 text-gray-400 bg-white"}`}>
+              {label}
+            </button>
+          ))}
+        </div>
+
+        <label className="block text-xs font-medium text-gray-500 mb-1">{lang === "zh" ? "建議標籤（一句話）" : "Recommendation label"}</label>
+        <textarea
+          value={project.meta?.recommendation?.label || ""}
+          onChange={(e) => { updateMeta((m) => { m.recommendation.label = e.target.value; }); updateApply((app) => { app.evidenceToDecision.recommendationLabel = e.target.value; }); }}
+          placeholder={lang === "zh" ? "例：不建議常規自費 LDCT（共享決策）..." : "e.g., one-line recommendation"}
+          rows={2}
+          className="w-full px-4 py-3 rounded-xl border-2 border-gray-100 focus:border-teal-300 focus:outline-none resize-y text-sm mb-4"
+        />
+
+        <label className="block text-xs font-medium text-gray-500 mb-1">{lang === "zh" ? "建議確定性" : "Certainty"}</label>
+        <select value={project.meta?.recommendation?.certaintyLevel || ""}
+          onChange={(e) => updateMeta((m) => { m.recommendation.certaintyLevel = e.target.value; })}
+          className="w-full px-3 py-2 rounded-lg border border-gray-200 focus:border-teal-300 focus:outline-none text-sm mb-4">
+          <option value="">{lang === "zh" ? "選擇等級" : "Select level"}</option>
+          <option value="high">{lang === "zh" ? "高 (High)" : "High"}</option>
+          <option value="moderate">{lang === "zh" ? "中 (Moderate)" : "Moderate"}</option>
+          <option value="low">{lang === "zh" ? "低 (Low)" : "Low"}</option>
+          <option value="very-low">{lang === "zh" ? "很低 (Very Low)" : "Very Low"}</option>
+        </select>
+
+        <label className="block text-xs font-medium text-gray-500 mb-1">{lang === "zh" ? "為何為部分推薦 / 補充理由" : "Reason for conditional"}</label>
+        <textarea
+          value={data.evidenceToDecision.reasonForConditional || ""}
+          onChange={(e) => updateApply((app) => { app.evidenceToDecision.reasonForConditional = e.target.value; })}
+          rows={2}
+          className="w-full px-4 py-3 rounded-xl border-2 border-gray-100 focus:border-teal-300 focus:outline-none resize-y text-sm"
+        />
       </section>
 
       {/* Patient summary */}

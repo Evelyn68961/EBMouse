@@ -15,6 +15,11 @@ export function buildPairs(project) {
   const sel = acquire.selectedArticle || {};
   const alt = acquire.alternativeArticles?.[0] || {};
   const flowNum = (n, suffix) => (n ? `${n}${suffix}` : '');
+  // sampleSize may be a bare number (append unit) or a descriptive string (use as-is).
+  const sampleText = (s, unit = ' 人') => {
+    if (s == null || s === '' || s === 0) return '';
+    return /^\s*\d[\d,]*\s*$/.test(String(s)) ? `${s}${unit}` : String(s);
+  };
 
   const picots = ask.picots || [];
   const primary = picots.find((p) => p.isPrimary) || picots[0] || {};
@@ -28,7 +33,7 @@ export function buildPairs(project) {
     const rr = `${o.effectSize || ''} ${o.ci95 || ''}`.trim();
     outcomePairs.push(
       [`{{o${i}.name}}`, o.name || ''],
-      [`{{o${i}.n}}`, o.sampleSize ? `${o.sampleSize} 人` : ''],
+      [`{{o${i}.n}}`, sampleText(o.sampleSize)],
       [`{{o${i}.rct}}`, o.rctCount ? `(${o.rctCount} RCT)` : ''],
       [`{{o${i}.rr}}`, rr],
     );
@@ -67,8 +72,7 @@ export function buildPairs(project) {
   // Appraise — S54 效益分析 summary table (3 outcomes). Reuses results data;
   // quality = computed per-outcome certainty; clinical meaning derived from it.
   const s54cert = (o) => {
-    const g = o?.grade || {};
-    const total = b.rob + b.ind + b.pub + (Number(g.imprecision?.decision) || 0) + (Number(g.inconsistency?.decision) || 0);
+    const total = outcomeTotalDowngrade(o);
     return total >= 0 ? '高' : total === -1 ? '中' : total === -2 ? '低' : '很低';
   };
   const s54clin = (q) => (q === '高' ? '有效' : q === '中' ? '可能有效' : q ? '證據不足' : '');
@@ -79,7 +83,7 @@ export function buildPairs(project) {
     s54Pairs.push(
       [`{{o${i}.s54name}}`, o.name || ''],
       [`{{o${i}.s54name2}}`, ''],
-      [`{{o${i}.s54n}}`, o.sampleSize ? `${o.sampleSize}人` : ''],
+      [`{{o${i}.s54n}}`, sampleText(o.sampleSize, '人')],
       [`{{o${i}.s54rct}}`, o.rctCount ? `(${o.rctCount} RCT)` : ''],
       [`{{o${i}.s54rr1}}`, o.effectSize ? `${o.effectSize} ` : ''],
       [`{{o${i}.s54rr2}}`, o.ci95 || ''],
@@ -175,19 +179,28 @@ function gradeDec(d) {
   return Number(d) >= 0 ? '不扣分' : `扣 ${Math.abs(Number(d))} 分`;
 }
 
-// The three body-level GRADE decisions (assessed once across all studies).
+// Body-level GRADE tokens on the fixed slides (risk-of-bias S36, indirectness
+// S43, publication-bias S44) show a single value. GRADE is now assessed
+// per-outcome, so we represent the body with the FIRST outcome's domains.
 export function gradeBodyDecisions(project) {
-  const dom = project?.appraise?.grade?.domains || {};
+  const g = project?.appraise?.results?.outcomes?.[0]?.grade || {};
   return {
-    rob: Number(dom.riskOfBias?.decision) || 0,
-    ind: Number(dom.indirectness?.decision) || 0,
-    pub: Number(dom.publicationBias?.decision) || 0,
+    rob: Number(g.riskOfBias?.decision) || 0,
+    ind: Number(g.indirectness?.decision) || 0,
+    pub: Number(g.publicationBias?.decision) || 0,
   };
 }
 
 // Is this outcome downgraded for inconsistency? (picks the "issues" layout)
 export function isDowngradedInc(o) {
   return (Number(o?.grade?.inconsistency?.decision) || 0) < 0;
+}
+
+// Sum of this outcome's five GRADE domain decisions.
+export function outcomeTotalDowngrade(o) {
+  const g = o?.grade || {};
+  return ['riskOfBias', 'imprecision', 'inconsistency', 'indirectness', 'publicationBias']
+    .reduce((s, d) => s + (Number(g[d]?.decision) || 0), 0);
 }
 
 // GENERIC per-outcome GRADE fill pairs for ONE cloned detail slide. The masters
@@ -201,7 +214,8 @@ export function outcomeGradeFill(o, body) {
   const bnd = ciBounds(o?.ci95);
   const ratioStr = bnd && bnd[0] ? `CI ratio = ${bnd[1]}/${bnd[0]} = ${(bnd[1] / bnd[0]).toFixed(2)}` : '';
   const cross = bnd ? (bnd[0] < 1 && bnd[1] > 1 ? '有跨越 null' : '無跨越 null') : '';
-  const total = body.rob + body.ind + body.pub + (Number(imp.decision) || 0) + (Number(inc.decision) || 0);
+  // GRADE is per-outcome: use this outcome's own five domains.
+  const total = outcomeTotalDowngrade(o);
   const certainty = total >= 0 ? '高' : total === -1 ? '中' : total === -2 ? '低' : '很低';
   const concl = `整體${total >= 0 ? '不扣分' : '扣 ' + Math.abs(total) + ' 分'} → 證據品質: ${certainty}`;
   return [
@@ -223,11 +237,11 @@ export function outcomeGradeFill(o, body) {
     // pub are body-level (same across outcomes).
     ['{{gi.sum.name}}', o?.name || ''],
     ['{{gi.sum.concl}}', o?.name ? concl : ''],
-    ['{{gi.sum.d.rob}}', badgeScore(body.rob)],
+    ['{{gi.sum.d.rob}}', badgeScore(g.riskOfBias?.decision)],
     ['{{gi.sum.d.imp}}', badgeScore(imp.decision)],
     ['{{gi.sum.d.inc}}', badgeScore(inc.decision)],
-    ['{{gi.sum.d.ind}}', badgeScore(body.ind)],
-    ['{{gi.sum.d.pub}}', badgeScore(body.pub)],
+    ['{{gi.sum.d.ind}}', badgeScore(g.indirectness?.decision)],
+    ['{{gi.sum.d.pub}}', badgeScore(g.publicationBias?.decision)],
   ];
 }
 

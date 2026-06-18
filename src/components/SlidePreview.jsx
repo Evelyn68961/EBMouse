@@ -345,6 +345,8 @@ function CaspSlide({ data, active, lang }) {
 // ─── GRADE Summary — domain scorecard with colored badges ───
 function GradeSlide({ data, active, lang }) {
   const g = data.grade;
+  // GRADE is per-outcome now; preview the first outcome's domains.
+  const og = data.results?.outcomes?.[0]?.grade || {};
   const domains = [
     { key: 'riskOfBias', zh: '誤差風險', en: 'Risk of Bias' },
     { key: 'imprecision', zh: '不精確性', en: 'Imprecision' },
@@ -352,32 +354,36 @@ function GradeSlide({ data, active, lang }) {
     { key: 'indirectness', zh: '不直接性', en: 'Indirectness' },
     { key: 'publicationBias', zh: '發表偏誤', en: 'Pub. Bias' },
   ];
-  const total = domains.reduce((s, d) => s + g.domains[d.key].decision, 0);
+  const dec = (k) => Number(og?.[k]?.decision) || 0;
+  const total = domains.reduce((s, d) => s + dec(d.key), 0);
+  const autoLevel = total >= 0 ? 'high' : total === -1 ? 'moderate' : total === -2 ? 'low' : 'very_low';
+  const norm = (v) => (v === 'very-low' ? 'very_low' : v);
+  const certaintyLevel = norm(og.certainty) || norm(g.certaintyLevel) || autoLevel;
   const levelMap = { high: { zh: '高', en: 'High', c: C.green }, moderate: { zh: '中', en: 'Moderate', c: C.amber }, low: { zh: '低', en: 'Low', c: '#E67E22' }, very_low: { zh: '很低', en: 'Very Low', c: C.red } };
-  const level = levelMap[g.certaintyLevel];
+  const level = levelMap[certaintyLevel];
 
   return (
     <S active={active} num={13} label={lang === 'zh' ? 'GRADE' : 'GRADE'}>
       <TealHeading text={lang === 'zh' ? 'Core GRADE 綜合評估' : 'Core GRADE Summary'} />
       <div className="space-y-[2px] mb-1.5">
         {domains.map(({ key, zh, en }) => {
-          const dec = g.domains[key].decision;
+          const d = dec(key);
           return (
             <div key={key} className="flex items-center justify-between rounded px-1 py-[2px]" style={{ background: C.tealLight }}>
               <span style={{ fontSize: '4.5px', color: C.dark }}>{lang === 'zh' ? zh : en}</span>
               <div className="rounded px-1.5" style={{
                 fontSize: '4.5px', fontWeight: 700,
-                background: dec === 0 ? C.greenBg : C.redBg,
-                color: dec === 0 ? C.green : C.red,
+                background: d === 0 ? C.greenBg : C.redBg,
+                color: d === 0 ? C.green : C.red,
               }}>
-                {dec === 0 ? (lang === 'zh' ? '不扣分' : '0') : dec}
+                {d === 0 ? (lang === 'zh' ? '不扣分' : '0') : d}
               </div>
             </div>
           );
         })}
       </div>
       {/* Total + certainty level */}
-      {g.certaintyLevel && level && (
+      {level && (
         <div className="rounded py-1 text-center" style={{ background: C.teal }}>
           <div style={{ fontSize: '4px', color: C.tealLight }}>
             {lang === 'zh' ? `整體扣 ${Math.abs(total)} 分 →` : `Total: ${total} →`}

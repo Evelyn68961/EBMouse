@@ -36,6 +36,15 @@ export default function WorkflowRouter() {
     }
   };
 
+  const handleDownloadJson = async () => {
+    try {
+      const { downloadCaseJson } = await import('../../caseJson');
+      downloadCaseJson(project);
+    } catch (e) {
+      alert((lang === "zh" ? "匯出失敗：" : "Export failed: ") + e.message);
+    }
+  };
+
   useEffect(() => {
     const p = getProject(projectId);
     if (!p) { navigate("/"); return; }
@@ -122,8 +131,12 @@ export default function WorkflowRouter() {
                   <span className="text-xs font-medium text-gray-500">{lang === "zh" ? "簡報預覽" : "Slide Preview"}</span>
                   <span className="text-xs text-gray-300">— {lang === "zh" ? "即時更新" : "live"}</span>
                 </div>
+                <button onClick={handleDownloadJson}
+                  className="w-full mb-2 px-3 py-2 rounded-lg bg-teal-500 text-white text-xs font-semibold hover:bg-teal-600 transition-colors">
+                  {t("exportJson", lang)}
+                </button>
                 <button onClick={handleDownloadPptx} disabled={exporting}
-                  className="w-full mb-3 px-3 py-2 rounded-lg bg-teal-500 text-white text-xs font-semibold hover:bg-teal-600 disabled:opacity-50 transition-colors">
+                  className="w-full mb-3 px-3 py-2 rounded-lg border border-teal-200 text-teal-600 text-xs font-semibold hover:bg-teal-50 disabled:opacity-50 transition-colors">
                   {exporting ? (lang === "zh" ? "產生中…" : "Generating…") : t("exportPptx", lang)}
                 </button>
                 <SlidePreview project={project} currentPhase={phase} />
@@ -161,8 +174,12 @@ function MobilePreview({ project, currentPhase, lang }) {
             </button>
           </div>
           <div className="px-4 py-4 max-w-sm mx-auto">
+            <button onClick={async () => { try { const { downloadCaseJson } = await import('../../caseJson'); downloadCaseJson(project); } catch (e) { alert((lang === "zh" ? "匯出失敗：" : "Export failed: ") + e.message); } }}
+              className="w-full mb-2 px-3 py-2 rounded-lg bg-teal-500 text-white text-xs font-semibold hover:bg-teal-600 transition-colors">
+              {t("exportJson", lang)}
+            </button>
             <button onClick={async () => { try { const { downloadPptx } = await import('../../pptx/fillPptx'); await downloadPptx(project); } catch (e) { alert((lang === "zh" ? "匯出失敗：" : "Export failed: ") + e.message); } }}
-              className="w-full mb-3 px-3 py-2 rounded-lg bg-teal-500 text-white text-xs font-semibold hover:bg-teal-600 transition-colors">
+              className="w-full mb-3 px-3 py-2 rounded-lg border border-teal-200 text-teal-600 text-xs font-semibold hover:bg-teal-50 transition-colors">
               {t("exportPptx", lang)}
             </button>
             <SlidePreview project={project} currentPhase={currentPhase} />

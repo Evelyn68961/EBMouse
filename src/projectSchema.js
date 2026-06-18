@@ -1,5 +1,30 @@
 import { v4 as uuidv4 } from 'uuid';
 
+// Per-outcome GRADE shape: all five domains live on each outcome (the case JSON
+// stores rob/indirectness/publicationBias per-outcome, not body-level, because
+// they can differ across outcomes). imprecision/inconsistency keep their extra
+// detail fields (used by the PPTX detail slides); every domain has a free-text
+// `note` that feeds the *Note fields in the exported case JSON.
+export function newOutcomeGrade() {
+  return {
+    riskOfBias: { decision: 0, note: "" },
+    imprecision: { decision: 0, note: "", magnitude: "" },
+    inconsistency: { decision: 0, note: "", i2: "", overlap: "", distribution: "" },
+    indirectness: { decision: 0, note: "" },
+    publicationBias: { decision: 0, note: "" },
+    certainty: "", // optional override; transform derives from total when empty
+  };
+}
+
+export function newOutcome() {
+  return {
+    name: "", category: "", sampleSize: 0, rctCount: 0,
+    effectSize: "", ci95: "", pValue: "", nnt: "", nnh: "",
+    subgroups: [],
+    grade: newOutcomeGrade(),
+  };
+}
+
 export function createNewProject(title = "", lang = "zh") {
   return {
     meta: {
@@ -10,6 +35,12 @@ export function createNewProject(title = "", lang = "zh") {
       currentPhase: 1,
       lang,
       members: [],
+      // Identity block carried in the case JSON's meta.
+      institution: "",
+      division: "",
+      competition: "",
+      // Final recommendation (case JSON meta.recommendation).
+      recommendation: { strength: "", direction: "", label: "", certaintyLevel: "" },
     },
     assess: {
       scenario: "",
@@ -41,6 +72,7 @@ export function createNewProject(title = "", lang = "zh") {
     acquire: {
       databases: [{ name: "", rationale: "" }],
       keywords: {
+        note: "",
         freeText: { p: [], i: [], c: [], o: [] },
         meshTerms: { p: [], i: [], c: [], o: [] },
         booleanStrategy: "",
@@ -48,6 +80,8 @@ export function createNewProject(title = "", lang = "zh") {
       screeningFlow: {
         initialResults: { pubmed: 0, embase: 0, cochrane: 0 },
         afterDedup: 0,
+        afterLitSuggest: 0,
+        afterSRFilter: 0,
         afterTitleAbstract: 0,
         afterFullText: 0,
         finalIncluded: 0,
@@ -66,6 +100,8 @@ export function createNewProject(title = "", lang = "zh") {
     },
     appraise: {
       casp: {
+        tool: "CASP-SR",
+        comment: "",
         scores: {
           q1: { human: "", aiScore: "", evidence: "" },
           q2: { human: "", aiScore: "", evidence: "" },
@@ -84,23 +120,17 @@ export function createNewProject(title = "", lang = "zh") {
         kappa: null,
       },
       results: {
-        outcomes: [
-          {
-            name: "", sampleSize: 0, rctCount: 0,
-            effectSize: "", ci95: "", pValue: "",
-            subgroups: [],
-            grade: {
-              imprecision: { decision: 0, magnitude: "" },
-              inconsistency: { decision: 0, i2: "", overlap: "", distribution: "" },
-            },
-          },
-        ],
+        comment: "",
+        outcomes: [newOutcome()],
         forestPlotImage: null,
         funnelPlotImage: null,
       },
       grade: {
-        mid: { value: 0, method: "", justification: "", reference: "" },
+        mid: { value: 0, unit: "", outcome: "", method: "", justification: "", derivation: "", reference: "", isNullThreshold: false },
         domains: {
+          // Body-level holder kept only for the indirectness PICO-comparison table
+          // (feeds the PPTX indirectness slide). Per-outcome decisions live on each
+          // outcome's grade now; these decision fields are no longer edited.
           riskOfBias: { highRiskCount: 0, lowRiskCount: 0, unclearCount: 0, sensitivityResult: "", decision: 0, rationale: "" },
           imprecision: { pointEstimate: 0, pointVsMid: "", ciCrossesMid: false, effectMagnitude: "", decision: 0, rationale: "" },
           inconsistency: { ciOverlap: "", pointEstimateSide: "", i2: 0, decision: 0, rationale: "" },
@@ -122,18 +152,31 @@ export function createNewProject(title = "", lang = "zh") {
         certaintyLevel: "",
         aiFeedback: null,
       },
+      // Direct low-evidence supporting study (case JSON appraise.supportingRCT).
+      supportingRCT: { comment: "", title: "", purpose: "", population: "", intervention: "", outcome: "", conclusion: "" },
+      // Extra analyses / NNT calcs (case JSON appraise.additionalAnalysis[]).
+      additionalAnalysis: [],
     },
     apply: {
-      applicability: { overallSimilarity: "", rationale: "" },
+      applicability: {
+        overallSimilarity: "",
+        rationale: "",
+        rows: [],            // [{ item, study, case_, similarity }]
+        conclusion: "",
+      },
+      efficacySummary: { effect: "", midComparison: "", certainty: "", nnt: "" },
       benefitRisk: { options: [{ name: "", benefits: [""], risks: [""] }] },
       costAnalysis: { options: [{ name: "", directCost: [""], indirectCost: [""], totalCost: "" }] },
       evidenceToDecision: {
+        reference: "",
         benefitRisk: { assessment: "", direction: 0 },
         evidenceQuality: { assessment: "", direction: 0 },
         valuesPreferences: { assessment: "", direction: 0 },
         costEffectiveness: { assessment: "", direction: 0 },
         feasibility: { assessment: "", direction: 0 },
         acceptability: { assessment: "", direction: 0 },
+        recommendationLabel: "",
+        reasonForConditional: "",
       },
       recommendationStrength: "",
       patientSummary: "",

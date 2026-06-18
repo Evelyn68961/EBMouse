@@ -33,6 +33,18 @@ export default function PhaseAssess() {
     fn(next.meta.members);
     return next;
   });
+  const updateMeta = (field, value) => updateProject((prev) => {
+    const next = JSON.parse(JSON.stringify(prev));
+    next.meta[field] = value;
+    return next;
+  });
+  const questions = data.clinicalQuestions || [];
+  const updateQuestions = (fn) => updateProject((prev) => {
+    const next = JSON.parse(JSON.stringify(prev));
+    if (!Array.isArray(next.assess.clinicalQuestions)) next.assess.clinicalQuestions = [];
+    fn(next.assess.clinicalQuestions);
+    return next;
+  });
   const arms = data.treatmentArms || [];
   const updateArm = (i, field, value) => updateProject((prev) => {
     const next = JSON.parse(JSON.stringify(prev));
@@ -86,6 +98,26 @@ export default function PhaseAssess() {
           className="text-sm text-teal-500 hover:text-teal-600 font-medium">
           + {lang === "zh" ? "新增成員" : "Add member"}
         </button>
+
+        {/* Team identity → case JSON meta */}
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 mt-4">
+          {[
+            { key: "institution", label: lang === "zh" ? "機構" : "Institution", placeholder: lang === "zh" ? "例：輔仁大學附設醫院藥劑部" : "Institution" },
+            { key: "division", label: lang === "zh" ? "分工 / 組別" : "Division", placeholder: lang === "zh" ? "例：①文獻指導 ②GRADE ③臨床應用" : "Division" },
+            { key: "competition", label: lang === "zh" ? "競賽" : "Competition", placeholder: lang === "zh" ? "例：2026 NCMEA 實證臨床組" : "Competition" },
+          ].map(({ key, label, placeholder }) => (
+            <div key={key}>
+              <label className="block text-xs font-medium text-gray-500 mb-1">{label}</label>
+              <input
+                type="text"
+                value={project.meta?.[key] || ""}
+                onChange={(e) => updateMeta(key, e.target.value)}
+                placeholder={placeholder}
+                className="w-full px-3 py-2 rounded-lg border border-gray-200 focus:border-teal-300 focus:outline-none text-sm"
+              />
+            </div>
+          ))}
+        </div>
       </section>
 
       {/* Section 1: Clinical Scenario */}
@@ -147,6 +179,30 @@ export default function PhaseAssess() {
           rows={3}
           className="w-full px-4 py-3 rounded-xl border-2 border-gray-100 focus:border-teal-300 focus:outline-none resize-y text-sm"
         />
+      </section>
+
+      {/* Section 3b: Clinical questions (case JSON assess.clinicalQuestions) */}
+      <section className="mb-8">
+        <h3 className="font-semibold text-gray-700 mb-3">
+          {lang === "zh" ? "❓ 病人的臨床問題" : "❓ Clinical Questions"}
+        </h3>
+        {questions.map((q, i) => (
+          <div key={i} className="flex gap-2 mb-2">
+            <input
+              type="text"
+              value={q}
+              onChange={(e) => updateQuestions((arr) => { arr[i] = e.target.value; })}
+              placeholder={lang === "zh" ? "例：該不該做 LDCT 篩檢？" : "e.g., a question the patient is asking"}
+              className="flex-1 px-3 py-2 rounded-lg border border-gray-200 focus:border-teal-300 focus:outline-none text-sm"
+            />
+            <button onClick={() => updateQuestions((arr) => { arr.splice(i, 1); })}
+              className="px-2 text-gray-400 hover:text-red-500" title="remove">✕</button>
+          </div>
+        ))}
+        <button onClick={() => updateQuestions((arr) => { arr.push(""); })}
+          className="text-sm text-teal-500 hover:text-teal-600 font-medium">
+          + {lang === "zh" ? "新增臨床問題" : "Add question"}
+        </button>
       </section>
 
       {/* Section 4: Background Knowledge */}
