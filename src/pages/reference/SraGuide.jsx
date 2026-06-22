@@ -20,13 +20,50 @@ function Accordion({ title, icon, children, defaultOpen = false }) {
   );
 }
 
+// ── Mechanical syntax converter ──────────────────────────────────────────
+// Deterministic field-tag / phrase-syntax swaps ONLY. Does NOT map controlled
+// vocabulary (MeSH ↔ Emtree term equivalence) — that still needs Polyglot.
+const FIELD_MAP = {
+  embase:   { 'tiab': ':ti,ab', 'title/abstract': ':ti,ab', 'tw': ':ti,ab', 'ti': ':ti', 'title': ':ti', 'ab': ':ab', 'au': ':au', 'all fields': '', 'all': '' },
+  cochrane: { 'tiab': ':ti,ab', 'title/abstract': ':ti,ab', 'tw': ':ti,ab,kw', 'ti': ':ti', 'title': ':ti', 'ab': ':ab', 'au': ':au', 'all fields': '', 'all': '' },
+};
+
+function convertQuery(src, target) {
+  if (!src) return '';
+  let s = src;
+  // 1) Subject headings: "Term"[MeSH] / Term[Mesh Terms] / Term[mh]
+  const meshRe = /"?([^"[\]]+?)"?\s*\[(?:mesh(?:\s*terms)?|mh)\]/gi;
+  s = target === 'embase'
+    ? s.replace(meshRe, (_, term) => `'${term.trim()}'/exp`)
+    : s.replace(meshRe, (_, term) => `[mh "${term.trim()}"]`);
+  // 2) Remaining field tags
+  const fm = FIELD_MAP[target];
+  s = s.replace(/\[([^\][]+)\]/g, (m, tag) => {
+    const key = tag.trim().toLowerCase();
+    return key in fm ? fm[key] : m; // leave unknown tags untouched
+  });
+  // 3) Embase uses single quotes for phrases
+  if (target === 'embase') s = s.replace(/"([^"]+)"/g, (_, p) => `'${p}'`);
+  return s;
+}
+
 export default function SraGuide() {
   const { lang } = useLang();
   const [activeTab, setActiveTab] = useState('what');
+  const [pmQuery, setPmQuery] = useState('');
+  const [copied, setCopied] = useState('');
+  const copy = (key, text) => {
+    if (!text) return;
+    navigator.clipboard?.writeText(text).then(() => {
+      setCopied(key);
+      setTimeout(() => setCopied(''), 1500);
+    });
+  };
   const tabs = [
     { id: 'what', zh: '為什麼需要轉換', en: 'Why Convert', icon: '❓' },
     { id: 'how', zh: '操作步驟', en: 'How To', icon: '🔧' },
     { id: 'compare', zh: '詞彙對照', en: 'Vocabulary Map', icon: '🔄' },
+    { id: 'convert', zh: '語法轉換器', en: 'Syntax Converter', icon: '⚡' },
   ];
 
   return (
@@ -149,6 +186,68 @@ export default function SraGuide() {
             </table>
           </div>
           <p className="text-xs text-gray-500 mt-3">{lang === 'zh' ? '💡 這就是為什麼需要 Polyglot — 手動轉換容易出錯，特別是 Embase 的語法差異最大。' : '💡 This is why you need Polyglot — manual conversion is error-prone, especially Embase which differs most.'}</p>
+        </div>
+      )}
+
+      {/* ═══ TAB: Syntax Converter ═══ */}
+      {activeTab === 'convert' && (
+        <div>
+          <h2 className="font-bold text-xl text-gray-800 mb-2">⚡ {lang === 'zh' ? '機械式語法轉換器' : 'Mechanical Syntax Converter'}</h2>
+          <p className="text-sm text-gray-500 mb-4">
+            {lang === 'zh'
+              ? '貼入 PubMed 搜尋式，自動轉換欄位標籤與詞組語法為 Embase / Cochrane 格式。'
+              : 'Paste a PubMed search and auto-convert field tags & phrase syntax to Embase / Cochrane format.'}
+          </p>
+
+          <div className="bg-red-50 border border-red-200 rounded-xl p-4 mb-5">
+            <p className="text-sm text-red-800 leading-relaxed">
+              ⚠️ <strong>{lang === 'zh' ? '重要限制：' : 'Important limit:'}</strong>{' '}
+              {lang === 'zh'
+                ? '本工具只做機械式語法替換（如 [tiab] → :ti,ab、"X"[MeSH] → \'X\'/exp）。它不會翻譯控制詞彙本身 — MeSH 與 Emtree 的詞彙對應必須用 Polyglot 確認。執行前請務必人工檢查。'
+                : 'This only does mechanical syntax swaps (e.g. [tiab] → :ti,ab, "X"[MeSH] → \'X\'/exp). It does NOT translate the controlled-vocabulary terms — MeSH↔Emtree mapping must be verified in Polyglot. Always review before running.'}
+            </p>
+          </div>
+
+          <label className="block text-xs font-medium text-gray-500 mb-1">{lang === 'zh' ? 'PubMed 搜尋式' : 'PubMed search'}</label>
+          <textarea
+            value={pmQuery}
+            onChange={(e) => setPmQuery(e.target.value)}
+            placeholder={'((myopia) OR "Myopia"[MeSH]) AND (atropine[tiab] OR "Atropine"[MeSH])'}
+            rows={5}
+            className="w-full px-4 py-3 rounded-xl border-2 border-gray-100 focus:border-teal-300 focus:outline-none resize-y text-sm font-mono mb-5"
+          />
+
+          {[
+            { key: 'embase', label: 'Embase (Emtree)', color: '#E67E22' },
+            { key: 'cochrane', label: 'Cochrane Library', color: '#27AE60' },
+          ].map(({ key, label, color }) => {
+            const out = convertQuery(pmQuery, key);
+            return (
+              <div key={key} className="mb-4 rounded-xl border overflow-hidden" style={{ borderColor: color + '40' }}>
+                <div className="flex items-center justify-between px-4 py-2" style={{ background: color + '12' }}>
+                  <span className="font-semibold text-sm" style={{ color }}>{label}</span>
+                  <button
+                    onClick={() => copy(key, out)}
+                    disabled={!out}
+                    className="text-xs font-medium px-2.5 py-1 rounded-lg border bg-white disabled:opacity-40 hover:bg-gray-50 transition-colors"
+                    style={{ color, borderColor: color + '40' }}
+                  >
+                    {copied === key ? (lang === 'zh' ? '已複製 ✓' : 'Copied ✓') : (lang === 'zh' ? '複製' : 'Copy')}
+                  </button>
+                </div>
+                <pre className="px-4 py-3 text-xs font-mono text-gray-700 whitespace-pre-wrap break-words min-h-[3rem]">{out || <span className="text-gray-300">{lang === 'zh' ? '（轉換結果會顯示在這裡）' : '(converted output appears here)'}</span>}</pre>
+              </div>
+            );
+          })}
+
+          <div className="mt-2 bg-amber-50 rounded-xl p-4 border border-amber-200">
+            <p className="text-sm text-amber-800 leading-relaxed">
+              ✅ {lang === 'zh' ? '轉換後的下一步：' : 'After converting:'}{' '}
+              {lang === 'zh'
+                ? '到 Polyglot 確認詞彙對應 → 在各資料庫執行 → 把逐字搜尋式與結果數量記錄到 Acquire 階段的「搜尋式紀錄」。'
+                : 'Verify vocabulary in Polyglot → run in each database → log the verbatim strings + result counts in the Acquire step’s “Search-strategy Log.”'}
+            </p>
+          </div>
         </div>
       )}
 

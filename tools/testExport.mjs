@@ -28,6 +28,11 @@ const project = {
       meshTerms: { p: ['"Osteoarthritis, Knee"[MeSH]'], i: ['"Glucosamine"[MeSH]'], o: ['"Pain"[MeSH]'] },
     },
     screeningFlow: { pubmedInitial: 87, litPositive: 16, litNegative: 71 },
+    searchQueries: [
+      { database: 'PubMed', queryString: '(osteoarthritis OR knee) AND glucosamine', date: '2026-06-01' },
+      { database: 'Embase', queryString: "('osteoarthritis'/exp OR knee) AND 'glucosamine'/exp", date: '2026-06-01' },
+      { database: 'Cochrane Library', queryString: '[mh "Osteoarthritis"] AND glucosamine', date: '2026-06-01' },
+    ],
     selectedArticle: { rctCount: 14, totalParticipants: 4338, brief: '評估 CPM 對 TKA 術後膝關節活動度的效益。' },
     alternativeArticles: [{ studyCount: 37, participants: 2895, brief: '探討關節腔注射對骨關節炎疼痛的效果。' }],
   },
@@ -125,7 +130,7 @@ let visibleText = '';
 for (const n of visNums) visibleText += await text(n);
 const V = visibleText; // all visible deck text (incl. dynamically cloned GRADE slides)
 
-const s54=await text(54), s20=await text(20), s43=await text(43), s13=await text(13), s14=await text(14), s18=await text(18), s1=await text(1), s4=await text(4), s6=await text(6), s3=await text(3), s5=await text(5), s8=await text(8), s9=await text(9), s12=await text(12), s23=await text(23), s34=await text(34), s49=await text(49), s50=await text(50), s51=await text(51), s52=await text(52), s53=await text(53), s55=await text(55), s56=await text(56);
+const s54=await text(54), s20=await text(20), s43=await text(43), s13=await text(13), s14=await text(14), s15=await text(15), s16=await text(16), s18=await text(18), s1=await text(1), s4=await text(4), s6=await text(6), s3=await text(3), s5=await text(5), s8=await text(8), s9=await text(9), s12=await text(12), s23=await text(23), s34=await text(34), s49=await text(49), s50=await text(50), s51=await text(51), s52=await text(52), s53=await text(53), s55=await text(55), s56=await text(56);
 const checks = [
   ['S1 team members', s1.includes('王小明 藥師 | 李美麗 醫師 | 陳大同 護理師')],
   ['S4 background topic', s4.includes('連續被動性運動')],
@@ -149,6 +154,10 @@ const checks = [
   ['S14 positive', s14.includes('Positive: 16 篇')],
   ['S14 negative', s14.includes('Negative: 71 篇')],
   ['S14 no leftover token', !s14.includes('{{')],
+  ['S15 Cochrane converted query', s15.includes('[mh "Osteoarthritis"] AND glucosamine')],
+  ['S15 no leftover token', !s15.includes('{{')],
+  ['S16 Embase converted query', s16.includes("'glucosamine'/exp")],
+  ['S16 no leftover token', !s16.includes('{{')],
   ['S18 selected RCT count', s18.includes('RCT 數量: 14 篇')],
   ['S18 selected participants', s18.includes('受試者數量: 4338 人')],
   ['S18 alt study count', s18.includes('研究數量: 37 篇')],
