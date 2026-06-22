@@ -77,6 +77,9 @@ export function createNewProject(title = "", lang = "zh") {
         meshTerms: { p: [], i: [], c: [], o: [] },
         booleanStrategy: "",
       },
+      // Verbatim search strings actually executed in each database (for
+      // reproducibility — judges expect the exact strings, not just counts).
+      searchQueries: [{ database: "PubMed", queryString: "", date: "" }],
       screeningFlow: {
         initialResults: { pubmed: 0, embase: 0, cochrane: 0 },
         afterDedup: 0,

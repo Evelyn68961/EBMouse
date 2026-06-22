@@ -98,9 +98,9 @@ function Empty({ text, lang }) {
 }
 
 // ─── SLIDE 1: Title ───
-function TitleSlide({ project, active, lang }) {
+function TitleSlide({ project, active, lang, num }) {
   return (
-    <S active={active} num={1} label={lang === 'zh' ? '封面' : 'Title'}>
+    <S active={active} num={num} label={lang === 'zh' ? '封面' : 'Title'}>
       <div className="flex-1 flex flex-col items-center justify-center text-center">
         <div style={{ fontSize: '10px', fontWeight: 800, color: C.teal, letterSpacing: '1px' }}>
           EBM 實證醫學競賽
@@ -117,10 +117,10 @@ function TitleSlide({ project, active, lang }) {
 }
 
 // ─── SLIDE 2: Case Introduction (個案簡介) ───
-function CaseSlide({ data, active, lang }) {
+function CaseSlide({ data, active, lang, num }) {
   const has = data.scenario || data.patientProfile.condition;
   return (
-    <S active={active} num={2} label={lang === 'zh' ? '個案簡介' : 'Case'}>
+    <S active={active} num={num} label={lang === 'zh' ? '個案簡介' : 'Case'}>
       <TealHeading text={lang === 'zh' ? '個案簡介' : 'Case Introduction'} />
       {has ? (
         <>
@@ -141,11 +141,11 @@ function CaseSlide({ data, active, lang }) {
 }
 
 // ─── SLIDE 3: Background Knowledge (背景知識) ───
-function BackgroundSlide({ data, active, lang }) {
+function BackgroundSlide({ data, active, lang, num }) {
   const bg = data.backgroundKnowledge;
   const has = bg.diseaseOverview || bg.riskFactors || bg.treatmentOptions;
   return (
-    <S active={active} num={3} label={lang === 'zh' ? '背景知識' : 'Background'}>
+    <S active={active} num={num} label={lang === 'zh' ? '背景知識' : 'Background'}>
       <TealHeading text={lang === 'zh' ? '背景知識' : 'Background Knowledge'} />
       {has ? (
         <>
@@ -159,7 +159,7 @@ function BackgroundSlide({ data, active, lang }) {
 }
 
 // ─── SLIDE 4+: PICOT (matches the real layout: colored badges left, content right, type checkboxes) ───
-function PicotSlide({ picot, idx, active, lang }) {
+function PicotSlide({ picot, idx, active, lang, num }) {
   const has = picot.p || picot.i || picot.c || picot.o;
   const badges = [
     { key: 'P', val: picot.p, bg: C.teal },
@@ -176,7 +176,7 @@ function PicotSlide({ picot, idx, active, lang }) {
   ];
 
   return (
-    <S active={active} num={4 + idx} label={`PICOT-${idx + 1}`}>
+    <S active={active} num={num} label={`PICOT-${idx + 1}`}>
       <div className="flex items-center justify-between mb-1">
         <div style={{ fontSize: '7px', fontWeight: 700, color: C.teal }}>PICOT-{idx + 1}</div>
         {picot.isPrimary && (
@@ -223,11 +223,11 @@ function PicotSlide({ picot, idx, active, lang }) {
 }
 
 // ─── Search History (檢索歷程) — PRISMA-like flow ───
-function SearchFlowSlide({ data, active, lang }) {
+function SearchFlowSlide({ data, active, lang, num }) {
   const f = data.screeningFlow;
   const total = (f.initialResults.pubmed || 0) + (f.initialResults.embase || 0) + (f.initialResults.cochrane || 0);
   return (
-    <S active={active} num={8} label={lang === 'zh' ? '檢索歷程' : 'Search'}>
+    <S active={active} num={num} label={lang === 'zh' ? '檢索歷程' : 'Search'}>
       <TealHeading text={lang === 'zh' ? '檢索歷程' : 'Search History'} />
       {total > 0 ? (
         <div className="flex-1 flex flex-col items-center justify-center gap-[3px]">
@@ -261,12 +261,32 @@ function SearchFlowSlide({ data, active, lang }) {
   );
 }
 
+// ─── Keyword Conversion (關鍵字轉換) — verbatim per-DB queries ───
+function ConversionSlide({ data, active, lang, num }) {
+  const queries = (data.searchQueries || []).filter((q) => q && (q.queryString || '').trim());
+  return (
+    <S active={active} num={num} label={lang === 'zh' ? '關鍵字轉換' : 'Conversion'}>
+      <TealHeading text={lang === 'zh' ? '關鍵字轉換' : 'Keyword Conversion'} />
+      {queries.length > 0 ? (
+        <div className="flex-1 flex flex-col gap-[3px] overflow-hidden">
+          {queries.slice(0, 4).map((q, i) => (
+            <div key={i} className="rounded px-1.5 py-[2px]" style={{ background: C.tealLight, border: `0.5px solid ${C.tealMid}` }}>
+              <div style={{ fontSize: '4px', fontWeight: 700, color: C.teal }}>{q.database || '—'}</div>
+              <div style={{ fontSize: '3.5px', color: C.dark, fontFamily: 'monospace' }} className="line-clamp-2">{q.queryString}</div>
+            </div>
+          ))}
+        </div>
+      ) : <Empty lang={lang} />}
+    </S>
+  );
+}
+
 // ─── Article Selection (文獻選擇) ───
-function ArticleSlide({ data, active, lang }) {
+function ArticleSlide({ data, active, lang, num }) {
   const art = data.selectedArticle;
   const has = art.title;
   return (
-    <S active={active} num={9} label={lang === 'zh' ? '文獻選擇' : 'Article'}>
+    <S active={active} num={num} label={lang === 'zh' ? '文獻選擇' : 'Article'}>
       <TealHeading text={lang === 'zh' ? '文獻選擇' : 'Article Selection'} />
       {has ? (
         <div className="rounded p-1.5" style={{ background: C.tealLight, border: `0.5px solid ${C.tealMid}` }}>
@@ -292,7 +312,7 @@ function ArticleSlide({ data, active, lang }) {
 }
 
 // ─── CASP Results (文獻評讀結果) — two-column emoji table matching real slides ───
-function CaspSlide({ data, active, lang }) {
+function CaspSlide({ data, active, lang, num }) {
   const scores = data.casp.scores;
   const keys = Object.keys(scores);
   const answered = keys.filter(k => scores[k].human).length;
@@ -321,7 +341,7 @@ function CaspSlide({ data, active, lang }) {
   }
 
   return (
-    <S active={active} num={11} label={lang === 'zh' ? 'CASP 結果' : 'CASP'}>
+    <S active={active} num={num} label={lang === 'zh' ? 'CASP 結果' : 'CASP'}>
       <TealHeading text={lang === 'zh' ? '文獻評讀結果' : 'CASP Appraisal Results'} />
       {answered > 0 ? (
         <>
@@ -343,7 +363,7 @@ function CaspSlide({ data, active, lang }) {
 }
 
 // ─── GRADE Summary — domain scorecard with colored badges ───
-function GradeSlide({ data, active, lang }) {
+function GradeSlide({ data, active, lang, num }) {
   const g = data.grade;
   // GRADE is per-outcome now; preview the first outcome's domains.
   const og = data.results?.outcomes?.[0]?.grade || {};
@@ -363,7 +383,7 @@ function GradeSlide({ data, active, lang }) {
   const level = levelMap[certaintyLevel];
 
   return (
-    <S active={active} num={13} label={lang === 'zh' ? 'GRADE' : 'GRADE'}>
+    <S active={active} num={num} label={lang === 'zh' ? 'GRADE' : 'GRADE'}>
       <TealHeading text={lang === 'zh' ? 'Core GRADE 綜合評估' : 'Core GRADE Summary'} />
       <div className="space-y-[2px] mb-1.5">
         {domains.map(({ key, zh, en }) => {
@@ -398,7 +418,7 @@ function GradeSlide({ data, active, lang }) {
 }
 
 // ─── Evidence to Decision (證據到建議) ───
-function EtdSlide({ data, active, lang }) {
+function EtdSlide({ data, active, lang, num }) {
   const etd = data.evidenceToDecision;
   const factors = [
     { key: 'benefitRisk', zh: '利益風險', en: 'Benefit/Risk' },
@@ -411,7 +431,7 @@ function EtdSlide({ data, active, lang }) {
   const has = factors.some(f => etd[f.key].direction !== 0 || etd[f.key].assessment);
 
   return (
-    <S active={active} num={15} label={lang === 'zh' ? '證據到建議' : 'EtD'}>
+    <S active={active} num={num} label={lang === 'zh' ? '證據到建議' : 'EtD'}>
       <TealHeading text={lang === 'zh' ? '證據到建議' : 'Evidence to Decision'} />
       {has ? (
         <div className="space-y-[2px]">
@@ -452,9 +472,9 @@ function EtdSlide({ data, active, lang }) {
 }
 
 // ─── Patient Summary (去學術化回應) ───
-function SummarySlide({ data, active, lang }) {
+function SummarySlide({ data, active, lang, num }) {
   return (
-    <S active={active} num={16} label={lang === 'zh' ? '回應' : 'Summary'}>
+    <S active={active} num={num} label={lang === 'zh' ? '回應' : 'Summary'}>
       <TealHeading text={lang === 'zh' ? '去學術化回應' : 'Patient Summary'} />
       {data.patientSummary ? (
         <div className="rounded p-1.5 flex-1" style={{ background: C.tealLight }}>
@@ -469,9 +489,9 @@ function SummarySlide({ data, active, lang }) {
 }
 
 // ─── Thank You ───
-function ThankYouSlide({ active }) {
+function ThankYouSlide({ active, num }) {
   return (
-    <S active={active} num={17} label="End">
+    <S active={active} num={num} label="End">
       <div className="flex-1 flex items-center justify-center" style={{ background: `linear-gradient(135deg, ${C.tealLight} 0%, ${C.white} 100%)` }}>
         <div style={{ fontSize: '12px', fontWeight: 800, color: C.teal, fontStyle: 'italic' }}>
           THANK YOU
@@ -482,14 +502,6 @@ function ThankYouSlide({ active }) {
 }
 
 // ─── Phase → active slide mapping ───
-const phaseActiveMap = {
-  1: [1, 2, 3],
-  2: [4, 5, 6],
-  3: [7, 8, 9],
-  4: [10, 11, 12, 13],
-  5: [14, 15, 16, 17],
-};
-
 export default function SlidePreview({ project, currentPhase }) {
   const { lang } = useLang();
   const a = project.assess;
@@ -498,43 +510,42 @@ export default function SlidePreview({ project, currentPhase }) {
   const apr = project.appraise;
   const app = project.apply;
 
-  const isA = (n) => (phaseActiveMap[currentPhase] || []).includes(n);
-
-  let slideNum = 1;
+  // Running counter → slide numbers are always the real sequential order, no
+  // matter how many PICOT slides exist. `n(phase)` returns the next number and
+  // marks the slide active when it belongs to the current workflow phase.
+  let count = 0;
+  const n = () => ++count;
+  const on = (phase) => phase === currentPhase;
 
   return (
     <div className="space-y-0.5">
       {/* Phase 1: Assess */}
-      <TitleSlide project={project} active={isA(slideNum)} lang={lang} />
-      {slideNum++}
-      <CaseSlide data={a} active={isA(slideNum)} lang={lang} />
-      {slideNum++}
-      <BackgroundSlide data={a} active={isA(slideNum)} lang={lang} />
-      {slideNum++}
+      <TitleSlide project={project} active={on(1)} lang={lang} num={n()} />
+      <CaseSlide data={a} active={on(1)} lang={lang} num={n()} />
+      <BackgroundSlide data={a} active={on(1)} lang={lang} num={n()} />
 
       {/* Phase 2: Ask */}
-      <Divider zh="形成問題" en="Ask" active={isA(slideNum)} num={slideNum} />
-      {slideNum++}
-      {ask.picots.map((picot, idx) => {
-        const n = slideNum + idx;
-        return <PicotSlide key={picot.id} picot={picot} idx={idx} active={isA(4)} lang={lang} />;
-      })}
+      <Divider zh="形成問題" en="Ask" active={on(2)} num={n()} />
+      {ask.picots.map((picot, idx) => (
+        <PicotSlide key={picot.id} picot={picot} idx={idx} active={on(2)} lang={lang} num={n()} />
+      ))}
 
-      {/* Phase 3: Acquire */}
-      <Divider zh="文獻檢索" en="Acquire" active={isA(7)} num={7} />
-      <SearchFlowSlide data={acq} active={isA(8)} lang={lang} />
-      <ArticleSlide data={acq} active={isA(9)} lang={lang} />
+      {/* Phase 3: Acquire — real deck order: conversion → search history → article */}
+      <Divider zh="文獻檢索" en="Acquire" active={on(3)} num={n()} />
+      <ConversionSlide data={acq} active={on(3)} lang={lang} num={n()} />
+      <SearchFlowSlide data={acq} active={on(3)} lang={lang} num={n()} />
+      <ArticleSlide data={acq} active={on(3)} lang={lang} num={n()} />
 
       {/* Phase 4: Appraise */}
-      <Divider zh="文獻評讀" en="Appraise" active={isA(10)} num={10} />
-      <CaspSlide data={apr} active={isA(11)} lang={lang} />
-      <GradeSlide data={apr} active={isA(13)} lang={lang} />
+      <Divider zh="文獻評讀" en="Appraise" active={on(4)} num={n()} />
+      <CaspSlide data={apr} active={on(4)} lang={lang} num={n()} />
+      <GradeSlide data={apr} active={on(4)} lang={lang} num={n()} />
 
       {/* Phase 5: Apply */}
-      <Divider zh="臨床應用" en="Apply" active={isA(14)} num={14} />
-      <EtdSlide data={{ ...app, recommendationStrength: app.recommendationStrength }} active={isA(15)} lang={lang} />
-      <SummarySlide data={app} active={isA(16)} lang={lang} />
-      <ThankYouSlide active={isA(17)} />
+      <Divider zh="臨床應用" en="Apply" active={on(5)} num={n()} />
+      <EtdSlide data={{ ...app, recommendationStrength: app.recommendationStrength }} active={on(5)} lang={lang} num={n()} />
+      <SummarySlide data={app} active={on(5)} lang={lang} num={n()} />
+      <ThankYouSlide active={on(5)} num={n()} />
     </div>
   );
 }

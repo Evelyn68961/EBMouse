@@ -14,6 +14,7 @@ const PHASE_TOOLS = {
     { path: "/toolbox/pubmed-search", zh: "PubMed 搜尋策略", en: "PubMed Search", icon: "🔍" },
     { path: "/toolbox/sra", zh: "SRA 關鍵字轉換", en: "SRA Conversion", icon: "🔄" },
     { path: "/toolbox/litsuggest", zh: "LitSuggest 篩選", en: "LitSuggest Guide", icon: "🤖" },
+    { path: "/toolbox/query-compare", zh: "搜尋式比較板", en: "Query Compare", icon: "🧑‍🤝‍🧑" },
   ],
   // Phase 4: Appraise
   4: [

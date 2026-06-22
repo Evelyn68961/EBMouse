@@ -17,6 +17,7 @@ import PicotWorksheet from './pages/reference/PicotWorksheet';
 import PubmedSearchGuide from './pages/reference/PubmedSearchGuide';
 import SraGuide from './pages/reference/SraGuide';
 import LitSuggestGuide from './pages/reference/LitSuggestGuide';
+import QueryCompare from './pages/reference/QueryCompare';
 import About from './pages/About';
 
 export const LangContext = createContext();
@@ -54,6 +55,7 @@ export default function App() {
           <Route path="/toolbox/pubmed-search" element={<PubmedSearchGuide />} />
           <Route path="/toolbox/sra" element={<SraGuide />} />
           <Route path="/toolbox/litsuggest" element={<LitSuggestGuide />} />
+          <Route path="/toolbox/query-compare" element={<QueryCompare />} />
           <Route path="/about" element={<About />} />
         </Routes>
       </Layout>

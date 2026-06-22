@@ -129,6 +129,56 @@ export default function PhaseAcquire() {
         />
       </section>
 
+      {/* Per-database search-strategy log — verbatim strings actually run */}
+      <section className="mb-8">
+        <h3 className="font-semibold text-gray-700 mb-1">{lang === "zh" ? "🔍 搜尋式紀錄（各資料庫）" : "🔍 Search-strategy Log (per database)"}</h3>
+        <p className="text-xs text-gray-400 mb-3">
+          {lang === "zh"
+            ? "記錄你在每個資料庫實際執行的完整搜尋式。簡報與評審需要逐字的搜尋式以確保可重現性。需要將 PubMed 轉成 Embase / Cochrane 語法？用工具箱的「SRA 關鍵字轉換」。"
+            : "Record the exact query you ran in each database. Judges need verbatim strings for reproducibility. Need to convert PubMed syntax to Embase / Cochrane? Use “SRA Conversion” in the Toolbox."}
+        </p>
+        <div className="space-y-3">
+          {(data.searchQueries || []).map((q, idx) => (
+            <div key={idx} className="bg-white rounded-xl border border-gray-100 p-4">
+              <div className="flex gap-3 mb-2">
+                <input
+                  type="text"
+                  list="ebm-db-list"
+                  value={q.database}
+                  onChange={(e) => update((acq) => { acq.searchQueries[idx].database = e.target.value; })}
+                  placeholder={lang === "zh" ? "資料庫" : "Database"}
+                  className="flex-1 px-3 py-2 rounded-lg border border-gray-200 focus:border-teal-300 focus:outline-none text-sm"
+                />
+                <input
+                  type="date"
+                  value={q.date || ""}
+                  onChange={(e) => update((acq) => { acq.searchQueries[idx].date = e.target.value; })}
+                  className="w-40 px-3 py-2 rounded-lg border border-gray-200 focus:border-teal-300 focus:outline-none text-sm text-gray-600"
+                />
+                {(data.searchQueries || []).length > 1 && (
+                  <button onClick={() => update((acq) => { acq.searchQueries.splice(idx, 1); })} className="text-gray-300 hover:text-red-400 px-2">✕</button>
+                )}
+              </div>
+              <textarea
+                value={q.queryString}
+                onChange={(e) => update((acq) => { acq.searchQueries[idx].queryString = e.target.value; })}
+                placeholder={lang === "zh" ? '貼上在此資料庫執行的完整搜尋式' : 'Paste the full query run in this database'}
+                rows={3}
+                className="w-full px-3 py-2 rounded-lg border border-gray-200 focus:border-teal-300 focus:outline-none resize-y text-xs font-mono"
+              />
+            </div>
+          ))}
+        </div>
+        <datalist id="ebm-db-list">
+          <option value="PubMed" /><option value="Embase" /><option value="Cochrane Library" />
+          <option value="Web of Science" /><option value="Scopus" /><option value="CINAHL" />
+        </datalist>
+        <button
+          onClick={() => update((acq) => { if (!Array.isArray(acq.searchQueries)) acq.searchQueries = []; acq.searchQueries.push({ database: "", queryString: "", date: "" }); })}
+          className="mt-3 text-sm text-teal-500 hover:text-teal-600 font-medium"
+        >+ {lang === "zh" ? "新增搜尋式" : "Add search query"}</button>
+      </section>
+
       {/* Screening flow */}
       <section className="mb-8">
         <h3 className="font-semibold text-gray-700 mb-3">{lang === "zh" ? "📊 篩選流程 (PRISMA)" : "📊 Screening Flow (PRISMA)"}</h3>

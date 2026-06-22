@@ -195,6 +195,16 @@ const SLIDES = {
     ['Negative: 71 篇', '{{s14.neg}}'],
   ],
 
+  // S15/S16 關鍵字轉換 — verbatim per-DB converted queries. The whole example
+  // query box collapses to one token (first paragraph keeps formatting; the
+  // remaining example lines are dropped via the run-collapse in tokenize_conv).
+  // NOTE: these two boxes were tokenized by tools/tokenize_conv.py against the
+  // already-built template (the example text spans many runs/paragraphs, which
+  // the exact-string SLIDES map can't match). Listed here for documentation /
+  // future regeneration; see that script if rebuilding from the source deck.
+  // 15: Cochrane query box -> {{conv.cochrane}}
+  // 16: Embase  query box -> {{conv.embase}}
+
   // S18 文獻選擇 — selected vs alternative article (counts + brief)
   18: [
     ['研究數量: 37 篇', '{{s18.alt.count}}'],

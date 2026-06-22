@@ -161,6 +161,9 @@ export function toCaseJson(project) {
         meshTerms: { p: joinArr(kw.meshTerms?.p), i: joinArr(kw.meshTerms?.i), c: joinArr(kw.meshTerms?.c), o: joinArr(kw.meshTerms?.o) },
         booleanStrategy: str(kw.booleanStrategy),
       },
+      searchQueries: (acquire.searchQueries || [])
+        .filter((q) => q && (q.database || q.queryString))
+        .map((q) => ({ database: str(q.database), queryString: str(q.queryString), date: str(q.date) })),
       screeningFlow: {
         initialResults: {
           pubmed: num(flow.initialResults?.pubmed),

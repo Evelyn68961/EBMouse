@@ -14,6 +14,10 @@ export function buildPairs(project) {
   const joinKw = (v) => (Array.isArray(v) ? v.filter((s) => String(s).trim()).join(', ') : (v || ''));
   const sel = acquire.selectedArticle || {};
   const alt = acquire.alternativeArticles?.[0] || {};
+  // Per-database verbatim queries (S15 Cochrane / S16 Embase conversion slides).
+  // Match by database name; fall back to the master Boolean strategy for PubMed.
+  const findQuery = (re) =>
+    (acquire.searchQueries || []).find((q) => q && re.test(String(q.database || '')))?.queryString || '';
   const flowNum = (n, suffix) => (n ? `${n}${suffix}` : '');
   // sampleSize may be a bare number (append unit) or a descriptive string (use as-is).
   const sampleText = (s, unit = ' 人') => {
@@ -143,6 +147,9 @@ export function buildPairs(project) {
     ['{{s13.p1}}', (kw.freeText?.p?.[0]) || ''],
     ['{{s13.p2}}', (kw.freeText?.p?.[1]) || ''],
     ['{{s13.i1}}', (kw.freeText?.i?.[0]) || ''],
+    // Acquire — S15/S16 keyword-conversion slides (verbatim per-DB queries)
+    ['{{conv.cochrane}}', findQuery(/cochrane/i)],
+    ['{{conv.embase}}', findQuery(/embase/i)],
     // Acquire — S14 LitSuggest screen counts
     ['{{s14.total}}', flowNum(acquire.screeningFlow?.pubmedInitial, ' 篇')],
     ['{{s14.pos}}', acquire.screeningFlow?.litPositive ? `Positive: ${acquire.screeningFlow.litPositive} 篇` : ''],
