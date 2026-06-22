@@ -15,8 +15,13 @@ import Hamster from '../../components/Hamster';
 const ProjectContext = createContext();
 export const useProject = () => useContext(ProjectContext);
 
+// Phase slugs drive the URL: /workflow/<id>/<slug>. Index = phase number - 1.
+const PHASE_SLUGS = ['assess', 'ask', 'acquire', 'appraise', 'apply'];
+const slugToNum = (s) => PHASE_SLUGS.indexOf(s) + 1; // invalid -> 0
+const numToSlug = (n) => PHASE_SLUGS[n - 1];
+
 export default function WorkflowRouter() {
-  const { projectId } = useParams();
+  const { projectId, phase: phaseParam } = useParams();
   const navigate = useNavigate();
   const { lang } = useLang();
   const [project, setProject] = useState(null);
@@ -65,8 +70,29 @@ export default function WorkflowRouter() {
     });
   }, [lang]);
 
-  const setPhase = (phase) => {
-    updateProject((prev) => ({ ...prev, meta: { ...prev.meta, currentPhase: phase } }));
+  // Phase comes from the URL. If the slug is missing/invalid, fall back to the
+  // saved resume point while the redirect effect below corrects the URL.
+  const phaseValid = PHASE_SLUGS.includes(phaseParam);
+  const phase = phaseValid ? slugToNum(phaseParam) : (project?.meta?.currentPhase || 1);
+
+  // No / bad slug -> redirect to the last-saved phase so "continue" resumes.
+  useEffect(() => {
+    if (!project || phaseValid) return;
+    navigate(`/workflow/${projectId}/${numToSlug(project.meta.currentPhase || 1)}`, { replace: true });
+  }, [project, phaseValid, projectId, navigate]);
+
+  // Keep the saved resume pointer in sync with the URL (covers Back/Forward and
+  // deep links), so Home shows the right progress and "continue" lands here.
+  useEffect(() => {
+    if (!project || !phaseValid) return;
+    if (project.meta.currentPhase !== slugToNum(phaseParam)) {
+      updateProject((prev) => ({ ...prev, meta: { ...prev.meta, currentPhase: slugToNum(phaseParam) } }));
+    }
+  }, [project, phaseValid, phaseParam, updateProject]);
+
+  const setPhase = (num) => {
+    if (num < 1 || num > 5) return;
+    navigate(`/workflow/${projectId}/${numToSlug(num)}`);
   };
 
   if (!project) {
@@ -77,7 +103,6 @@ export default function WorkflowRouter() {
     );
   }
 
-  const phase = project.meta.currentPhase;
   const phaseComponents = { 1: PhaseAssess, 2: PhaseAsk, 3: PhaseAcquire, 4: PhaseAppraise, 5: PhaseApply };
   const PhaseComponent = phaseComponents[phase] || PhaseAssess;
 

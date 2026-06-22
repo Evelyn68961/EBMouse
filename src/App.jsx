@@ -40,7 +40,8 @@ export default function App() {
       <Layout>
         <Routes>
           <Route path="/" element={<Home />} />
-          <Route path="/workflow/:projectId/*" element={<WorkflowRouter />} />
+          <Route path="/workflow/:projectId" element={<WorkflowRouter />} />
+          <Route path="/workflow/:projectId/:phase" element={<WorkflowRouter />} />
           <Route path="/cases" element={<CaseLibrary />} />
           <Route path="/cases/atropine-2024" element={<CaseAtropine2024 />} />
           <Route path="/cases/cpm-2025" element={<CaseCPM2025 />} />
